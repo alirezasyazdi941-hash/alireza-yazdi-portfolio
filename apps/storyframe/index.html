@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101318">
+<title>StoryFrame — Alireza Yazdi</title><meta name="author" content="Alireza Yazdi">
+<style>
+:root{color-scheme:dark;--bg:#101318;--panel:#191f27;--panel2:#202833;--line:#303b49;--text:#edf2f7;--muted:#9aa8b7;--accent:#76b7ff;--accent2:#b9dcff;--good:#78d6ad;--danger:#ff8d8d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{max-width:1440px;margin:auto;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 2px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:11px}.mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,#a7d5ff,#3f78b5);display:grid;place-items:center;color:#08111c;font-size:20px;font-weight:900}
+h1{font-size:18px;margin:0}header small{color:var(--muted);font-size:11px;display:block;margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 13px;border-radius:10px;font-size:13px}.btn.primary{background:var(--accent);color:#07111d;border-color:var(--accent);font-weight:700}.btn:disabled{opacity:.45;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.panel h2{font-size:15px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px;line-height:1.8}
+label{display:block;color:#c8d3df;font-size:12px;margin:12px 0 6px}
+input[type=text],textarea,select{width:100%;background:#0f141a;border:1px solid var(--line);border-radius:10px;padding:11px;color:var(--text);outline:none}
+textarea{min-height:150px;resize:vertical;line-height:1.9}input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+.script-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.preview-wrap{background:#080b0f;border:1px solid #34404e;border-radius:13px;overflow:hidden}
+canvas{display:block;width:100%;aspect-ratio:16/9;background:#090d12;object-fit:contain}
+.preview-meta{display:flex;justify-content:space-between;gap:8px;padding:9px 11px;color:var(--muted);font-size:11px}
+.scene-list{display:grid;gap:9px;margin-top:12px}
+.scene{border:1px solid var(--line);border-radius:12px;padding:11px;background:#141a21}
+.scene-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.scene-head strong{font-size:13px}.scene-head span{font-size:11px;color:var(--muted)}
+.scene textarea{min-height:72px}.scene input[type=text]{margin-top:7px}.scene-bottom{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.scene-bottom input[type=number]{width:72px;background:#0f141a;border:1px solid var(--line);border-radius:8px;padding:7px;color:var(--text)}
+.thumb{width:76px;height:48px;object-fit:cover;border-radius:7px;background:#27313d;border:1px solid var(--line)}
+.small{font-size:11px;padding:7px 9px}.timeline{height:7px;background:#303b49;border-radius:20px;overflow:hidden;margin-top:12px}.timeline>div{height:100%;background:var(--accent);width:0%}
+.status{font-size:12px;color:var(--muted);min-height:22px;margin-top:9px}.status.good{color:var(--good)}.status.error{color:var(--danger)}
+.drop{border:1px dashed #536477;border-radius:10px;padding:10px;text-align:center;color:var(--muted);font-size:11px;margin-top:8px}
+.footer{color:#8190a0;font-size:11px;line-height:1.8;margin:18px 2px}
+.hidden{display:none!important}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.app{padding-left:12px;padding-right:12px}header{align-items:flex-start}.actions .btn{padding:9px 10px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="mark">▶</div><div><h1>Alireza Yazdi · StoryFrame</h1><small>استودیوی ساخت فیلم از داستان · نسخه مستقل</small></div></div>
+ <div class="actions"><button class="btn" id="saveProject">ذخیره پروژه</button><button class="btn" id="loadProject">بازکردن پروژه</button><input id="projectFile" class="hidden" type="file" accept=".json,application/json"></div>
+</header>
+
+<div class="layout">
+ <section class="panel">
+  <h2>۱. داستان و سناریو</h2>
+  <label for="projectTitle">عنوان فیلم</label><input id="projectTitle" type="text" value="داستان من" maxlength="90">
+  <label for="story">متن داستان یا سناریو</label>
+  <textarea id="story" placeholder="داستانت را اینجا بنویس... هر پاراگراف به یک صحنه تبدیل می‌شود."></textarea>
+  <div class="script-tools"><button class="btn primary" id="makeScenes">تبدیل داستان به صحنه‌ها</button><button class="btn" id="sample">نمونه داستان</button></div>
+  <p class="muted">برای نتیجه بهتر، هر پاراگراف را به‌عنوان یک صحنه مستقل بنویس. بعد می‌توانی متن، تصویر و مدت هر صحنه را ویرایش کنی.</p>
+  <div style="height:1px;background:var(--line);margin:16px 0"></div>
+  <h2>۲. صحنه‌ها و استوری‌بورد</h2>
+  <div class="row"><span class="muted" id="sceneCount">۰ صحنه</span><button class="btn small" id="addScene">＋ افزودن صحنه</button></div>
+  <div id="scenes" class="scene-list"></div>
+ </section>
+
+ <section class="panel">
+  <h2>۳. پیش‌نمایش فیلم</h2>
+  <div class="preview-wrap"><canvas id="screen" width="1280" height="720"></canvas><div class="preview-meta"><span id="previewTitle">StoryFrame Studio</span><span id="counter">۰ / ۰</span></div></div>
+  <div class="row" style="margin-top:10px"><button class="btn" id="prev">قبلی</button><button class="btn primary" id="play">▶ پخش داستان</button><button class="btn" id="next">بعدی</button></div>
+  <div class="timeline"><div id="progress"></div></div>
+  <div class="status" id="status" aria-live="polite">برای شروع، داستانت را وارد کن و صحنه بساز.</div>
+  <div style="height:1px;background:var(--line);margin:16px 0"></div>
+  <h2>۴. صدا و خروجی</h2>
+  <label for="music">موسیقی پس‌زمینه (اختیاری)</label><input id="music" type="file" accept="audio/*">
+  <div class="row" style="margin-top:8px"><label style="margin:0;flex:1">صدای موسیقی</label><input id="volume" type="range" min="0" max="1" step=".05" value=".35" style="flex:2"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="speak">🔊 خواندن متن صحنه</button><button class="btn" id="stopVoice">توقف صدا</button></div>
+  <p class="muted">خواندن متن از صدای دستگاه استفاده می‌کند. برای خروجی فیلم، موسیقی بارگذاری‌شده در صورت پشتیبانی مرورگر ضبط می‌شود؛ صدای گفتار دستگاه ممکن است داخل فایل ضبط نشود.</p>
+  <button class="btn primary" id="export" style="width:100%;margin-top:8px">⏺ ساخت و ذخیره ویدئو</button>
+  <p class="muted">خروجی بر اساس پشتیبانی Safari از ضبط ویدئوی Canvas ساخته می‌شود. فرمت قابل ارائه توسط مرورگر انتخاب می‌شود؛ MP4 در همه نسخه‌ها تضمین‌شده نیست.</p>
+ </section>
+</div>
+<div class="footer">© 2026 Alireza Yazdi · StoryFrame یک ابزار آفلاین برای ساخت استوری‌بورد و ویدئوی اسلایدی است؛ تولید خودکار تصاویر سینمایی یا تبدیل هوش مصنوعی متن به ویدئو انجام نمی‌دهد. برای هر صحنه تصویر دلخواهت را اضافه کن. فایل HTML و پروژه روی دستگاه خودت باقی می‌مانند.</div>
+</div>
+
+<script>
+(()=> {
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('screen'),ctx=canvas.getContext('2d');
+let scenes=[],current=0,playTimer=null,playing=false,musicUrl=null,musicAudio=null,exporting=false;
+const font='Tahoma,Arial,sans-serif';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function setStatus(msg,type=''){const el=$('status');el.textContent=msg;el.className='status '+type}
+function fmt(n){return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}
+function draw(){
+ const w=canvas.width,h=canvas.height,s=scenes[current];ctx.clearRect(0,0,w,h);
+ const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#172434');g.addColorStop(1,'#070a0e');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ if(s&&s.image){try{const im=s.image;const scale=Math.max(w/im.width,h/im.height),iw=im.width*scale,ih=im.height*scale;ctx.globalAlpha=.58;ctx.drawImage(im,(w-iw)/2,(h-ih)/2,iw,ih);ctx.globalAlpha=1;ctx.fillStyle='rgba(4,8,13,.48)';ctx.fillRect(0,0,w,h)}catch(e){}}
+ ctx.textAlign='right';ctx.direction='rtl';ctx.fillStyle='#9bcfff';ctx.font='600 24px '+font;ctx.fillText(($('projectTitle').value||'STORYFRAME').slice(0,45),w-76,100);
+ ctx.fillStyle='#fff';ctx.font='bold 48px '+font;
+ const text=s?s.text:'داستانت را به فیلم تبدیل کن';wrapText(text,w-152,300,w-152,62,4);
+ ctx.fillStyle='#c0cbd7';ctx.font='22px '+font;ctx.fillText(s?`صحنه ${current+1}  ·  ${s.duration} ثانیه`:'پیش‌نمایش استوری‌بورد',w-76,h-74);
+ ctx.textAlign='left';ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='16px '+font;ctx.fillText('ALIREZA YAZDI · STORYFRAME',76,h-74);
+ $('previewTitle').textContent=$('projectTitle').value||'Alireza Yazdi · StoryFrame';
+ $('counter').textContent=fmt(scenes.length?current+1:0)+' / '+fmt(scenes.length);
+ $('progress').style.width=scenes.length?((current+1)/scenes.length*100)+'%':'0%';
+}
+function wrapText(text,x,y,maxWidth,lineHeight,maxLines){
+ const words=String(text||'').split(/\s+/);let line='',lines=[];
+ for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}
+ if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);lines[maxLines-1]=lines[maxLines-1].slice(0,Math.max(0,lines[maxLines-1].length-3))+'…'}
+ lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));
+}
+function renderList(){
+ $('sceneCount').textContent=fmt(scenes.length)+' صحنه';
+ $('scenes').innerHTML='';
+ scenes.forEach((s,i)=>{
+  const el=document.createElement('div');el.className='scene';
+  el.innerHTML=`<div class="scene-head"><strong>صحنه ${fmt(i+1)}</strong><span>${fmt(s.duration)} ثانیه</span></div>
+  <textarea aria-label="متن صحنه ${i+1}" data-text="${i}">${esc(s.text)}</textarea>
+  <div class="scene-bottom"><img class="thumb" alt="تصویر صحنه" src="${s.imageUrl||''}" style="${s.imageUrl?'':'visibility:hidden'}">
+  <label class="btn small" style="margin:0">انتخاب تصویر<input data-image="${i}" type="file" accept="image/*" hidden></label>
+  <label style="margin:0">مدت <input data-duration="${i}" type="number" min="1" max="60" value="${s.duration}"> ثانیه</label>
+  <button class="btn small" data-preview="${i}">پیش‌نمایش</button><button class="btn small" data-delete="${i}">حذف</button></div>`;
+  $('scenes').appendChild(el);
+ });
+}
+function addScene(text='متن این صحنه را بنویس...',duration=4){scenes.push({text,duration,image:null,imageUrl:''});current=scenes.length-1;renderList();draw()}
+$('scenes').addEventListener('input',e=>{
+ const i=Number(e.target.dataset.text??e.target.dataset.duration);if(!Number.isInteger(i)||!scenes[i])return;
+ if(e.target.dataset.text!==undefined)scenes[i].text=e.target.value;
+ if(e.target.dataset.duration!==undefined)scenes[i].duration=Math.max(1,Math.min(60,Number(e.target.value)||4));
+ draw();
+});
+$('scenes').addEventListener('change',e=>{
+ if(e.target.dataset.image===undefined)return;
+ const i=Number(e.target.dataset.image),file=e.target.files?.[0];if(!file||!file.type.startsWith('image/'))return;
+ const reader=new FileReader();reader.onload=()=>{const im=new Image();im.onload=()=>{scenes[i].image=im;scenes[i].imageUrl=reader.result;renderList();draw()};im.src=reader.result};reader.readAsDataURL(file);
+});
+$('scenes').addEventListener('click',e=>{
+ const p=e.target.dataset.preview,d=e.target.dataset.delete;
+ if(p!==undefined){current=Number(p);draw()}
+ if(d!==undefined){const i=Number(d);scenes.splice(i,1);current=Math.max(0,Math.min(current,scenes.length-1));renderList();draw()}
+});
+$('makeScenes').onclick=()=>{const parts=$('story').value.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);if(!parts.length){setStatus('ابتدا متن داستان را وارد کن.','error');return}stopPlayback();scenes=parts.map(t=>({text:t,duration:5,image:null,imageUrl:''}));current=0;renderList();draw();setStatus(`${scenes.length} صحنه ساخته شد.`,'good')};
+$('addScene').onclick=()=>{addScene();renderList()};
+$('sample').onclick=()=>{$('story').value='در شهری آرام، چراغ‌های آخر شب یکی‌یکی خاموش می‌شدند.\n\nدختری جوان نامه‌ای قدیمی پیدا کرد؛ نامه‌ای که نام خیابانی ناشناس روی آن نوشته شده بود.\n\nاو در سکوت شب به دنبال نشانی رفت و پشت دری آبی‌رنگ ایستاد.\n\nدر باز شد؛ گاهی یک راز، آغاز یک زندگی تازه است.';setStatus('نمونه داستان وارد شد. برای ساخت صحنه‌ها روی دکمه تبدیل بزن.','good')};
+function go(n){if(!scenes.length)return;current=(n+scenes.length)%scenes.length;draw()}
+$('prev').onclick=()=>go(current-1);$('next').onclick=()=>go(current+1);
+function stopPlayback(){if(playTimer)clearTimeout(playTimer);playTimer=null;playing=false;$('play').textContent='▶ پخش داستان'}
+function playNext(){if(!playing)return;draw();const s=scenes[current];if(!s){stopPlayback();return}playTimer=setTimeout(()=>{if(current<scenes.length-1){current++;playNext()}else stopPlayback()},Math.max(1,s.duration)*1000)}
+$('play').onclick=()=>{if(playing){stopPlayback();return}if(!scenes.length){setStatus('ابتدا صحنه بساز.','error');return}playing=true;$('play').textContent='Ⅱ توقف';playNext()};
+$('speak').onclick=()=>{if(!('speechSynthesis'in window)){setStatus('خواندن متن در این مرورگر پشتیبانی نمی‌شود.','error');return}const s=scenes[current];if(!s)return; speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s.text);u.lang='fa-IR';u.rate=.92;speechSynthesis.speak(u)};
+$('stopVoice').onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel()};
+$('projectTitle').addEventListener('input',draw);
+$('music').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(musicUrl)URL.revokeObjectURL(musicUrl);musicUrl=URL.createObjectURL(f);musicAudio=new Audio(musicUrl);musicAudio.loop=true;musicAudio.volume=Number($('volume').value);setStatus('موسیقی بارگذاری شد.','good')};
+$('volume').oninput=()=>{if(musicAudio)musicAudio.volume=Number($('volume').value)};
+$('saveProject').onclick=()=>{
+ const data={version:1,title:$('projectTitle').value,story:$('story').value,scenes:scenes.map(s=>({text:s.text,duration:s.duration,imageUrl:s.imageUrl||''}))};
+ const blob=new Blob([JSON.stringify(data)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='storyframe-project.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setStatus('فایل پروژه ذخیره شد.','good')
+};
+$('loadProject').onclick=()=>$('projectFile').click();
+$('projectFile').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);$('projectTitle').value=d.title||'داستان من';$('story').value=d.story||'';scenes=(d.scenes||[]).map(s=>({text:s.text||'',duration:s.duration||4,image:null,imageUrl:s.imageUrl||''}));let pending=scenes.map((s,i)=>new Promise(resolve=>{if(!s.imageUrl)return resolve();const im=new Image();im.onload=()=>{s.image=im;resolve()};im.onerror=resolve;im.src=s.imageUrl}));Promise.all(pending).then(()=>{current=0;renderList();draw();setStatus('پروژه باز شد.','good')})}catch(err){setStatus('فایل پروژه معتبر نیست.','error')}};r.readAsText(f)};
+function mimeType(){const types=['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];return types.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||''}
+$('export').onclick=async()=>{
+ if(exporting)return;if(!scenes.length){setStatus('برای خروجی ابتدا صحنه بساز.','error');return}
+ if(!canvas.captureStream||!window.MediaRecorder){setStatus('ضبط ویدئو در این نسخه از مرورگر پشتیبانی نمی‌شود. از پیش‌نمایش یا ذخیره پروژه استفاده کن.','error');return}
+ stopPlayback();exporting=true;$('export').disabled=true;
+ let audioCtx=null,source=null,dest=null,stream=null,recorder=null,chunks=[];
+ try{
+  const type=mimeType();stream=canvas.captureStream(30);
+  if(musicAudio&&musicUrl&&window.AudioContext){
+   audioCtx=new AudioContext();await audioCtx.resume();source=audioCtx.createMediaElementSource(musicAudio);dest=audioCtx.createMediaStreamDestination();source.connect(dest);source.connect(audioCtx.destination);dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+   musicAudio.currentTime=0;musicAudio.volume=Number($('volume').value);await musicAudio.play().catch(()=>{});
+  }
+  recorder=new MediaRecorder(stream,type?{mimeType:type}:undefined);
+  recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  recorder.onerror=()=>setStatus('هنگام ضبط خطایی رخ داد.','error');
+  const finished=new Promise(resolve=>recorder.onstop=resolve);recorder.start();
+  setStatus('در حال ساخت ویدئو… این صفحه را باز نگه دار.');
+  for(let i=0;i<scenes.length;i++){current=i;draw();await new Promise(r=>setTimeout(r,Math.max(1,scenes[i].duration)*1000))}
+  if(recorder.state!=='inactive')recorder.stop();await finished;
+  if(musicAudio)musicAudio.pause();
+  const blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});if(!blob.size)throw new Error('empty');
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='storyframe-film.'+(recorder.mimeType.includes('mp4')?'mp4':'webm');a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
+  setStatus('ویدئو ساخته شد. اگر دانلود خودکار انجام نشد، از گزینه اشتراک‌گذاری مرورگر استفاده کن.','good');
+ }catch(err){setStatus('ساخت ویدئو ناموفق بود؛ ممکن است محدودیت ضبط در Safari یا حافظه دستگاه باشد. پروژه را ذخیره کن.','error')}
+ finally{if(musicAudio)musicAudio.pause();if(audioCtx)await audioCtx.close().catch(()=>{});if(stream)stream.getTracks().forEach(t=>t.stop());exporting=false;$('export').disabled=false;draw()}
+};
+addScene('به دنیای داستانت خوش آمدی. متن این صحنه را ویرایش کن یا داستانت را وارد کن.',5);renderList();draw();
+})();
+</script>
+</body>
+</html>
