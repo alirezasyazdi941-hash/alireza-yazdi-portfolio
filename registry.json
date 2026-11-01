@@ -1,0 +1,10 @@
+{
+  "name": "alireza-yazdi-portfolio",
+  "version": "1.0.0",
+  "purpose": "Static interactive portfolio: WebGL galaxy landing + phone shell hosting project apps",
+  "interface": { "entry": "index.html", "config": "assets/data.js", "apps": "apps/<id>/index.html" },
+  "dependencies": { "runtime": [], "build_only": ["angular (research-os)", "playwright (tests)"] },
+  "permissions": { "network": "none at runtime", "credentials": "none", "storage": "localStorage per app" },
+  "tests": "node test/site.test.js",
+  "docs": "README.md"
+}

@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Alireza Yazdi — Interactive Research Portfolio"
+type: software
+authors:
+  - family-names: Yazdi
+    given-names: Alireza
+    email: Alireza_Yazdi@nononick.ir
+repository-code: "https://github.com/alirezassezar1-svg/alireza-yazdi-portfolio"
+license: MIT
+date-released: 2026-11-01
+version: 1.0.0
