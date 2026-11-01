@@ -17,7 +17,7 @@
     'void main(){',
     '  vec3 p=aPos;float a=1.0;',
     '  if(aType<0.5){',
-    '    float r=length(p.xz);float ang=atan(p.z,p.x)+uTime*uSpin/(0.45+sqrt(r));',
+    '    float r=length(p.xz);float ang=atan(p.z,p.x)+uTime*uSpin*0.12;',
     '    p.x=cos(ang)*r;p.z=sin(ang)*r;',
     '  }else{ a=0.55+0.45*sin(uTime*1.3+aSeed*40.0); }',
     '  vec4 pos=uMVP*vec4(p,1.0);gl_Position=pos;',

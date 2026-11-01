@@ -4,7 +4,7 @@ window.PORTFOLIO = {
     name: "Alireza Yazdi",
     nameFa: "علیرضا یزدی",
     email: "Alireza_Yazdi@nononick.ir",
-    github: "https://github.com/alirezassezar1-svg",
+    github: "https://github.com/alirezasyazdi941-hash",
     web: "https://nononick.ir",
     role: { en: "MSc student in Artificial Intelligence", fa: "دانشجوی کارشناسی ارشد هوش مصنوعی" },
     affiliation: { en: "Islamic Azad University, Dezful Branch · Iran", fa: "دانشگاه آزاد اسلامی واحد دزفول · ایران" },
@@ -49,6 +49,27 @@ window.PORTFOLIO = {
         en: "Bilingual research workspace: literature discovery, gap analysis, comparison matrix, experiment lab, knowledge graph, writing studio and publication-readiness checklist, with a built-in local analysis engine.",
         fa: "فضای کار پژوهشی دوزبانه: کشف منابع، تحلیل شکاف پژوهشی، ماتریس مقایسه، آزمایشگاه آزمایش، گراف دانش، استودیوی نگارش و چک‌لیست آمادگی انتشار؛ با موتور تحلیل محلی."
       },
-      tech: ["Angular 21", "TypeScript", "Signals"] }
+      tech: ["Angular 21", "TypeScript", "Signals"] },
+    { id: "void-cinema", path: "apps/void-cinema/index.html", glyph: "reel", hue: [350, 300],
+      name: { en: "Void Cinema", fa: "ولد سینما" },
+      desc: {
+        en: "Cinema post-production and film studio workspace, delivered as an installable Angular PWA.",
+        fa: "فضای کار پس‌تولید و استودیوی فیلم، به‌صورت PWA قابل نصب با Angular."
+      },
+      tech: ["Angular", "PWA", "Service Worker"] },
+    { id: "webgl-studio", path: "apps/webgl-studio/index.html", glyph: "cube", hue: [190, 230],
+      name: { en: "WebGL Studio", fa: "استودیوی WebGL" },
+      desc: {
+        en: "Builder for interactive scroll-driven WebGL sites (Lenis, GSAP, three.js) targeting GitHub Pages.",
+        fa: "سازنده‌ی سایت‌های تعاملی اسکرول‌محور با WebGL (Lenis، GSAP، three.js) برای GitHub Pages."
+      },
+      tech: ["Angular", "Lenis", "GSAP", "three.js"] },
+    { id: "uni-command", path: "apps/uni-command/index.html", glyph: "cap", hue: [45, 15],
+      name: { en: "Uni Command", fa: "فرماندهی دانشگاهی" },
+      desc: {
+        en: "Academic-journey command center for planning university applications. The AI advisor needs a backend and is inactive on this static demo.",
+        fa: "مرکز فرماندهی مسیر دانشگاهی برای برنامه‌ریزی اپلای. مشاور هوشمند به سرور نیاز دارد و در این دموی ایستا غیرفعال است."
+      },
+      tech: ["Angular", "TypeScript", "Tailwind"] }
   ]
 };

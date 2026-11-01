@@ -11,6 +11,9 @@
     scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 9h8M8 12h8M8 15h5"/>',
     film: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M8 5v14M16 5v14M3.5 9.5H8M16 9.5h4.5M3.5 14.5H8M16 14.5h4.5"/>',
     atom: '<circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(120 12 12)"/>',
+    reel: '<circle cx="12" cy="12" r="8.500"/><circle cx="12" cy="12" r="1.800"/><circle cx="12" cy="6.800" r="1.400"/><circle cx="12" cy="17.200" r="1.400"/><circle cx="6.800" cy="12" r="1.400"/><circle cx="17.200" cy="12" r="1.400"/>',
+    cube: '<path d="M12 3 20 7.500v9L12 21 4 16.500v-9z"/><path d="m4 7.500 8 4.500 8-4.500M12 12v9"/>',
+    cap: '<path d="m2.500 9 9.500-4.500L21.500 9 12 13.500z"/><path d="M6.500 11.200v4.500c0 1.300 2.500 2.800 5.500 2.800s5.500-1.500 5.500-2.800v-4.500M21.500 9v5.500"/>',
     user: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.5 7 5.5"/>',
     git: '<path d="M9 19c-4 1.3-4-2-6-2.5m12 4.5v-3a2.6 2.6 0 0 0-.7-2c2.800-.3 5.700-1.400 5.700-6.200A4.800 4.800 0 0 0 18.700 6.800 4.500 4.500 0 0 0 18.600 3.500S17.500 3.200 15 5a12 12 0 0 0-6 0C6.500 3.200 5.400 3.500 5.400 3.500a4.500 4.500 0 0 0-.1 3.300A4.800 4.800 0 0 0 4 10.300c0 4.800 2.900 5.900 5.700 6.200a2.600 2.600 0 0 0-.7 2v3"/>',
     mail: '<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m4 7.500 8 6 8-6"/>'
@@ -57,7 +60,7 @@
     if (current && current.kind === 'about') renderAbout();
   }
 
-  function tick() { var d = new Date(); $('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  function tick() { var d = new Date(); $('clock').textContent = (d.getHours() % 12 || 12) + ':' + String(d.getMinutes()).padStart(2, '0'); }
   tick(); setInterval(tick, 20000);
 
   function showWindow(title, origin) {

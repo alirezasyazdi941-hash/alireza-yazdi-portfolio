@@ -20,13 +20,13 @@ const ok = (m) => console.log('  ✔', m);
   pg.on('console', (m) => { if (m.type() === 'error' && !/favicon|Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
   pg.on('requestfailed', (r) => errors.push('reqfail: ' + r.url()));
   await pg.goto(base); await pg.waitForSelector('#grid .app');
-  assert.strictEqual(await pg.locator('#grid .app').count(), 4); ok('home screen shows 4 project apps');
+  assert.strictEqual(await pg.locator("#grid .app").count(), 7); ok('home screen shows 7 project apps');
   assert.strictEqual(await pg.locator('#dock .app').count(), 3); ok('dock: About, GitHub, Email');
   const gl = await pg.evaluate(() => ({ ready: !!window.__galaxyReady, fallback: document.documentElement.classList.contains('no-webgl') }));
   assert(gl.ready || gl.fallback); ok(gl.ready ? 'WebGL galaxy rendering' : 'galaxy fell back to CSS (no WebGL in this browser)');
   await pg.screenshot({ path: '/tmp/claude-0/portfolio-desktop.png' });
 
-  for (const id of ['alireza-path', 'docscan-iran', 'storyframe', 'research-os']) {
+  for (const id of ['alireza-path', 'docscan-iran', 'storyframe', 'research-os', 'void-cinema', 'webgl-studio', 'uni-command']) {
     await pg.locator(`#grid .app[data-id="${id}"]`).dispatchEvent("click");
     const fr = await pg.waitForSelector('#wbody iframe', { state: 'attached' }); const frame = await fr.contentFrame();
     await frame.waitForLoadState('load'); await pg.waitForFunction(() => document.getElementById('loading').classList.contains('done'));

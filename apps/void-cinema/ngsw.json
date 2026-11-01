@@ -1,0 +1,108 @@
+{
+  "configVersion": 1,
+  "timestamp": 1793565808863,
+  "index": "./index.html",
+  "assetGroups": [
+    {
+      "name": "app-shell",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./favicon.ico",
+        "./index.html",
+        "./main-BELGIE7Q.js",
+        "./manifest.webmanifest",
+        "./styles-CVNE2JPX.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "media",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./assets/images/film_frame_actor_profile_1793404727880.jpg",
+        "./assets/images/film_frame_monolith_desert_1793404738600.jpg",
+        "./assets/images/film_frame_orbital_monolith_1793404716142.jpg",
+        "./assets/images/film_frame_tokyo_noir_1793404704926.jpg",
+        "./icons/apple-touch-icon.png",
+        "./icons/favicon-48.png",
+        "./icons/icon-192.png",
+        "./icons/icon-512.png",
+        "./icons/icon-maskable-192.png",
+        "./icons/icon-maskable-512.png"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "fonts",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "./media/jetbrains-mono-latin-ext-wght-normal-TSLVDSQR.woff2",
+        "./media/jetbrains-mono-latin-wght-normal-VBS632QH.woff2",
+        "./media/material-icons-latin-400-normal-LEZCGFVT.woff2",
+        "./media/plus-jakarta-sans-latin-ext-wght-normal-UBEBQO7H.woff2",
+        "./media/plus-jakarta-sans-latin-wght-normal-XZSBT77D.woff2",
+        "./media/vazirmatn-arabic-wght-normal-GZN7WEUV.woff2",
+        "./media/vazirmatn-latin-ext-wght-normal-RMRFIRIZ.woff2",
+        "./media/vazirmatn-latin-wght-normal-QLHTNE3B.woff2"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "./assets/images/film_frame_actor_profile_1793404727880.jpg": "0cc04f67e19bd76a5a4402a221eed320e0725511",
+    "./assets/images/film_frame_monolith_desert_1793404738600.jpg": "83b7b0a8799eaf2ac3357a46bca594cb7b8af8f9",
+    "./assets/images/film_frame_orbital_monolith_1793404716142.jpg": "ed181b56e156d35ef6346ab83975a263a3e5c9a3",
+    "./assets/images/film_frame_tokyo_noir_1793404704926.jpg": "4dff42fe4e0b14848cba8cf4d6ec3bf2be8c1bf4",
+    "./favicon.ico": "fc28861d7d0ec2cf0091b57d33b2779387066772",
+    "./icons/apple-touch-icon.png": "9a7245bf63997e4ca36419cc4176879e7ca2593c",
+    "./icons/favicon-48.png": "0f4d93c70f0e8ed633999c5c696e4d1594334bf4",
+    "./icons/icon-192.png": "d2e8415881bd10e82669e3687c76df672cc16793",
+    "./icons/icon-512.png": "ce11dc0e962f627920b7ef6f190feef8c424ef13",
+    "./icons/icon-maskable-192.png": "90d3cba587c637c2f2ccdce0447da376d24566ed",
+    "./icons/icon-maskable-512.png": "b34ede6ba5f4a3b779d988f06b6f00a461550688",
+    "./index.html": "408a944062d07efb5229bf2814de19389a14b336",
+    "./main-BELGIE7Q.js": "42519e870ab5d637fa8642492e0fbfb32bef6f62",
+    "./manifest.webmanifest": "4991f4fbb7174c00da6c6a01f8512752ae7c31b5",
+    "./media/jetbrains-mono-latin-ext-wght-normal-TSLVDSQR.woff2": "1cb17b5afb36675200d5c3d1b3a8e7a2bf0e510e",
+    "./media/jetbrains-mono-latin-wght-normal-VBS632QH.woff2": "e7277e714521ceb5f174cc9879b51e0f4aa69753",
+    "./media/material-icons-latin-400-normal-LEZCGFVT.woff2": "0bc0c675480d94ec7e8609dda6227f88c5d08d2c",
+    "./media/plus-jakarta-sans-latin-ext-wght-normal-UBEBQO7H.woff2": "42f3e9018127e0e9793b61620d436aa6b4786728",
+    "./media/plus-jakarta-sans-latin-wght-normal-XZSBT77D.woff2": "a389d97de580a2d6a3723112234bd2b3839ce0db",
+    "./media/vazirmatn-arabic-wght-normal-GZN7WEUV.woff2": "55397bc2e59d1bf652fd82609872ac3acecb7618",
+    "./media/vazirmatn-latin-ext-wght-normal-RMRFIRIZ.woff2": "a2120b64f93793bc2ffdad40f2e133d14b42d7ab",
+    "./media/vazirmatn-latin-wght-normal-QLHTNE3B.woff2": "ee0a5328e85617615ea3ee67cd75fc418148e92b",
+    "./styles-CVNE2JPX.css": "9604f1ea3189b2c1dcbc4c8a916fa029429923ce"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}

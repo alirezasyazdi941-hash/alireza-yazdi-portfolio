@@ -2,7 +2,7 @@
 
 A portfolio presented as a phone floating inside a galaxy. Each project is an app on the phone's home screen and opens inside the device (or full page via the ↗ button).
 
-**Live site:** `https://alirezassezar1-svg.github.io/alireza-yazdi-portfolio/` (after enabling GitHub Pages — see below)
+**Live site:** `https://alirezasyazdi941-hash.github.io/alireza-yazdi-portfolio/` (after enabling GitHub Pages — see below)
 
 | App | What it is | Stack |
 |---|---|---|
@@ -10,6 +10,9 @@ A portfolio presented as a phone floating inside a galaxy. Each project is an ap
 | **DocScan Iran** | In-browser document scanner: perspective correction, shadow removal, file-size control. | React, OpenCV.js |
 | **StoryFrame** | Story → storyboard → slideshow video (canvas + MediaRecorder), optional music and text-to-speech. Offline. | Vanilla JS, Canvas |
 | **Research OS** | Bilingual research workspace: literature discovery, gap analysis, comparison matrix, experiment lab, knowledge graph, writing studio, publication-readiness checklist. Built-in local analysis engine; an optional Gemini backend exists in the source but is *not* active on this static site. | Angular 21 |
+| **Void Cinema** | Cinema post-production and film-studio workspace, installable PWA. | Angular, Service Worker |
+| **WebGL Studio** | Builder for scroll-driven interactive WebGL sites (Lenis, GSAP, three.js) for GitHub Pages. | Angular |
+| **Uni Command** | Academic-journey command center for university applications. Its AI advisor needs a backend and is inactive on this static demo. | Angular, Tailwind |
 
 ## Design notes
 - **No runtime dependencies on the landing page.** The galaxy is a hand-written WebGL point renderer (`assets/galaxy.js`, ~100 lines); the phone shell is plain JS/CSS. Fonts for Research OS are bundled, so nothing is fetched from third-party CDNs.
