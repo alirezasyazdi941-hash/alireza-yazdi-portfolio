@@ -1,11 +1,12 @@
 {
   "name": "alireza-yazdi-portfolio",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "purpose": "Static interactive portfolio: WebGL galaxy landing + phone shell hosting project apps",
   "interface": {
     "entry": "index.html",
     "config": "assets/data.js",
-    "apps": "apps/<id>/index.html"
+    "apps": "apps/<id>/index.html",
+    "film": "film/index.html"
   },
   "dependencies": {
     "runtime": [],
@@ -19,7 +20,7 @@
     "credentials": "Hugging Face token typed by the user, kept in sessionStorage only, never cached",
     "storage": "IndexedDB 'ay-ai-cache' (SHA-256 keyed) + localStorage per app"
   },
-  "tests": "node test/site.test.js && node test/ay-ai.test.js",
+  "tests": "node test/site.test.js && node test/ay-ai.test.js && node test/film.test.js",
   "docs": "README.md",
   "tools": [
     {
