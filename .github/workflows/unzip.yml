@@ -1,10 +1,12 @@
-name: Unzip site.zip
+name: Unzip uploaded zips
 
-# Upload one file named site.zip to the repo root; this extracts it, commits the result
-# and asks GitHub Pages to rebuild. Nothing else is touched.
+# Upload one or more .zip files to the repo root (e.g. site.zip, apps-1.zip, apps-2.zip).
+# Each is extracted and merged into the repo (later names overwrite earlier ones), then deleted,
+# the result is committed and GitHub Pages is asked to rebuild.
+# A zip with a single top-level folder is flattened. Anything under .github/ or .git/ is ignored.
 on:
   push:
-    paths: ['site.zip']
+    paths: ['*.zip']
   workflow_dispatch:
 
 permissions:
@@ -17,21 +19,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract site.zip
+      - name: Extract zips
         run: |
-          test -f site.zip
-          unzip -q -o site.zip -d _tmp
-          n=$(ls -A _tmp | wc -l)
-          if [ "$n" -eq 1 ] && [ -d "_tmp/$(ls -A _tmp)" ]; then src="_tmp/$(ls -A _tmp)"; else src=_tmp; fi
-          cp -a "$src"/. .
-          rm -rf _tmp site.zip
+          shopt -s nullglob
+          zips=(./*.zip)
+          [ ${#zips[@]} -gt 0 ] || { echo "no zip at repo root"; exit 1; }
+          for z in "${zips[@]}"; do
+            echo "== $z"
+            rm -rf _tmp; mkdir _tmp
+            unzip -q -o "$z" -d _tmp
+            find _tmp -name '__MACOSX' -prune -exec rm -rf {} + ; find _tmp -name '.DS_Store' -delete
+            rm -rf _tmp/.github _tmp/.git
+            n=$(ls -A _tmp | wc -l)
+            if [ "$n" -eq 1 ] && [ -d "_tmp/$(ls -A _tmp)" ]; then src="_tmp/$(ls -A _tmp)"; else src=_tmp; fi
+            rm -rf "$src/.github" "$src/.git"
+            cp -a "$src"/. .
+            rm -rf _tmp "$z"
+          done
 
       - name: Commit
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add -A
-          git commit -m "Update site from site.zip" || echo "nothing to commit"
+          git commit -m "Update site from uploaded zips" || echo "nothing to commit"
           git push
 
       - name: Ask Pages to rebuild
