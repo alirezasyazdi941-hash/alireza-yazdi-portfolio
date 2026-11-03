@@ -55,4 +55,6 @@ MIT © 2026 Alireza Yazdi. Third-party: OpenCV.js (Apache-2.0), Angular (MIT), V
 
 ## The film (`film/index.html`)
 
-A short scroll-driven film in five chapters (signal, structure, research, build, ship), drawn on a single canvas as a pure function of scroll progress, so it can be scrubbed in both directions. No libraries. English and Persian (RTL), responsive, and it respects `prefers-reduced-motion`. Tests: `node test/film.test.js`.
+An interactive scroll film in five chapters. About 16,000 particles morph from noise into a neural network, a galaxy, a code window, a phone with the apps, and finally the initials "AY". Scrolling drives the morph (Lenis + GSAP ScrollTrigger), moving the pointer pushes particles away, clicking sends a shockwave, and the camera drifts with the story. English and Persian (RTL), responsive, `prefers-reduced-motion` aware.
+
+Libraries are self-hosted in `film/vendor/` (three.js and Lenis are MIT; GSAP uses its free "Standard No Charge" license, see `film/vendor/LICENSES.txt`), so nothing is loaded from a CDN. The earlier 2D canvas version is kept as `film/classic.html` and is also the fallback when WebGL is unavailable. Tests: `node test/film.test.js`.

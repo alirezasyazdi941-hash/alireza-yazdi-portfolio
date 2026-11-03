@@ -1,0 +1,4 @@
+three.js 0.160.0 — MIT, © three.js authors
+Lenis 1.1.14 — MIT, © Darkroom Engineering
+GSAP 3.12.5 (+ScrollTrigger) — GreenSock "Standard No Charge" license, https://gsap.com/standard-license
+Self-hosted here so the film works without a CDN (e.g. when CDNs are slow or blocked).

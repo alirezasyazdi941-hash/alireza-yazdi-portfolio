@@ -1,6 +1,6 @@
 {
   "name": "alireza-yazdi-portfolio",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "purpose": "Static interactive portfolio: WebGL galaxy landing + phone shell hosting project apps",
   "interface": {
     "entry": "index.html",
@@ -9,7 +9,11 @@
     "film": "film/index.html"
   },
   "dependencies": {
-    "runtime": [],
+    "runtime": [
+      "three@0.160.0 (film, self-hosted)",
+      "gsap@3.12.5 (film, self-hosted)",
+      "lenis@1.1.14 (film, self-hosted)"
+    ],
     "build_only": [
       "angular (research-os)",
       "playwright (tests)"

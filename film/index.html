@@ -4,215 +4,65 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Alireza Yazdi · The Film</title>
-<meta name="description" content="A short scroll-driven film by Alireza Yazdi: from a signal to a system, built in plain HTML, CSS and canvas.">
+<meta name="description" content="An interactive scroll film by Alireza Yazdi: 16,000 particles become a network, a galaxy, code and a phone. Move to disturb them, click to send a wave.">
 <meta name="theme-color" content="#05060f">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <style>
 :root{--bg:#05060f;--ink:#eef0ff;--mut:#9aa3d0;--a:#7c9cff;--b:#5be3c8;color-scheme:dark}
 *{box-sizing:border-box}html{background:var(--bg)}
-body{margin:0;color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg)}
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{margin:0;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);overflow-x:hidden}
 [dir=rtl] body{font-family:Vazirmatn,Tahoma,system-ui,sans-serif}
-#track{height:640vh}
-#stage{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden}
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.cap{position:absolute;inset-inline:0;bottom:max(14vh,90px);text-align:center;padding:0 24px;pointer-events:none;opacity:0;will-change:opacity,transform}
-.cap small{display:block;color:var(--b);letter-spacing:.18em;text-transform:uppercase;font-size:12px;font-weight:700;margin-bottom:8px}
-[dir=rtl] .cap small{letter-spacing:0}
-.cap h2{margin:0 auto;max-width:18ch;font-size:clamp(26px,5.2vw,54px);line-height:1.15;font-weight:800;text-wrap:balance}
-.cap p{margin:12px auto 0;max-width:46ch;color:var(--mut)}
-#end{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;text-align:center;gap:14px;padding:24px;opacity:0;pointer-events:none}
-#end.on{pointer-events:auto}
-#end h1{margin:0;font-size:clamp(34px,8vw,84px);line-height:1.05;font-weight:800;background:linear-gradient(90deg,#fff,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
-#end p{margin:0;color:var(--mut);max-width:48ch}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+#track{height:760vh}
+.veil{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 45%,#05060fcc 100%)}
+.ch{position:fixed;inset-inline:0;bottom:max(9vh,64px);padding:0 24px;text-align:center;pointer-events:none;visibility:hidden}
+.ch.on{visibility:visible}
+.ch>*{opacity:0;transform:translateY(26px);filter:blur(8px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1),filter .9s}
+.ch.on>*{opacity:1;transform:none;filter:none}
+.ch.on>*:nth-child(2){transition-delay:.12s}.ch.on>*:nth-child(3){transition-delay:.26s}
+.ch small{display:block;color:var(--b);letter-spacing:.2em;text-transform:uppercase;font-size:12px;font-weight:700;margin-bottom:8px}
+[dir=rtl] .ch small{letter-spacing:0}
+.ch h2{margin:0 auto;max-width:20ch;font-size:clamp(28px,5.6vw,60px);line-height:1.12;font-weight:800;text-wrap:balance;text-shadow:0 2px 30px #05060f}
+.ch p{margin:12px auto 0;max-width:48ch;color:var(--mut);text-shadow:0 1px 12px #05060f}
+#end{inset:0;bottom:0;display:grid;align-content:end;justify-items:center;gap:12px;padding-bottom:max(9vh,60px)}
+#end h1{margin:0;font-size:clamp(36px,9vw,96px);line-height:1.04;font-weight:800;background:linear-gradient(90deg,#fff,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+#end p{margin:0;color:var(--mut);max-width:50ch}
 .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
-.btn{padding:12px 22px;border-radius:999px;border:1px solid #ffffff30;text-decoration:none;font-weight:700;background:#ffffff0d;backdrop-filter:blur(8px)}
+#end.on{pointer-events:auto}
+.btn{padding:12px 22px;border-radius:999px;border:1px solid #ffffff30;text-decoration:none;font-weight:700;background:#ffffff0d;backdrop-filter:blur(8px);color:var(--ink)}
 .btn.p{background:linear-gradient(90deg,var(--a),var(--b));color:#05060f;border:0}
 .top{position:fixed;inset-inline:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:max(14px,env(safe-area-inset-top)) 18px 14px;z-index:5}
-.top a,.top button{color:var(--ink);text-decoration:none;font-weight:700;font-size:14px;background:#ffffff12;border:1px solid #ffffff22;border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(8px)}
+.top a,.top button{color:var(--ink);text-decoration:none;font:700 14px/1 inherit;font-family:inherit;background:#ffffff12;border:1px solid #ffffff22;border-radius:999px;padding:9px 14px;cursor:pointer;backdrop-filter:blur(8px)}
 #bar{position:fixed;inset-inline:0;top:0;height:3px;background:linear-gradient(90deg,var(--a),var(--b));transform-origin:left;transform:scaleX(0);z-index:6}
 [dir=rtl] #bar{transform-origin:right}
-#cue{position:absolute;inset-inline:0;bottom:26px;text-align:center;color:var(--mut);font-size:13px;letter-spacing:.1em;transition:opacity .4s}
-#cue i{display:block;width:1px;height:28px;margin:8px auto 0;background:linear-gradient(var(--b),transparent);animation:cue 1.6s infinite}
+#dots{position:fixed;inset-inline-end:14px;top:50%;transform:translateY(-50%);display:grid;gap:10px;z-index:5}
+#dots button{width:10px;height:10px;border-radius:50%;border:1px solid #ffffff66;background:transparent;padding:0;cursor:pointer;transition:.3s}
+#dots button.on{background:var(--b);border-color:var(--b);transform:scale(1.35)}
+#hint{position:fixed;inset-inline:0;bottom:22px;text-align:center;color:var(--mut);font-size:13px;letter-spacing:.08em;pointer-events:none;transition:opacity .5s;z-index:4}
+#hint i{display:block;width:1px;height:26px;margin:8px auto 0;background:linear-gradient(var(--b),transparent);animation:cue 1.6s infinite}
 @keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-@media(prefers-reduced-motion:reduce){#cue i{animation:none}}
+#glow{position:fixed;left:0;top:0;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#5be3c855,transparent 65%);mix-blend-mode:screen;opacity:0;transition:opacity .3s;z-index:3}
+@media(hover:none){#glow{display:none}}
+@media(prefers-reduced-motion:reduce){#hint i{animation:none}.ch>*{transition-duration:.01s}}
+.nogl .ch{position:static;visibility:visible;padding:48px 24px}.nogl .ch>*{opacity:1;transform:none;filter:none}.nogl #track{height:auto}.nogl #gl,.nogl #dots,.nogl #hint{display:none}.nogl #end{position:static;padding:64px 24px;pointer-events:auto}
 </style>
 </head>
 <body>
 <div id="bar"></div>
 <div class="top"><a href="../index.html" id="back">← Portfolio</a><button id="lang" type="button">EN · فا</button></div>
-<div id="track">
-  <div id="stage">
-    <canvas id="c" aria-hidden="true"></canvas>
-    <div class="cap" id="cap0"></div><div class="cap" id="cap1"></div><div class="cap" id="cap2"></div>
-    <div class="cap" id="cap3"></div><div class="cap" id="cap4"></div>
-    <div id="end"><h1 id="nm">Alireza Yazdi</h1><p id="endp"></p>
-      <div class="btns"><a class="btn p" id="b1" href="../index.html#phone"></a><a class="btn" id="b2" href="#" target="_blank" rel="noopener"></a></div></div>
-    <div id="cue"><span id="cuet"></span><i></i></div>
-  </div>
-</div>
-<noscript><p style="padding:90px 24px">This film needs JavaScript. <a href="../index.html">Back to the portfolio</a></p></noscript>
+<canvas id="gl" aria-hidden="true"></canvas><div class="veil"></div><div id="glow"></div>
+<nav id="dots" aria-label="Chapters"></nav>
+<div id="track"></div>
+<section class="ch" id="c0"></section><section class="ch" id="c1"></section><section class="ch" id="c2"></section>
+<section class="ch" id="c3"></section><section class="ch" id="c4"></section>
+<section class="ch" id="end"><h1 id="nm">Alireza Yazdi</h1><p id="endp"></p>
+  <div class="btns"><a class="btn p" id="b1" href="../index.html#phone"></a><a class="btn" id="b2" href="#" target="_blank" rel="noopener"></a></div></section>
+<div id="hint"><span id="hintt"></span><i></i></div>
+<noscript><p style="position:relative;padding:90px 24px">This film needs JavaScript. <a href="../index.html">Back to the portfolio</a></p></noscript>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
 <script src="../assets/data.js"></script>
-<script>
-'use strict';
-(() => {
-const P = window.PORTFOLIO, apps = P.apps;
-const T = {
-  en: { back:'← Portfolio', cue:'SCROLL', open:'Open the phone', gh:'GitHub',
-    s:[ ['Chapter 1 · Signal','It begins as noise.','Raw data, unlabeled and restless.'],
-        ['Chapter 2 · Structure','Noise learns a shape.','Layers, weights and a little patience.'],
-        ['Chapter 3 · Research','Questions orbit it.','Papers, labs and ideas pulling in all directions.'],
-        ['Chapter 4 · Build','Then it gets built.','Plain code, no ceremony, tested before it is trusted.'],
-        ['Chapter 5 · Ship', apps.length + ' apps. One phone.','Each project becomes something you can open.'] ],
-    end:'MSc student in Artificial Intelligence · research tools, intelligent systems and interactive web platforms.' },
-  fa: { back:'← پورتفولیو', cue:'اسکرول کنید', open:'باز کردن گوشی', gh:'گیت‌هاب',
-    s:[ ['فصل ۱ · سیگنال','همه‌چیز با نویز شروع می‌شود.','داده‌ی خام، بی‌برچسب و بی‌قرار.'],
-        ['فصل ۲ · ساختار','نویز شکل می‌گیرد.','لایه‌ها، وزن‌ها و کمی صبر.'],
-        ['فصل ۳ · پژوهش','پرسش‌ها دورش می‌چرخند.','مقاله‌ها، آزمایشگاه‌ها و ایده‌هایی که از هر طرف می‌کشند.'],
-        ['فصل ۴ · ساخت','بعد ساخته می‌شود.','کد ساده، بی‌تشریفات، و آزموده پیش از اعتماد.'],
-        ['فصل ۵ · انتشار', apps.length + ' اپ. یک گوشی.','هر پروژه به چیزی تبدیل می‌شود که می‌توان باز کرد.'] ],
-    end:'دانشجوی کارشناسی ارشد هوش مصنوعی · ابزارهای پژوهشی، سامانه‌های هوشمند و پلتفرم‌های وب تعاملی.' }
-};
-let lang = 'en'; try { lang = localStorage.getItem('ay_lang') || (/^fa/.test(navigator.language) ? 'fa' : 'en'); } catch (e) {}
-const $ = (i) => document.getElementById(i);
-function setLang(l) {
-  lang = l; try { localStorage.setItem('ay_lang', l); } catch (e) {}
-  document.documentElement.lang = l; document.documentElement.dir = l === 'fa' ? 'rtl' : 'ltr';
-  const t = T[l]; $('back').textContent = t.back; $('cuet').textContent = t.cue; $('b1').textContent = t.open; $('b2').textContent = t.gh; $('b2').href = P.profile.github;
-  $('nm').textContent = l === 'fa' ? P.profile.nameFa : P.profile.name; $('endp').textContent = t.end;
-  t.s.forEach((s, i) => { $('cap' + i).innerHTML = '<small></small><h2></h2><p></p>'; const e = $('cap' + i); e.children[0].textContent = s[0]; e.children[1].textContent = s[1]; e.children[2].textContent = s[2]; });
-}
-$('lang').onclick = () => setLang(lang === 'en' ? 'fa' : 'en'); setLang(lang);
-
-// ---- helpers (pure functions of progress => scrubbable both ways) ----
-const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-const ease = (x) => x * x * (3 - 2 * x);
-const seg = (p, a, b) => ease(clamp((p - a) / (b - a)));
-const rnd = (s) => { s = Math.sin(s * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
-const cv = $('c'), g = cv.getContext('2d'); let W = 0, H = 0, D = 1;
-function resize() { D = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * D; cv.height = H * D; g.setTransform(D, 0, 0, D, 0, 0); }
-addEventListener('resize', resize); resize();
-const hsl = (h, s, l, a = 1) => 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
-
-const STARS = Array.from({ length: 220 }, (_, i) => ({ x: rnd(i + 1), y: rnd(i + 500), z: .3 + rnd(i + 900) * .9, h: 200 + rnd(i + 40) * 80 }));
-// network layout
-const LAYERS = [5, 7, 7, 4];
-function net() {
-  const m = Math.min(W, H), w = Math.min(W * .8, 760), x0 = W / 2 - w / 2, cy = H * .42, hh = Math.min(H * .3, 230); const nodes = [];
-  LAYERS.forEach((n, l) => { for (let i = 0; i < n; i++) nodes.push({ l, x: x0 + w * l / (LAYERS.length - 1), y: cy + (i - (n - 1) / 2) * (hh * 2 / 6.5) }); });
-  return nodes;
-}
-
-function scene(p, t) {
-  g.clearRect(0, 0, W, H);
-  const cx = W / 2, cy = H * .42, m = Math.min(W, H);
-  // stars (always there; drift with progress, rush at the end)
-  const rush = seg(p, .86, 1);
-  for (const s of STARS) {
-    const x = ((s.x * W + p * 160 * s.z * 6) % W + W) % W, y = s.y * H;
-    const dx = x - cx, dy = y - cy, k = 1 + rush * 1.5 * s.z;
-    g.fillStyle = hsl(s.h, 70, 85, .25 + s.z * .5);
-    g.beginPath(); g.arc(cx + dx * k, cy + dy * k, s.z * 1.4 * (1 + rush), 0, 7); g.fill();
-  }
-  // S1 signal -> S2 structure: noise points glide to node positions
-  const nodes = net(), noise = seg(p, 0, .08) * (1 - seg(p, .3, .36));
-  const toNet = seg(p, .14, .3), netOut = seg(p, .34, .42);
-  nodes.forEach((n, i) => {
-    const nx = rnd(i + 7) * W, ny = rnd(i + 77) * H * .8 + H * .1;
-    const wob = Math.sin(t * .8 + i) * 14 * (1 - toNet);
-    const x = nx + (n.x - nx) * toNet + wob, y = ny + (n.y - ny) * toNet + Math.cos(t * .7 + i) * 14 * (1 - toNet);
-    n.px = x; n.py = y;
-    const a = (noise * .9 + toNet * .1 + .1) * (1 - netOut) * seg(p, .03, .1);
-    if (a <= .01) return;
-    g.fillStyle = hsl(150 + n.l * 25, 80, 70, a); g.beginPath(); g.arc(x, y, 3 + toNet * 4 + (Math.sin(t * 3 + i) + 1) * toNet, 0, 7); g.fill();
-  });
-  const eA = seg(p, .22, .32) * (1 - netOut);
-  if (eA > .01) {
-    g.lineWidth = 1; let e = 0;
-    nodes.forEach((a) => nodes.forEach((b) => { if (b.l === a.l + 1) {
-      e++; const k = clamp((seg(p, .22, .32) * 1.4) - rnd(e) * .4);
-      if (k <= 0) return;
-      g.strokeStyle = hsl(190, 80, 70, .16 * eA); g.beginPath(); g.moveTo(a.px, a.py); g.lineTo(a.px + (b.px - a.px) * k, a.py + (b.py - a.py) * k); g.stroke();
-      const q = (t * .5 + rnd(e + 3)) % 1;
-      if (k > .95) { g.fillStyle = hsl(170, 90, 75, .9 * eA); g.beginPath(); g.arc(a.px + (b.px - a.px) * q, a.py + (b.py - a.py) * q, 2.2, 0, 7); g.fill(); }
-    } }));
-  }
-  // S3 research: orbits with paper cards
-  const oA = seg(p, .36, .44) * (1 - seg(p, .56, .62));
-  if (oA > .01) {
-    const core = 16 + Math.sin(t * 2) * 2;
-    const gr = g.createRadialGradient(cx, cy, 0, cx, cy, core * 4); gr.addColorStop(0, hsl(260, 90, 75, oA)); gr.addColorStop(1, hsl(260, 90, 60, 0));
-    g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, core * 4, 0, 7); g.fill();
-    g.fillStyle = hsl(260, 90, 85, oA); g.beginPath(); g.arc(cx, cy, core, 0, 7); g.fill();
-    const grow = seg(p, .36, .46);
-    for (let r = 0; r < 4; r++) {
-      const rx = (m * .16 + r * m * .1) * grow, ry = rx * .42, tilt = -.5 + r * .22;
-      g.save(); g.translate(cx, cy); g.rotate(tilt); g.strokeStyle = hsl(240 + r * 20, 70, 70, .22 * oA); g.beginPath(); g.ellipse(0, 0, rx, ry, 0, 0, 7); g.stroke();
-      const items = 2 + r;
-      for (let k = 0; k < items; k++) {
-        const ang = t * (.35 - r * .05) + k * 6.283 / items + r, px = Math.cos(ang) * rx, py = Math.sin(ang) * ry, s = 1 + Math.sin(ang) * .25;
-        g.save(); g.translate(px, py); g.rotate(-tilt); g.scale(s, s);
-        g.fillStyle = hsl(220 + r * 25, 80, 78, .9 * oA); g.fillRect(-9, -12, 18, 24); g.fillStyle = hsl(240, 40, 12, .8 * oA);
-        for (let l = 0; l < 4; l++) g.fillRect(-6, -8 + l * 5, 12 - (l === 3 ? 5 : 0), 1.6);
-        g.restore();
-      }
-      g.restore();
-    }
-  }
-  // S4 build: a window assembles, code lines type in
-  const bA = seg(p, .58, .64) * (1 - seg(p, .74, .8));
-  if (bA > .01) {
-    const w = Math.min(W * .84, 640), h = w * .56, x = cx - w / 2, y = cy - h / 2, f = seg(p, .58, .66);
-    g.save(); g.globalAlpha = bA; g.translate(cx, cy); g.scale(.8 + .2 * f, .8 + .2 * f); g.translate(-cx, -cy);
-    g.fillStyle = '#0d1230'; g.strokeStyle = '#7c9cff55'; g.lineWidth = 1.2; g.beginPath(); g.roundRect(x, y, w, h, 14); g.fill(); g.stroke();
-    ['#ff6b6b', '#ffd166', '#5be3a8'].forEach((c, i) => { g.fillStyle = c; g.beginPath(); g.arc(x + 20 + i * 18, y + 20, 5, 0, 7); g.fill(); });
-    const lines = 9, typed = seg(p, .6, .72) * lines;
-    for (let i = 0; i < lines; i++) {
-      const k = clamp(typed - i), len = (.25 + rnd(i + 11) * .5) * (w - 90), ind = (i % 3 === 1 ? 24 : i % 3 === 2 ? 48 : 0);
-      g.fillStyle = hsl([210, 160, 330, 40][i % 4], 70, 68, .85); g.fillRect(x + 28 + ind, y + 48 + i * ((h - 70) / lines), len * k, 6);
-    }
-    if (Math.floor(t * 2) % 2 === 0) { g.fillStyle = '#fff'; g.fillRect(x + 28 + 4, y + 48 + clamp(Math.floor(typed), 0, lines - 1) * ((h - 70) / lines) - 2, 2, 12); }
-    const tk = seg(p, .7, .74); if (tk > 0) { g.fillStyle = hsl(150, 80, 60, tk); g.font = '700 14px system-ui'; g.textAlign = 'right'; g.fillText('✔ tests passed', x + w - 18, y + h - 16); g.textAlign = 'left'; }
-    g.restore();
-  }
-  // S5 ship: phone outline + app icons pop
-  const sA = seg(p, .76, .82), fade = 1 - seg(p, .93, 1);
-  if (sA > .01) {
-    const ph = Math.min(H * .56, 470), pw = ph * .49, x = cx - pw / 2, y = H * .1, zoom = 1 + rush * 2.4;
-    g.save(); g.globalAlpha = sA * fade; g.translate(cx, cy); g.scale(zoom, zoom); g.translate(-cx, -cy);
-    g.fillStyle = '#0b1030'; g.strokeStyle = '#9aa3d055'; g.lineWidth = 2; g.beginPath(); g.roundRect(x, y, pw, ph, pw * .12); g.fill(); g.stroke();
-    g.fillStyle = '#000'; g.beginPath(); g.roundRect(cx - pw * .16, y + 10, pw * .32, 14, 7); g.fill();
-    const cols = 4, gap = pw * .06, cell = (pw - gap * 2 - gap * (cols - 1) - pw * .06) / cols;
-    apps.forEach((a, i) => {
-      const k = seg(p, .78 + i * .006, .84 + i * .006), c = i % cols, r = Math.floor(i / cols);
-      const ix = x + pw * .03 + gap + c * (cell + gap), iy = y + ph * .12 + r * (cell + gap * 1.6);
-      const s = k * (1 + Math.sin(k * 3.14) * .15); if (k <= 0) return;
-      g.save(); g.translate(ix + cell / 2, iy + cell / 2); g.scale(s, s);
-      const gr = g.createLinearGradient(-cell / 2, -cell / 2, cell / 2, cell / 2); gr.addColorStop(0, hsl(a.hue[0], 75, 62)); gr.addColorStop(1, hsl(a.hue[1], 75, 45));
-      g.fillStyle = gr; g.beginPath(); g.roundRect(-cell / 2, -cell / 2, cell, cell, cell * .26); g.fill(); g.restore();
-    });
-    g.restore();
-  }
-}
-
-// ---- scroll -> progress -> captions ----
-const track = $('track'), bar = $('bar'), end = $('end'), cue = $('cue');
-const caps = [0, 1, 2, 3, 4].map((i) => $('cap' + i));
-const windows = [[.02, .05, .11, .15], [.18, .22, .32, .36], [.4, .44, .54, .58], [.6, .64, .72, .76], [.8, .84, .9, .93]];
-let target = 0, cur = 0, reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-function readScroll() { const max = track.offsetHeight - innerHeight; target = clamp(scrollY / Math.max(1, max)); }
-addEventListener('scroll', readScroll, { passive: true }); addEventListener('resize', readScroll); readScroll();
-function frame(ms) {
-  const t = ms / 1000; cur += (target - cur) * (reduced ? 1 : .12); if (Math.abs(target - cur) < .0002) cur = target;
-  const p = cur; scene(p, t);
-  bar.style.transform = 'scaleX(' + p + ')';
-  caps.forEach((c, i) => { const w = windows[i], a = Math.min(seg(p, w[0], w[1]), 1 - seg(p, w[2], w[3])); c.style.opacity = a; c.style.transform = 'translateY(' + ((1 - a) * 18) + 'px)'; });
-  const e = seg(p, .94, .99); end.style.opacity = e; end.classList.toggle('on', e > .6);
-  cue.style.opacity = 1 - seg(p, 0, .03);
-  requestAnimationFrame(frame);
-}
-requestAnimationFrame(frame);
-window.__film = { setProgress(p) { target = cur = clamp(p); } }; // for tests
-})();
-</script>
+<script src="vendor/gsap.min.js"></script><script src="vendor/ScrollTrigger.min.js"></script><script src="vendor/lenis.min.js"></script>
+<script type="module" src="film.js"></script>
 </body>
 </html>
