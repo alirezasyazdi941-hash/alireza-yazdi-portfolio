@@ -48,3 +48,7 @@ See `CITATION.cff`.
 
 ## License
 MIT © 2026 Alireza Yazdi. Third-party: OpenCV.js (Apache-2.0), Angular (MIT), Vazirmatn (OFL), Material Icons (Apache-2.0).
+
+## AI Lab and `ay-ai` (IndexedDB + SHA-256 cache)
+
+`assets/lib/ay-ai.js` is a small dependency-free client for Pollinations (no key) and Hugging Face (your own token, supplied at runtime). Each request is canonicalised to JSON and hashed with SHA-256; the hash is the primary key of an IndexedDB store holding the text or image Blob. Identical requests are served locally, concurrent duplicates are merged, and the token is never part of the key or stored. Tests: `node test/ay-ai.test.js`.

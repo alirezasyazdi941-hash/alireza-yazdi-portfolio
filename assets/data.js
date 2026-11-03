@@ -70,6 +70,13 @@ window.PORTFOLIO = {
         en: "Academic-journey command center for planning university applications. The AI advisor needs a backend and is inactive on this static demo.",
         fa: "مرکز فرماندهی مسیر دانشگاهی برای برنامه‌ریزی اپلای. مشاور هوشمند به سرور نیاز دارد و در این دموی ایستا غیرفعال است."
       },
-      tech: ["Angular", "TypeScript", "Tailwind"] }
+      tech: ["Angular", "TypeScript", "Tailwind"] },
+    { id: "ai-lab", path: "apps/ai-lab/index.html", glyph: "atom", hue: [150, 250],
+      name: { en: "AI Lab", fa: "آزمایشگاه هوش مصنوعی" },
+      desc: {
+        en: "Browser-only text and image generation via Pollinations and Hugging Face. Every result is stored in IndexedDB under a SHA-256 key of the request, so repeats are instant and offline.",
+        fa: "تولید متن و تصویر فقط در مرورگر با Pollinations و Hugging Face. هر نتیجه با کلید SHA-256 درخواست در IndexedDB ذخیره می‌شود، پس تکرار آن آنی و آفلاین است."
+      },
+      tech: ["IndexedDB", "SHA-256", "Hugging Face", "Pollinations"] }
   ]
 };

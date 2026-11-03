@@ -1,10 +1,35 @@
 {
   "name": "alireza-yazdi-portfolio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "purpose": "Static interactive portfolio: WebGL galaxy landing + phone shell hosting project apps",
-  "interface": { "entry": "index.html", "config": "assets/data.js", "apps": "apps/<id>/index.html" },
-  "dependencies": { "runtime": [], "build_only": ["angular (research-os)", "playwright (tests)"] },
-  "permissions": { "network": "none at runtime", "credentials": "none", "storage": "localStorage per app" },
-  "tests": "node test/site.test.js",
-  "docs": "README.md"
+  "interface": {
+    "entry": "index.html",
+    "config": "assets/data.js",
+    "apps": "apps/<id>/index.html"
+  },
+  "dependencies": {
+    "runtime": [],
+    "build_only": [
+      "angular (research-os)",
+      "playwright (tests)"
+    ]
+  },
+  "permissions": {
+    "network": "AI Lab only: text.pollinations.ai, image.pollinations.ai, router.huggingface.co (user-initiated)",
+    "credentials": "Hugging Face token typed by the user, kept in sessionStorage only, never cached",
+    "storage": "IndexedDB 'ay-ai-cache' (SHA-256 keyed) + localStorage per app"
+  },
+  "tests": "node test/site.test.js && node test/ay-ai.test.js",
+  "docs": "README.md",
+  "tools": [
+    {
+      "name": "ay-ai",
+      "version": "1.0.0",
+      "path": "assets/lib/ay-ai.js",
+      "purpose": "Pollinations/Hugging Face client with SHA-256-keyed IndexedDB cache",
+      "interface": "AYAI.generate({kind,provider,model,prompt,token},{refresh,ttlMs}) -> {key,value,fromCache}",
+      "dependencies": [],
+      "tests": "test/ay-ai.test.js"
+    }
+  ]
 }
