@@ -18,15 +18,15 @@ const ok = (m) => console.log('  ✔', m);
   const pg = await ctx.newPage();
   pg.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   pg.on('console', (m) => { if (m.type() === 'error' && !/favicon|Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
-  pg.on('requestfailed', (r) => errors.push('reqfail: ' + r.url()));
+  pg.on('requestfailed', (r) => { if (!/accounts\.google\.com\/gsi\/client/.test(r.url())) errors.push('reqfail: ' + r.url()); }); // optional Google sign-in script in Universal Code Hub (offline sandbox)
   await pg.goto(base); await pg.waitForSelector('#grid .app');
-  assert.strictEqual(await pg.locator("#grid .app").count(), 8); ok('home screen shows 8 project apps');
+  assert.strictEqual(await pg.locator("#grid .app").count(), 14); ok('home screen shows 14 project apps');
   assert.strictEqual(await pg.locator('#dock .app').count(), 3); ok('dock: About, GitHub, Email');
   const gl = await pg.evaluate(() => ({ ready: !!window.__galaxyReady, fallback: document.documentElement.classList.contains('no-webgl') }));
   assert(gl.ready || gl.fallback); ok(gl.ready ? 'WebGL galaxy rendering' : 'galaxy fell back to CSS (no WebGL in this browser)');
   await pg.screenshot({ path: '/tmp/claude-0/portfolio-desktop.png' });
 
-  for (const id of ['alireza-path', 'docscan-iran', 'storyframe', 'research-os', 'void-cinema', 'webgl-studio', 'uni-command', 'ai-lab']) {
+  for (const id of ['alireza-path', 'docscan-iran', 'storyframe', 'research-os', 'void-cinema', 'webgl-studio', 'uni-command', 'ai-lab', 'academic-intelligence', 'ali-english-academy', 'ghahar', 'reality-forge', 'site-os', 'universal-code-hub']) {
     await pg.locator(`#grid .app[data-id="${id}"]`).dispatchEvent("click");
     const fr = await pg.waitForSelector('#wbody iframe', { state: 'attached' }); const frame = await fr.contentFrame();
     await frame.waitForLoadState('load'); await pg.waitForFunction(() => document.getElementById('loading').classList.contains('done'));

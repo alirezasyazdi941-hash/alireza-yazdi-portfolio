@@ -1,0 +1,12 @@
+[
+  {
+    "id": "fa",
+    "name": "فارسی",
+    "locale": "fa-IR"
+  },
+  {
+    "id": "en",
+    "name": "English",
+    "locale": "en-US"
+  }
+]

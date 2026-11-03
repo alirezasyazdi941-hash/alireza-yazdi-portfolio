@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05080c">
+  <meta name="description" content="قهار؛ مترجم هوشمند فارسی و انگلیسی با حالت ترکیبی آنلاین و آفلاین">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="قهار">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="stylesheet" href="./css/app.css">
+  <title>Alireza Yazdi · قهار | مترجم هوشمند</title>
+<link rel="stylesheet" href="fonts/local-fonts.css"></head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">ق</span><div><strong>قهار</strong><small>GHAHAR · SMART LANGUAGE</small></div></div>
+      <button class="icon-btn" id="settingsBtn" aria-label="تنظیمات">☷</button>
+    </header>
+
+    <nav class="tabs" aria-label="بخش‌ها">
+      <button class="tab active" data-view="translator"><span>文</span> مترجم</button>
+      <button class="tab" data-view="reminders"><span>♧</span> یادآور</button>
+      <button class="tab" data-view="history"><span>◷</span> تاریخچه</button>
+    </nav>
+
+    <main>
+      <section id="translatorView" class="view active">
+        <div class="language-row">
+          <label class="select-wrap"><span>زبان مبدأ</span><select id="sourceLang"><option value="auto">تشخیص خودکار</option><option value="fa">فارسی</option><option value="en">English</option></select></label>
+          <button id="swapBtn" class="swap-btn" aria-label="جابجایی زبان‌ها">⇄</button>
+          <label class="select-wrap"><span>زبان مقصد</span><select id="targetLang"><option value="en">English</option><option value="fa">فارسی</option></select></label>
+        </div>
+
+        <div class="editor-card">
+          <div class="card-heading"><span class="eyebrow">SOURCE TEXT</span><button id="clearBtn" class="text-action">پاک کردن ×</button></div>
+          <textarea id="sourceText" rows="6" placeholder="متن، جمله یا اصطلاح خود را اینجا بنویسید..." spellcheck="true"></textarea>
+          <div class="editor-footer">
+            <span id="charCount">۰ کاراکتر</span>
+            <div class="mini-actions"><button id="pasteBtn">چسباندن</button><button id="micBtn" aria-label="ورودی صوتی">🎙</button></div>
+          </div>
+        </div>
+
+        <div class="options-row">
+          <label>لحن ترجمه<select id="tone"><option value="daily">روان و طبیعی</option><option value="academic">رسمی و دانشگاهی</option><option value="literary">ادبی و فاخر</option><option value="colloquial">محاوره‌ای</option><option value="technical">تخصصی و فنی</option></select></label>
+          <label>سبک متن<select id="typography"><option value="minimal">مینیمال</option><option value="classic">کلاسیک</option><option value="mono">فنی</option></select></label>
+        </div>
+
+        <button id="translateBtn" class="primary-btn"><span>✦</span> ترجمه هوشمند <span class="btn-arrow">←</span></button>
+        <div id="status" class="status" role="status">برای ترجمه هوشمند به اینترنت و تنظیم API نیاز است.</div>
+
+        <div class="result-card" id="resultCard" hidden>
+          <div class="card-heading"><span class="eyebrow">TRANSLATION</span><div class="result-tools"><button id="copyBtn">کپی</button><button id="speakBtn">🔊</button><button id="favoriteBtn">♡</button></div></div>
+          <div id="translationText" class="translation-text" dir="auto"></div>
+          <div id="extraResult" class="extra-result"></div>
+        </div>
+
+        <div class="offline-note"><span class="pulse-dot"></span><span>ذخیره‌سازی محلی فعال است · <b id="connectionState">در حال بررسی اتصال…</b></span></div>
+      </section>
+
+      <section id="remindersView" class="view">
+        <div class="section-intro"><span class="eyebrow">PERSONAL REMINDERS</span><h1>یادآور</h1><p>یادداشت‌ها و یادآورهای خود را روی همین دستگاه نگه دارید.</p></div>
+        <div class="editor-card">
+          <label class="field-label" for="reminderText">چه چیزی یادت بماند؟</label>
+          <input id="reminderText" type="text" placeholder="عنوان یادآور">
+          <label class="field-label" for="reminderDate">زمان یادآوری</label>
+          <input id="reminderDate" type="datetime-local">
+          <button id="addReminderBtn" class="primary-btn">＋ ثبت یادآور</button>
+        </div>
+        <div id="reminderList" class="stack-list"></div>
+      </section>
+
+      <section id="historyView" class="view">
+        <div class="section-intro"><span class="eyebrow">LOCAL ARCHIVE</span><h1>تاریخچه</h1><p>ترجمه‌ها و موارد نشان‌شده در حافظه همین مرورگر ذخیره می‌شوند.</p></div>
+        <div class="history-filters"><button class="filter active" data-filter="all">همه</button><button class="filter" data-filter="favorite">علاقه‌مندی‌ها</button><button id="clearHistoryBtn" class="text-action">پاک‌سازی تاریخچه</button></div>
+        <div id="historyList" class="stack-list"></div>
+      </section>
+    </main>
+
+    <footer class="bottom-nav">
+      <button class="bottom-item active" data-view="translator"><span>文</span><small>مترجم</small></button>
+      <button class="bottom-item" data-view="history"><span>◷</span><small>تاریخچه</small></button>
+      <button class="bottom-item" data-view="reminders"><span>♧</span><small>یادآور</small></button>
+    </footer>
+  </div>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="dialog-head"><div><span class="eyebrow">PREFERENCES</span><h2>تنظیمات</h2></div><button class="icon-btn">×</button></form>
+    <div class="settings-content">
+      <label class="field-label" for="apiEndpoint">آدرس API ترجمه</label>
+      <input id="apiEndpoint" type="url" placeholder="https://your-domain.com/api/translate">
+      <p class="hint">کلید API را در این فایل یا مرورگر قرار ندهید. درخواست باید از سرور واسط امن شما عبور کند.</p>
+      <label class="field-label" for="apiMode">حالت ترجمه</label>
+      <select id="apiMode"><option value="hybrid">ترکیبی (آنلاین + امکانات محلی)</option><option value="online">فقط آنلاین</option></select>
+      <button id="saveSettingsBtn" class="primary-btn" type="button">ذخیره تنظیمات</button>
+      <div class="hint">برای نصب در آیفون: در Safari گزینه Share و سپس Add to Home Screen را انتخاب کنید.</div>
+    </div>
+  </dialog>
+  <script src="./js/app.js" defer></script>
+</body>
+</html>

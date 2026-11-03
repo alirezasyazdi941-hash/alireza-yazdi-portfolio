@@ -77,6 +77,48 @@ window.PORTFOLIO = {
         en: "Browser-only text and image generation via Pollinations and Hugging Face. Every result is stored in IndexedDB under a SHA-256 key of the request, so repeats are instant and offline.",
         fa: "تولید متن و تصویر فقط در مرورگر با Pollinations و Hugging Face. هر نتیجه با کلید SHA-256 درخواست در IndexedDB ذخیره می‌شود، پس تکرار آن آنی و آفلاین است."
       },
-      tech: ["IndexedDB", "SHA-256", "Hugging Face", "Pollinations"] }
+      tech: ["IndexedDB", "SHA-256", "Hugging Face", "Pollinations"] },
+    { id: "academic-intelligence", path: "apps/academic-intelligence/index.html", glyph: "atom", hue: [230, 190],
+      name: { en: "Academic Intelligence", fa: "هوش دانشگاهی" },
+      desc: {
+        en: "Personal research operating system: literature search through OpenAlex, reading lists and study planning, stored locally in IndexedDB. AI features need your own HTTPS backend and are off in this static demo.",
+        fa: "سیستم‌عامل پژوهشی شخصی: جستجوی منابع با OpenAlex، فهرست مطالعه و برنامه‌ریزی، با ذخیره‌ی محلی در IndexedDB. بخش هوش مصنوعی به سرور شخصی نیاز دارد و در این دمو غیرفعال است."
+      },
+      tech: ["Angular", "OpenAlex", "IndexedDB"] },
+    { id: "ali-english-academy", path: "apps/ali-english-academy/index.html", glyph: "cap", hue: [330, 270],
+      name: { en: "Ali English Academy", fa: "آکادمی انگلیسی علی" },
+      desc: {
+        en: "Private English-language academy with a structured curriculum, runs locally as a PWA.",
+        fa: "آکادمی خصوصی زبان انگلیسی با برنامه‌ی درسی ساختاریافته که به‌صورت PWA محلی اجرا می‌شود."
+      },
+      tech: ["Angular", "PWA"] },
+    { id: "ghahar", path: "apps/ghahar/index.html", glyph: "film", hue: [25, 345],
+      name: { en: "Ghahar Translator", fa: "قهار، مترجم هوشمند" },
+      desc: {
+        en: "Offline-first smart translator interface in vanilla JavaScript with self-hosted fonts.",
+        fa: "رابط مترجم هوشمند آفلاین‌محور با جاوااسکریپت خالص و فونت‌های محلی."
+      },
+      tech: ["JavaScript", "PWA", "RTL"] },
+    { id: "reality-forge", path: "apps/reality-forge/index.html", glyph: "cube", hue: [185, 265],
+      name: { en: "Reality Forge", fa: "کارگاه واقعیت" },
+      desc: {
+        en: "Browser AR/VR studio: write three.js scenes in a live code editor and preview them instantly. The preview sandbox loads three.js from a CDN.",
+        fa: "استودیوی واقعیت افزوده و مجازی در مرورگر: صحنه‌های three.js را در ویرایشگر زنده بنویس و فوراً ببین. پیش‌نمایش، three.js را از CDN می‌گیرد."
+      },
+      tech: ["Angular", "three.js", "WebXR"] },
+    { id: "site-os", path: "apps/site-os/index.html", glyph: "reel", hue: [205, 160],
+      name: { en: "Site OS", fa: "سایت‌ساز موبایل" },
+      desc: {
+        en: "Mobile-first website builder with editable project files that you can export and restore.",
+        fa: "سایت‌ساز موبایل‌محور با فایل پروژه‌ی قابل‌ویرایش که می‌توان خروجی گرفت و بازیابی کرد."
+      },
+      tech: ["Angular", "TypeScript", "JSZip"] },
+    { id: "universal-code-hub", path: "apps/universal-code-hub/index.html", glyph: "git", hue: [255, 200],
+      name: { en: "Universal Code Hub", fa: "مرکز کد جهانی" },
+      desc: {
+        en: "Move and sync code between projects and GitHub from the browser; data is kept locally in IndexedDB.",
+        fa: "انتقال و همگام‌سازی کد بین پروژه‌ها و گیت‌هاب از مرورگر؛ داده‌ها به‌صورت محلی در IndexedDB می‌ماند."
+      },
+      tech: ["Angular", "IndexedDB", "GitHub API"] }
   ]
 };
