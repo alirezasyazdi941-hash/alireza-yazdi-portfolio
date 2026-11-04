@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Alireza Yazdi · The Film (particles)</title>
+<meta name="description" content="An interactive scroll film by Alireza Yazdi: 16,000 particles become a network, a galaxy, code and a phone. Move to disturb them, click to send a wave.">
+<meta name="theme-color" content="#05060f">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#05060f;--ink:#eef0ff;--mut:#9aa3d0;--a:#7c9cff;--b:#5be3c8;color-scheme:dark}
+*{box-sizing:border-box}html{background:var(--bg)}
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{margin:0;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);overflow-x:hidden}
+[dir=rtl] body{font-family:Vazirmatn,Tahoma,system-ui,sans-serif}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+#track{height:760vh}
+.veil{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 45%,#05060fcc 100%)}
+.ch{position:fixed;inset-inline:0;bottom:max(9vh,64px);padding:0 24px;text-align:center;pointer-events:none;visibility:hidden}
+.ch.on{visibility:visible}
+.ch>*{opacity:0;transform:translateY(26px);filter:blur(8px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1),filter .9s}
+.ch.on>*{opacity:1;transform:none;filter:none}
+.ch.on>*:nth-child(2){transition-delay:.12s}.ch.on>*:nth-child(3){transition-delay:.26s}
+.ch small{display:block;color:var(--b);letter-spacing:.2em;text-transform:uppercase;font-size:12px;font-weight:700;margin-bottom:8px}
+[dir=rtl] .ch small{letter-spacing:0}
+.ch h2{margin:0 auto;max-width:20ch;font-size:clamp(28px,5.6vw,60px);line-height:1.12;font-weight:800;text-wrap:balance;text-shadow:0 2px 30px #05060f}
+.ch p{margin:12px auto 0;max-width:48ch;color:var(--mut);text-shadow:0 1px 12px #05060f}
+#end{inset:0;bottom:0;display:grid;align-content:end;justify-items:center;gap:12px;padding-bottom:max(9vh,60px)}
+#end h1{margin:0;font-size:clamp(36px,9vw,96px);line-height:1.04;font-weight:800;background:linear-gradient(90deg,#fff,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+#end p{margin:0;color:var(--mut);max-width:50ch}
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+#end.on{pointer-events:auto}
+.btn{padding:12px 22px;border-radius:999px;border:1px solid #ffffff30;text-decoration:none;font-weight:700;background:#ffffff0d;backdrop-filter:blur(8px);color:var(--ink)}
+.btn.p{background:linear-gradient(90deg,var(--a),var(--b));color:#05060f;border:0}
+.top{position:fixed;inset-inline:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:max(14px,env(safe-area-inset-top)) 18px 14px;z-index:5}
+.top a,.top button{color:var(--ink);text-decoration:none;font:700 14px/1 inherit;font-family:inherit;background:#ffffff12;border:1px solid #ffffff22;border-radius:999px;padding:9px 14px;cursor:pointer;backdrop-filter:blur(8px)}
+#bar{position:fixed;inset-inline:0;top:0;height:3px;background:linear-gradient(90deg,var(--a),var(--b));transform-origin:left;transform:scaleX(0);z-index:6}
+[dir=rtl] #bar{transform-origin:right}
+#dots{position:fixed;inset-inline-end:14px;top:50%;transform:translateY(-50%);display:grid;gap:10px;z-index:5}
+#dots button{width:10px;height:10px;border-radius:50%;border:1px solid #ffffff66;background:transparent;padding:0;cursor:pointer;transition:.3s}
+#dots button.on{background:var(--b);border-color:var(--b);transform:scale(1.35)}
+#hint{position:fixed;inset-inline:0;bottom:22px;text-align:center;color:var(--mut);font-size:13px;letter-spacing:.08em;pointer-events:none;transition:opacity .5s;z-index:4}
+#hint i{display:block;width:1px;height:26px;margin:8px auto 0;background:linear-gradient(var(--b),transparent);animation:cue 1.6s infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+#glow{position:fixed;left:0;top:0;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#5be3c855,transparent 65%);mix-blend-mode:screen;opacity:0;transition:opacity .3s;z-index:3}
+@media(hover:none){#glow{display:none}}
+@media(prefers-reduced-motion:reduce){#hint i{animation:none}.ch>*{transition-duration:.01s}}
+.nogl .ch{position:static;visibility:visible;padding:48px 24px}.nogl .ch>*{opacity:1;transform:none;filter:none}.nogl #track{height:auto}.nogl #gl,.nogl #dots,.nogl #hint{display:none}.nogl #end{position:static;padding:64px 24px;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div class="top"><a href="../index.html" id="back">← Portfolio</a><button id="lang" type="button">EN · فا</button></div>
+<canvas id="gl" aria-hidden="true"></canvas><div class="veil"></div><div id="glow"></div>
+<nav id="dots" aria-label="Chapters"></nav>
+<div id="track"></div>
+<section class="ch" id="c0"></section><section class="ch" id="c1"></section><section class="ch" id="c2"></section>
+<section class="ch" id="c3"></section><section class="ch" id="c4"></section>
+<section class="ch" id="end"><h1 id="nm">Alireza Yazdi</h1><p id="endp"></p>
+  <div class="btns"><a class="btn p" id="b1" href="../index.html#phone"></a><a class="btn" id="b2" href="#" target="_blank" rel="noopener"></a></div></section>
+<div id="hint"><span id="hintt"></span><i></i></div>
+<noscript><p style="position:relative;padding:90px 24px">This film needs JavaScript. <a href="../index.html">Back to the portfolio</a></p></noscript>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<script src="../assets/data.js"></script>
+<script src="vendor/gsap.min.js"></script><script src="vendor/ScrollTrigger.min.js"></script><script src="vendor/lenis.min.js"></script>
+<script type="module" src="particles.js"></script>
+</body>
+</html>

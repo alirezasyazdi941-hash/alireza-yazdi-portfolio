@@ -1,68 +1,1478 @@
-<!doctype html>
-<html lang="en" dir="ltr">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="description" content="Alireza Yazdi — AI, research tools and web platforms. A cinematic, scroll-driven journey from the labs that built the field to the tools I build." />
+<meta name="theme-color" content="#000000" />
+<meta name="color-scheme" content="dark" />
 <title>Alireza Yazdi · The Film</title>
-<meta name="description" content="An interactive scroll film by Alireza Yazdi: 16,000 particles become a network, a galaxy, code and a phone. Move to disturb them, click to send a wave.">
-<meta name="theme-color" content="#05060f">
-<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+
+
 <style>
-:root{--bg:#05060f;--ink:#eef0ff;--mut:#9aa3d0;--a:#7c9cff;--b:#5be3c8;color-scheme:dark}
-*{box-sizing:border-box}html{background:var(--bg)}
-html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}
-body{margin:0;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);overflow-x:hidden}
-[dir=rtl] body{font-family:Vazirmatn,Tahoma,system-ui,sans-serif}
-#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
-#track{height:760vh}
-.veil{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 45%,#05060fcc 100%)}
-.ch{position:fixed;inset-inline:0;bottom:max(9vh,64px);padding:0 24px;text-align:center;pointer-events:none;visibility:hidden}
-.ch.on{visibility:visible}
-.ch>*{opacity:0;transform:translateY(26px);filter:blur(8px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1),filter .9s}
-.ch.on>*{opacity:1;transform:none;filter:none}
-.ch.on>*:nth-child(2){transition-delay:.12s}.ch.on>*:nth-child(3){transition-delay:.26s}
-.ch small{display:block;color:var(--b);letter-spacing:.2em;text-transform:uppercase;font-size:12px;font-weight:700;margin-bottom:8px}
-[dir=rtl] .ch small{letter-spacing:0}
-.ch h2{margin:0 auto;max-width:20ch;font-size:clamp(28px,5.6vw,60px);line-height:1.12;font-weight:800;text-wrap:balance;text-shadow:0 2px 30px #05060f}
-.ch p{margin:12px auto 0;max-width:48ch;color:var(--mut);text-shadow:0 1px 12px #05060f}
-#end{inset:0;bottom:0;display:grid;align-content:end;justify-items:center;gap:12px;padding-bottom:max(9vh,60px)}
-#end h1{margin:0;font-size:clamp(36px,9vw,96px);line-height:1.04;font-weight:800;background:linear-gradient(90deg,#fff,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
-#end p{margin:0;color:var(--mut);max-width:50ch}
-.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
-#end.on{pointer-events:auto}
-.btn{padding:12px 22px;border-radius:999px;border:1px solid #ffffff30;text-decoration:none;font-weight:700;background:#ffffff0d;backdrop-filter:blur(8px);color:var(--ink)}
-.btn.p{background:linear-gradient(90deg,var(--a),var(--b));color:#05060f;border:0}
-.top{position:fixed;inset-inline:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:max(14px,env(safe-area-inset-top)) 18px 14px;z-index:5}
-.top a,.top button{color:var(--ink);text-decoration:none;font:700 14px/1 inherit;font-family:inherit;background:#ffffff12;border:1px solid #ffffff22;border-radius:999px;padding:9px 14px;cursor:pointer;backdrop-filter:blur(8px)}
-#bar{position:fixed;inset-inline:0;top:0;height:3px;background:linear-gradient(90deg,var(--a),var(--b));transform-origin:left;transform:scaleX(0);z-index:6}
-[dir=rtl] #bar{transform-origin:right}
-#dots{position:fixed;inset-inline-end:14px;top:50%;transform:translateY(-50%);display:grid;gap:10px;z-index:5}
-#dots button{width:10px;height:10px;border-radius:50%;border:1px solid #ffffff66;background:transparent;padding:0;cursor:pointer;transition:.3s}
-#dots button.on{background:var(--b);border-color:var(--b);transform:scale(1.35)}
-#hint{position:fixed;inset-inline:0;bottom:22px;text-align:center;color:var(--mut);font-size:13px;letter-spacing:.08em;pointer-events:none;transition:opacity .5s;z-index:4}
-#hint i{display:block;width:1px;height:26px;margin:8px auto 0;background:linear-gradient(var(--b),transparent);animation:cue 1.6s infinite}
-@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-#glow{position:fixed;left:0;top:0;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#5be3c855,transparent 65%);mix-blend-mode:screen;opacity:0;transition:opacity .3s;z-index:3}
-@media(hover:none){#glow{display:none}}
-@media(prefers-reduced-motion:reduce){#hint i{animation:none}.ch>*{transition-duration:.01s}}
-.nogl .ch{position:static;visibility:visible;padding:48px 24px}.nogl .ch>*{opacity:1;transform:none;filter:none}.nogl #track{height:auto}.nogl #gl,.nogl #dots,.nogl #hint{display:none}.nogl #end{position:static;padding:64px 24px;pointer-events:auto}
+/* ============================================================
+   Alireza Yazdi — Cinematic 3D Experience
+   Palette: deep black, ice-blue/cyan, thin grey lines.
+   No rounded corners. No clutter.
+   ============================================================ */
+:root{
+  --black:#000000;
+  --near-black:#050508;
+  --panel:#08080e;
+  --panel-border:#1a1a2a;
+  --ice:#7df9ff;
+  --cyan:#00e5ff;
+  --line:#1e1e2e;
+  --text:#e8e8f0;
+  --muted:#6a6a80;
+  --mono:ui-monospace,"SF Mono","Fira Code","Roboto Mono",Menlo,monospace;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:auto}
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:var(--sans);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  scrollbar-width:thin;
+  scrollbar-color:var(--ice) var(--black);
+}
+body::-webkit-scrollbar{width:4px}
+body::-webkit-scrollbar-track{background:var(--black)}
+body::-webkit-scrollbar-thumb{background:var(--ice)}
+img,svg,canvas{display:block;max-width:100%}
+button{font:inherit;color:inherit}
+
+/* ---------- Skip link ---------- */
+.skip-link{
+  position:absolute;top:-120px;left:16px;z-index:10000;
+  padding:12px 20px;background:var(--cyan);color:#000;font-weight:600;
+  text-decoration:none;transition:top .2s;font-family:var(--mono);font-size:.8rem;letter-spacing:.1em;
+}
+.skip-link:focus{top:16px}
+
+/* ---------- Fixed single WebGL canvas ---------- */
+#webgl-canvas{
+  position:fixed;inset:0;width:100vw;height:100vh;
+  display:block;z-index:0;outline:none;touch-action:pan-y;
+}
+
+/* ---------- 2D fallback ---------- */
+#fallback-2d{
+  position:fixed;inset:0;z-index:1;display:none;
+  align-items:center;justify-content:center;flex-direction:column;
+  background:radial-gradient(ellipse at 50% 45%,#0a1628 0%,#000 72%);
+  text-align:center;padding:24px;gap:28px;
+}
+#fallback-2d.is-visible{display:flex}
+.fallback-glow{
+  width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,255,.4) 0%,transparent 70%);
+  filter:blur(28px);animation:fallbackPulse 4.5s ease-in-out infinite;
+}
+.fallback-text{
+  font-family:var(--mono);font-size:clamp(.9rem,2.6vw,1.6rem);
+  letter-spacing:.32em;color:var(--ice);text-transform:uppercase;line-height:1.8;
+}
+@keyframes fallbackPulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+
+/* ---------- Progress indicator ---------- */
+#progress-indicator{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
+  z-index:500;display:flex;flex-direction:column;align-items:center;gap:9px;
+  pointer-events:none;transition:opacity .4s;
+}
+#progress-indicator.is-hidden{opacity:0}
+.progress-track{
+  width:min(42vw,320px);height:2px;background:var(--line);position:relative;overflow:hidden;
+}
+#progress-fill{
+  position:absolute;inset:0 auto 0 0;width:0%;
+  background:linear-gradient(90deg,var(--ice),var(--cyan));
+}
+#progress-label{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;color:var(--muted);
+}
+
+/* ---------- Intro gate ---------- */
+#intro-gate{
+  position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+  background:var(--black);transition:opacity .9s ease,visibility .9s;
+}
+#intro-gate.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.intro-inner{text-align:center;padding:32px;max-width:760px}
+.intro-eyebrow{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.5em;color:var(--ice);margin-bottom:26px;
+}
+.intro-title{
+  font-size:clamp(1.3rem,3.8vw,2.5rem);font-weight:300;line-height:1.35;
+  letter-spacing:.04em;margin-bottom:44px;
+}
+.intro-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:34px}
+.btn{
+  font-family:var(--mono);font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:15px 34px;border:1px solid var(--line);background:transparent;
+  color:var(--text);cursor:pointer;border-radius:0;
+  transition:border-color .25s,color .25s,background .25s;
+}
+.btn:hover,.btn:focus-visible{border-color:var(--ice);color:var(--ice);outline:none}
+.btn-primary{border-color:var(--ice);color:var(--ice)}
+.btn-primary:hover,.btn-primary:focus-visible{background:var(--ice);color:#000}
+.intro-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;color:var(--muted)}
+
+/* ---------- Scroll track ---------- */
+#scroll-container{position:relative;z-index:10;pointer-events:none}
+.act{
+  position:relative;height:100vh;height:100svh;
+  display:flex;align-items:center;justify-content:center;pointer-events:none;
+}
+.act-overlay{
+  text-align:center;padding:24px;max-width:900px;
+  opacity:0;will-change:opacity,transform;
+}
+.act-kicker{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.32em;color:var(--ice);margin-bottom:18px;
+}
+.act-title{
+  font-size:clamp(1.4rem,4.4vw,3.1rem);font-weight:300;letter-spacing:.03em;line-height:1.22;
+}
+.act-sub{
+  margin-top:18px;font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;color:var(--muted);
+}
+.act-cta{
+  margin-top:34px;font-family:var(--mono);font-size:.62rem;letter-spacing:.28em;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.act-cta .arrow{
+  width:1px;height:42px;background:linear-gradient(180deg,var(--ice),transparent);
+  animation:arrowPulse 2.2s ease-in-out infinite;
+}
+@keyframes arrowPulse{0%,100%{opacity:.25;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* ---------- Dashboard ---------- */
+#dashboard{
+  position:relative;z-index:20;background:var(--black);
+  border-top:1px solid var(--panel-border);
+  padding:clamp(56px,8vw,120px) clamp(18px,5vw,80px) clamp(48px,6vw,90px);
+  min-height:100vh;
+}
+.dash-head{max-width:1180px;margin:0 auto}
+.dash-kicker{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.32em;color:var(--ice);margin-bottom:16px;
+}
+.dash-title{
+  font-size:clamp(1.5rem,4vw,2.7rem);font-weight:300;letter-spacing:.03em;line-height:1.2;margin-bottom:14px;
+}
+.dash-desc{color:var(--muted);font-size:.92rem;max-width:56ch;line-height:1.6;margin-bottom:36px}
+
+.dash-tabs{
+  display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);
+  border-left:1px solid var(--line);margin-bottom:clamp(28px,4vw,48px);
+}
+.tab-btn{
+  border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:transparent;color:var(--muted);cursor:pointer;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:14px 20px;border-radius:0;transition:color .2s,background .2s;white-space:nowrap;
+}
+.tab-btn:hover,.tab-btn:focus-visible{color:var(--text);background:#0b0b14;outline:none}
+.tab-btn[aria-selected="true"]{color:var(--black);background:var(--ice)}
+
+.project-grid{
+  display:grid;gap:1px;background:var(--line);
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));
+  border:1px solid var(--line);
+}
+.tile{
+  display:flex;flex-direction:column;background:var(--panel);
+  text-decoration:none;color:inherit;position:relative;overflow:hidden;
+  transition:background .25s;
+}
+.tile:hover,.tile:focus-visible{background:#0d0d18;outline:none}
+.tile:hover .tile-link,.tile:focus-visible .tile-link{color:var(--ice)}
+.tile-thumb{
+  position:relative;aspect-ratio:16/9;overflow:hidden;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  background-color:#04040a;
+}
+.tile-thumb::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,rgba(125,249,255,.06) 0 1px,transparent 1px 22px),
+                   repeating-linear-gradient(90deg,rgba(125,249,255,.06) 0 1px,transparent 1px 22px);
+}
+.tile-glyph{
+  font-family:var(--mono);font-size:clamp(1.4rem,4vw,2.1rem);letter-spacing:.16em;
+  color:rgba(125,249,255,.75);text-transform:uppercase;z-index:1;
+}
+.tile-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+.tile-body{padding:18px 18px 22px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tile-cat{
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+}
+.tile-title{font-size:1rem;font-weight:500;letter-spacing:.01em;line-height:1.35}
+.tile-desc{font-size:.8rem;color:var(--muted);line-height:1.55;flex:1}
+.tile-link{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);transition:color .2s;margin-top:6px;
+}
+
+.panel-info{
+  border:1px solid var(--line);background:var(--panel);
+  padding:clamp(24px,4vw,48px);max-width:820px;
+}
+.panel-info p{color:var(--muted);line-height:1.75;font-size:.92rem;margin-bottom:16px}
+.panel-info p:last-child{margin-bottom:0}
+.panel-info a{color:var(--ice);text-decoration:none;border-bottom:1px solid rgba(125,249,255,.35)}
+.panel-info a:hover{border-bottom-color:var(--ice)}
+
+#dashboard-empty{
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.18em;color:var(--muted);
+  padding:40px 0;text-align:center;
+}
+.dash-foot{
+  max-width:1180px;margin:clamp(48px,6vw,80px) auto 0;
+  border-top:1px solid var(--line);padding-top:26px;
+  display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;
+}
+
+.noscript-message{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:#000;padding:32px;text-align:center;line-height:1.7;
+}
+.noscript-message a{color:var(--ice)}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width:640px){
+  .act-overlay{padding:20px 18px}
+  .tab-btn{padding:12px 13px;font-size:.58rem;letter-spacing:.1em}
+  #progress-indicator{bottom:16px}
+  .progress-track{width:56vw}
+}
+@media (hover:none){
+  .tile:hover{background:var(--panel)}
+}
 </style>
 </head>
 <body>
-<div id="bar"></div>
-<div class="top"><a href="../index.html" id="back">← Portfolio</a><button id="lang" type="button">EN · فا</button></div>
-<canvas id="gl" aria-hidden="true"></canvas><div class="veil"></div><div id="glow"></div>
-<nav id="dots" aria-label="Chapters"></nav>
-<div id="track"></div>
-<section class="ch" id="c0"></section><section class="ch" id="c1"></section><section class="ch" id="c2"></section>
-<section class="ch" id="c3"></section><section class="ch" id="c4"></section>
-<section class="ch" id="end"><h1 id="nm">Alireza Yazdi</h1><p id="endp"></p>
-  <div class="btns"><a class="btn p" id="b1" href="../index.html#phone"></a><a class="btn" id="b2" href="#" target="_blank" rel="noopener"></a></div></section>
-<div id="hint"><span id="hintt"></span><i></i></div>
-<noscript><p style="position:relative;padding:90px 24px">This film needs JavaScript. <a href="../index.html">Back to the portfolio</a></p></noscript>
-<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+
+<a class="skip-link" href="#dashboard">Skip to projects</a>
+
+<!-- Single fixed WebGL canvas -->
+<canvas id="webgl-canvas" aria-hidden="true"></canvas>
+
+<!-- 2D fallback -->
+<div id="fallback-2d" role="img" aria-label="Alireza Yazdi — AI, research tools and web platforms">
+  <div class="fallback-glow"></div>
+  <p class="fallback-text">ALIREZA YAZDI<br />AI · RESEARCH TOOLS · WEB PLATFORMS</p>
+</div>
+
+<!-- Cinematic progress -->
+<div id="progress-indicator" aria-hidden="true">
+  <div class="progress-track"><div id="progress-fill"></div></div>
+  <span id="progress-label">01 / 05</span>
+</div>
+
+<!-- Intro gate -->
+<div id="intro-gate">
+  <div class="intro-inner">
+    <p class="intro-eyebrow">ALIREZA YAZDI</p>
+    <h1 class="intro-title">DON'T JUST SCROLL A WEBSITE.<br />EXPERIENCE A DIGITAL WORLD.</h1>
+    <div class="intro-actions">
+      <button id="btn-skip" class="btn" type="button">Skip Intro</button>
+      <button id="btn-enter" class="btn btn-primary" type="button">Enter Experience</button>
+    </div>
+    <p class="intro-hint">Scroll to begin · Move pointer to look around</p>
+  </div>
+</div>
+
+<!-- ================= CINEMATIC SCROLL TRACK ================= -->
+<div id="scroll-container">
+
+  <section class="act" data-act="1" aria-label="Technology Universe">
+    <div class="act-overlay">
+      <p class="act-kicker">01 — WHERE THE FIELD IS BUILT</p>
+      <h2 class="act-title">THE LABS AND UNIVERSITIES THAT BUILT THE FIELD</h2>
+    </div>
+  </section>
+
+  <section class="act" data-act="2" aria-label="The Evolution">
+    <div class="act-overlay">
+      <p class="act-kicker">02 — THE EVOLUTION</p>
+      <h2 class="act-title">FROM NETWORKS TO NEURAL MINDS</h2>
+      <p class="act-sub">NETWORKS · INTERNET · CLOUD · AI · NEURAL NETS · ROBOTICS · HUMAN–MACHINE</p>
+    </div>
+  </section>
+
+  <section class="act" data-act="3" aria-label="Human and Artificial Intelligence">
+    <div class="act-overlay">
+      <p class="act-kicker">03 — HUMAN &amp; AI</p>
+      <h2 class="act-title">HUMAN INTELLIGENCE MEETS<br />ARTIFICIAL INTELLIGENCE</h2>
+      <p class="act-sub">THE FUTURE IS BUILT, NOT WAITED FOR.</p>
+    </div>
+  </section>
+
+  <section class="act" data-act="4" aria-label="The Transformation">
+    <div class="act-overlay">
+      <p class="act-kicker">04 — THE TRANSFORMATION</p>
+      <h2 class="act-title">ALIREZA YAZDI<br />AI · RESEARCH TOOLS · WEB PLATFORMS</h2>
+    </div>
+  </section>
+
+  <section class="act" data-act="5" aria-label="Final Destination">
+    <div class="act-overlay">
+      <p class="act-kicker">05 — FINAL DESTINATION</p>
+      <h2 class="act-title">ENTER THE PLATFORM</h2>
+      <div class="act-cta"><span>SCROLL</span><span class="arrow"></span></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ================= DASHBOARD (real, functional) ================= -->
+<main id="dashboard">
+  <div class="dash-head">
+    <p class="dash-kicker">ALIREZA YAZDI — MSC STUDENT IN ARTIFICIAL INTELLIGENCE</p>
+    <h2 class="dash-title">TOOLS &amp; PROJECTS</h2>
+    <p class="dash-desc"><span id="count">0</span> working tools, and the list keeps growing. Every tile opens the live app in a new tab.</p>
+
+    <nav class="dash-tabs" role="tablist" aria-label="Project categories">
+      <button class="tab-btn" role="tab" aria-selected="true"  data-category="all">All</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-category="ai">AI</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-category="research">Research &amp; Learning</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-category="web">Web &amp; Experiences</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-category="tools">Tools</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-category="about">About</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-category="contact">Contact</button>
+    </nav>
+
+    <div id="project-grid" class="project-grid" role="tabpanel" aria-live="polite"></div>
+    <p id="dashboard-empty" hidden>NO ENTRIES IN THIS CATEGORY YET.</p>
+  </div>
+
+  <footer class="dash-foot">
+    <span>© <span id="year"></span> Alireza Yazdi · <a href="../index.html">Back to the portfolio</a></span>
+    <span>Built with three.js · GSAP · Lenis (self-hosted)</span>
+  </footer>
+</main>
+
+<noscript>
+  <div class="noscript-message">
+    <p>This experience requires JavaScript.<br />Please enable it to view the 3D journey and the interactive project dashboard.</p>
+  </div>
+</noscript>
+
+<!-- ============================================================
+     DATA — edit this block to add / remove projects.
+     Every URL here is real and live.
+     ============================================================ -->
+
+
+<!-- Libraries -->
 <script src="../assets/data.js"></script>
-<script src="vendor/gsap.min.js"></script><script src="vendor/ScrollTrigger.min.js"></script><script src="vendor/lenis.min.js"></script>
-<script type="module" src="film.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.min.js"
+  }
+}
+</script>
+
+<script type="module">
+/* ============================================================
+   Alireza Yazdi — main module
+   ============================================================ */
+
+const PF = window.PORTFOLIO;
+const DATA = {
+  contactEmail: PF.profile.email,
+  about: PF.profile.tagline.en + ' ' + PF.profile.role.en + ', ' + PF.profile.affiliation.en + '.',
+  projects: PF.apps.map(a => ({ category: a.cat, title: a.name.en, desc: a.desc.en, url: '../' + a.path }))
+};
+document.getElementById('count').textContent = DATA.projects.length;
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ------------------------------------------------------------
+   1. CAPABILITY DETECTION
+   ------------------------------------------------------------ */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = window.matchMedia('(hover: none)').matches;
+
+function webglAvailable(){
+  try{
+    const c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+  }catch(e){ return false; }
+}
+
+function qualityTier(){
+  const mem   = navigator.deviceMemory || 4;
+  const cores = navigator.hardwareConcurrency || 4;
+  const small = Math.min(window.innerWidth, window.innerHeight) < 500;
+  if (mem <= 2 || cores <= 2 || small) return 'low';
+  if (mem <= 4 || cores <= 6)          return 'medium';
+  return 'high';
+}
+
+const HAS_WEBGL = webglAvailable();
+const TIER = qualityTier();
+
+/* ------------------------------------------------------------
+   2. DASHBOARD
+   ------------------------------------------------------------ */
+const CAT_LABEL = { ai:'AI', research:'Research & Learning', web:'Web & Experiences', tools:'Tools', about:'About', contact:'Contact', all:'All' };
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function buildDashboard(category){
+  const grid  = document.getElementById('project-grid');
+  const empty = document.getElementById('dashboard-empty');
+  grid.innerHTML = '';
+  empty.hidden = true;
+
+  if (category === 'about'){
+    const d = document.createElement('div');
+    d.className = 'panel-info';
+    d.style.gridColumn = '1 / -1';
+    d.innerHTML = `<p class="tile-cat">ABOUT</p>
+      <p style="margin-top:14px">${esc(DATA.about)}</p>
+      <p><a href="../index.html">Open the portfolio</a> · <a href="https://github.com/alirezasyazdi941-hash" target="_blank" rel="noopener">GitHub</a></p>`;
+    grid.appendChild(d);
+    return;
+  }
+
+  if (category === 'contact'){
+    const d = document.createElement('div');
+    d.className = 'panel-info';
+    d.style.gridColumn = '1 / -1';
+    d.innerHTML = `<p class="tile-cat">CONTACT</p>
+      <p style="margin-top:14px">Research collaboration, a question, or just hello.</p>
+      <p><a href="mailto:${encodeURIComponent(DATA.contactEmail)}">${esc(DATA.contactEmail)}</a></p>`;
+    grid.appendChild(d);
+    return;
+  }
+
+  const items = DATA.projects.filter(p => category === 'all' || p.category === category);
+
+  if (!items.length){ empty.hidden = false; return; }
+
+  items.forEach((p, i) => {
+    const a = document.createElement('a');
+    a.className = 'tile';
+    a.href = p.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.setAttribute('aria-label', `${p.title} — ${CAT_LABEL[p.category] || p.category} (opens in a new tab)`);
+
+    const glyph = (p.title.match(/[A-Za-z]/g) || ['N']).slice(0, 2).join('').toUpperCase();
+    const shade = 12 + (i % 5) * 6;
+    const thumbBg = `linear-gradient(135deg, hsl(192 100% ${shade}% / .55) 0%, #04040a 70%)`;
+
+    a.innerHTML = `
+      <div class="tile-thumb" style="background:${thumbBg}">
+        ${p.thumb ? `<img src="${esc(p.thumb)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}
+        <span class="tile-glyph" aria-hidden="true">${esc(glyph)}</span>
+      </div>
+      <div class="tile-body">
+        <span class="tile-cat">${esc(CAT_LABEL[p.category] || p.category)}</span>
+        <h3 class="tile-title">${esc(p.title)}</h3>
+        <p class="tile-desc">${esc(p.desc)}</p>
+        <span class="tile-link">Open ↗</span>
+      </div>`;
+    grid.appendChild(a);
+  });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    buildDashboard(btn.dataset.category);
+  });
+});
+buildDashboard('all');
+
+/* ------------------------------------------------------------
+   3. SMOOTH SCROLL + SCROLLTRIGGER
+   ------------------------------------------------------------ */
+const gsapReady = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+const LenisCtor = window.Lenis || window.lenis;
+let lenis = null;
+
+if (gsapReady){
+  gsap.registerPlugin(ScrollTrigger);
+  if (LenisCtor){
+    lenis = new LenisCtor({
+      duration: prefersReducedMotion ? 0 : 1.1,
+      smoothWheel: !prefersReducedMotion,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.4
+    });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+}
+
+/* ------------------------------------------------------------
+   4. UI WIRING — intro gate, progress
+   ------------------------------------------------------------ */
+const introGate  = document.getElementById('intro-gate');
+const progressEl = document.getElementById('progress-indicator');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const dashboardEl = document.getElementById('dashboard');
+
+let introDismissed = false;
+function dismissIntro(){
+  if (introDismissed) return;
+  introDismissed = true;
+  introGate.classList.add('is-hidden');
+}
+document.getElementById('btn-enter').addEventListener('click', dismissIntro);
+document.getElementById('btn-skip').addEventListener('click', () => {
+  dismissIntro();
+  if (lenis) lenis.scrollTo('#dashboard', { duration: prefersReducedMotion ? 0 : 1.6 });
+  else document.getElementById('dashboard').scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+});
+window.addEventListener('wheel', dismissIntro, { passive: true, once: true });
+window.addEventListener('touchmove', dismissIntro, { passive: true, once: true });
+
+/* Overlay fades driven by ScrollTrigger */
+if (gsapReady){
+  gsap.utils.toArray('.act-overlay').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 34 },
+      {
+        opacity: 1, y: 0, ease: 'none',
+        scrollTrigger: {
+          trigger: el.closest('.act'),
+          start: 'top 78%',
+          end: 'bottom 22%',
+          scrub: true
+        }
+      }
+    );
+  });
+}
+
+/* ------------------------------------------------------------
+   5. THREE.JS WORLD
+   ------------------------------------------------------------ */
+let THREE = null;
+try {
+  THREE = await import('three');
+} catch (err){
+  THREE = null;
+}
+
+const canvas = document.getElementById('webgl-canvas');
+const fallback2d = document.getElementById('fallback-2d');
+
+if (!HAS_WEBGL || !THREE){
+  canvas.style.display = 'none';
+  fallback2d.classList.add('is-visible');
+  startFallbackMode();
+} else {
+  startCinematic();
+}
+
+/* Progress tracking works in both modes */
+let scrollProgress = 0;
+let needsRender = true;
+
+function updateProgressUI(p){
+  progressFill.style.width = (p * 100).toFixed(2) + '%';
+  const act = Math.min(5, Math.max(1, Math.floor(p * 5) + 1));
+  progressLabel.textContent = String(act).padStart(2, '0') + ' / 05';
+  const dashTop = dashboardEl.getBoundingClientRect().top;
+  progressEl.classList.toggle('is-hidden', dashTop < window.innerHeight * 0.55);
+}
+
+if (gsapReady){
+  ScrollTrigger.create({
+    trigger: '#scroll-container',
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: self => {
+      scrollProgress = self.progress;
+      needsRender = true;
+      updateProgressUI(self.progress);
+    }
+  });
+} else {
+  window.addEventListener('scroll', () => {
+    const c = document.getElementById('scroll-container');
+    const total = c.offsetHeight - window.innerHeight;
+    scrollProgress = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
+    needsRender = true;
+    updateProgressUI(scrollProgress);
+  }, { passive: true });
+}
+updateProgressUI(0);
+
+/* Reduced-motion / no-WebGL fallbacks */
+function startFallbackMode(){
+  // Dashboard remains fully functional — nothing else to do.
+}
+
+/* ------------------------------------------------------------
+   CINEMATIC MODE
+   ------------------------------------------------------------ */
+function startCinematic(){
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: TIER === 'high',
+    alpha: false,
+    powerPreference: 'high-performance',
+    stencil: false,
+    depth: true
+  });
+  renderer.setClearColor(0x000000, 1);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const DPR_CAP = TIER === 'high' ? 2 : TIER === 'medium' ? 1.5 : 1;
+  function applySize(){
+    const w = window.innerWidth, h = window.innerHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, DPR_CAP));
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    particleUniforms.uPixelRatio.value = renderer.getPixelRatio();
+  }
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x000000, 0.0022);
+
+  const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 4000);
+  camera.position.set(0, 0, 70);
+
+  /* ---- shared textures ---- */
+  const dotTex = (() => {
+    const s = 64, c = document.createElement('canvas');
+    c.width = c.height = s;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+    g.addColorStop(0,   'rgba(255,255,255,1)');
+    g.addColorStop(0.22,'rgba(190,248,255,0.92)');
+    g.addColorStop(0.55,'rgba(0,190,235,0.28)');
+    g.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+
+  const disposables = { geometries: [], materials: [], textures: [dotTex] };
+
+  function track(obj){
+    if (obj.geometry) disposables.geometries.push(obj.geometry);
+    if (obj.material) disposables.materials.push(obj.material);
+    return obj;
+  }
+
+  /* ---- text sprite factory ---- */
+  function makeTextSprite(text, scale = 1){
+    const FONT = 72, PAD = 36;
+    const measure = document.createElement('canvas').getContext('2d');
+    measure.font = `600 ${FONT}px ui-monospace, monospace`;
+    const w = Math.ceil(measure.measureText(text).width) + PAD * 2;
+    const h = FONT + PAD * 2;
+
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.font = `600 ${FONT}px ui-monospace, monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#00e5ff';
+    ctx.shadowBlur = 26;
+    ctx.fillStyle = '#d8f6ff';
+    ctx.fillText(text, w / 2, h / 2);
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter;
+    tex.generateMipmaps = false;
+    disposables.textures.push(tex);
+
+    const mat = new THREE.SpriteMaterial({
+      map: tex, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, opacity: 0, fog: true
+    });
+    disposables.materials.push(mat);
+
+    const sp = new THREE.Sprite(mat);
+    const k = 0.0125 * scale;
+    sp.scale.set(w * k, h * k, 1);
+    return sp;
+  }
+
+  /* ============================================================
+     ACT 1 — TECHNOLOGY UNIVERSE
+     ============================================================ */
+  const act1 = new THREE.Group();
+  scene.add(act1);
+
+  // the single light point
+  const lightPoint = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: dotTex, color: 0x9fe9ff, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.95
+  }));
+  lightPoint.scale.set(26, 26, 1);
+  lightPoint.position.set(0, 0, -22);
+  act1.add(lightPoint);
+  disposables.materials.push(lightPoint.material);
+
+  const COMPANIES = ['MIT','Stanford','Oxford','Cambridge','ETH Zürich','Tsinghua','NUS','Toronto','EPFL','KAIST','Tokyo','Sharif','Tehran'];
+  const nameSprites = [];
+  COMPANIES.forEach((name, i) => {
+    const sp = makeTextSprite(name, 1);
+    const ang = i * 2.399963;                 // golden angle spread
+    const r   = 11 + (i % 3) * 8;
+    sp.position.set(
+      Math.cos(ang) * r * 1.45,
+      Math.sin(ang) * r * 0.75,
+      -10 - i * 13.5
+    );
+    act1.add(sp);
+    nameSprites.push(sp);
+  });
+
+  /* ============================================================
+     ACT 2 — THE EVOLUTION (7 stations along -Z)
+     ============================================================ */
+  const STATION_COUNT = 7;
+  const STATION_Z = -270;
+  const STATION_GAP = 70;
+  const stations = [];
+  const act2 = new THREE.Group();
+  scene.add(act2);
+
+  const C_ICE  = 0x7df9ff;
+  const C_DIM  = 0x1f5f7a;
+  const C_LINE = 0x1b4d66;
+
+  function pointsMaterial(color, size, opacity){
+    const m = new THREE.PointsMaterial({
+      size, map: dotTex, color, transparent: true, opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, fog: true
+    });
+    m.userData.baseOpacity = opacity;
+    disposables.materials.push(m);
+    return m;
+  }
+  function lineMaterial(color, opacity){
+    const m = new THREE.LineBasicMaterial({
+      color, transparent: true, opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false, fog: true
+    });
+    m.userData.baseOpacity = opacity;
+    disposables.materials.push(m);
+    return m;
+  }
+
+  function makeStation(i){
+    const g = new THREE.Group();
+    const mats = [];
+    const add = o => { g.add(o); if (o.material) mats.push(o.material); return o; };
+
+    /* 0 — computer networks */
+    if (i === 0){
+      const N = TIER === 'low' ? 22 : 42;
+      const nodes = [];
+      for (let k = 0; k < N; k++){
+        nodes.push(new THREE.Vector3(
+          (Math.random() - 0.5) * 62,
+          (Math.random() - 0.5) * 38,
+          (Math.random() - 0.5) * 62
+        ));
+      }
+      const pg = new THREE.BufferGeometry();
+      pg.setAttribute('position', new THREE.Float32BufferAttribute(
+        nodes.flatMap(v => [v.x, v.y, v.z]), 3));
+      disposables.geometries.push(pg);
+      add(new THREE.Points(pg, pointsMaterial(C_ICE, 1.1, 0.95)));
+
+      const lp = [];
+      nodes.forEach((v, a) => {
+        const near = nodes
+          .map((w, b) => ({ b, d: v.distanceToSquared(w) }))
+          .filter(o => o.b !== a)
+          .sort((x, y) => x.d - y.d)
+          .slice(0, 2);
+        near.forEach(o => {
+          const w = nodes[o.b];
+          lp.push(v.x, v.y, v.z, w.x, w.y, w.z);
+        });
+      });
+      const lg = new THREE.BufferGeometry();
+      lg.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
+      disposables.geometries.push(lg);
+      add(new THREE.LineSegments(lg, lineMaterial(C_LINE, 0.55)));
+    }
+
+    /* 1 — internet (wireframe globe + orbit rings) */
+    if (i === 1){
+      const sphere = new THREE.SphereGeometry(17, 18, 12);
+      const wire = new THREE.WireframeGeometry(sphere);
+      sphere.dispose();
+      disposables.geometries.push(wire);
+      add(new THREE.LineSegments(wire, lineMaterial(C_DIM, 0.5)));
+
+      for (let k = 0; k < 3; k++){
+        const pts = [];
+        const R = 22 + k * 4;
+        for (let s = 0; s <= 64; s++){
+          const a = (s / 64) * Math.PI * 2;
+          pts.push(new THREE.Vector3(Math.cos(a) * R, Math.sin(a) * R * 0.35, Math.sin(a) * R * 0.35));
+        }
+        const rg = new THREE.BufferGeometry().setFromPoints(pts);
+        disposables.geometries.push(rg);
+        const ring = add(new THREE.Line(rg, lineMaterial(C_ICE, 0.42)));
+        ring.rotation.set(k * 1.1, k * 0.7, k * 0.4);
+      }
+
+      const dg = new THREE.BufferGeometry();
+      const dp = [];
+      for (let k = 0; k < 260; k++){
+        const t = Math.random() * Math.PI * 2;
+        const p = Math.acos(2 * Math.random() - 1);
+        const r = 17.6;
+        dp.push(r * Math.sin(p) * Math.cos(t), r * Math.cos(p), r * Math.sin(p) * Math.sin(t));
+      }
+      dg.setAttribute('position', new THREE.Float32BufferAttribute(dp, 3));
+      disposables.geometries.push(dg);
+      add(new THREE.Points(dg, pointsMaterial(C_ICE, 0.55, 0.7)));
+    }
+
+    /* 2 — cloud (floating wireframe data panels) */
+    if (i === 2){
+      const cols = 4, rows = 3;
+      for (let c = 0; c < cols; c++){
+        for (let r = 0; r < rows; r++){
+          const bg = new THREE.BoxGeometry(13, 8, 0.6);
+          disposables.geometries.push(bg);
+          const m = new THREE.MeshBasicMaterial({
+            color: 0x0a2b3d, wireframe: true, transparent: true,
+            opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false, fog: true
+          });
+          m.userData.baseOpacity = 0.55;
+          disposables.materials.push(m);
+          const mesh = new THREE.Mesh(bg, m);
+          mesh.position.set(
+            (c - (cols - 1) / 2) * 17,
+            (r - (rows - 1) / 2) * 12,
+            (Math.random() - 0.5) * 14
+          );
+          mesh.rotation.y = (Math.random() - 0.5) * 0.5;
+          g.add(mesh);
+          mats.push(m);
+        }
+      }
+      const lg = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-40, -20, 0), new THREE.Vector3(40, -20, 0),
+        new THREE.Vector3(-40, 22, 0),  new THREE.Vector3(40, 22, 0)
+      ]);
+      disposables.geometries.push(lg);
+      add(new THREE.LineSegments(lg, lineMaterial(C_LINE, 0.3)));
+    }
+
+    /* 3 — artificial intelligence (dense point cloud core) */
+    if (i === 3){
+      const COUNT = TIER === 'low' ? 900 : TIER === 'medium' ? 2200 : 4200;
+      const arr = new Float32Array(COUNT * 3);
+      for (let k = 0; k < COUNT; k++){
+        const t = Math.random() * Math.PI * 2;
+        const p = Math.acos(2 * Math.random() - 1);
+        const r = Math.pow(Math.random(), 0.55) * 26;
+        arr[k*3]   = r * Math.sin(p) * Math.cos(t);
+        arr[k*3+1] = r * Math.cos(p) * 0.8;
+        arr[k*3+2] = r * Math.sin(p) * Math.sin(t);
+      }
+      const pg = new THREE.BufferGeometry();
+      pg.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+      disposables.geometries.push(pg);
+      const pts = add(new THREE.Points(pg, pointsMaterial(C_ICE, 0.75, 0.9)));
+      g.userData.pulse = pts;
+
+      const core = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: dotTex, color: 0xbdf3ff, transparent: true,
+        blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.9
+      }));
+      core.scale.set(34, 34, 1);
+      disposables.materials.push(core.material);
+      g.add(core);
+      mats.push(core.material);
+    }
+
+    /* 4 — neural networks (layers + connections) */
+    if (i === 4){
+      const layers = [5, 8, 8, 5, 3];
+      const spread = 16, depthGap = 12;
+      const layerNodes = [];
+      layers.forEach((n, li) => {
+        const row = [];
+        for (let k = 0; k < n; k++){
+          row.push(new THREE.Vector3(
+            (k - (n - 1) / 2) * (spread / Math.max(1, n - 1)) * 1.6,
+            (li - (layers.length - 1) / 2) * depthGap,
+            0
+          ));
+        }
+        layerNodes.push(row);
+      });
+      const all = layerNodes.flat();
+      const pg = new THREE.BufferGeometry();
+      pg.setAttribute('position', new THREE.Float32BufferAttribute(
+        all.flatMap(v => [v.x, v.y, v.z]), 3));
+      disposables.geometries.push(pg);
+      add(new THREE.Points(pg, pointsMaterial(C_ICE, 1.3, 1)));
+
+      const lp = [];
+      for (let li = 0; li < layerNodes.length - 1; li++){
+        layerNodes[li].forEach(a => {
+          layerNodes[li + 1].forEach(b => {
+            if (Math.random() > 0.55) lp.push(a.x, a.y, a.z, b.x, b.y, b.z);
+          });
+        });
+      }
+      const lg = new THREE.BufferGeometry();
+      lg.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
+      disposables.geometries.push(lg);
+      add(new THREE.LineSegments(lg, lineMaterial(C_DIM, 0.35)));
+    }
+
+    /* 5 — robotics (wireframe arm) */
+    if (i === 5){
+      const segs = [
+        { p: [0, -18, 0],  s: [7, 14, 7] },
+        { p: [0, -6, 0],   s: [5, 12, 5] },
+        { p: [8, 4, 0],    s: [4, 14, 4] },
+        { p: [16, 12, 0],  s: [3, 10, 3] }
+      ];
+      segs.forEach(sg => {
+        const bg = new THREE.BoxGeometry(sg.s[0], sg.s[1], sg.s[2]);
+        disposables.geometries.push(bg);
+        const m = new THREE.MeshBasicMaterial({
+          color: 0x0d3a4f, wireframe: true, transparent: true, opacity: 0.7,
+          blending: THREE.AdditiveBlending, depthWrite: false, fog: true
+        });
+        m.userData.baseOpacity = 0.7;
+        disposables.materials.push(m);
+        const mesh = new THREE.Mesh(bg, m);
+        mesh.position.set(sg.p[0], sg.p[1], sg.p[2]);
+        mesh.rotation.z = sg.p[0] * 0.012;
+        g.add(mesh);
+        mats.push(m);
+      });
+
+      const jg = new THREE.SphereGeometry(2.4, 10, 8);
+      disposables.geometries.push(jg);
+      const jm = pointsMaterial(C_ICE, 2.6, 1);
+      segs.forEach(sg => {
+        const j = new THREE.Points(jg, jm);
+        j.position.set(sg.p[0], sg.p[1], sg.p[2]);
+        g.add(j);
+      });
+      mats.push(jm);
+    }
+
+    /* 6 — human-machine future (humanoid point silhouette + merging dust) */
+    if (i === 6){
+      const pts = [];
+      const pushCapsule = (a, b, rad, n) => {
+        const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
+        const dir = new THREE.Vector3().subVectors(B, A);
+        const len = dir.length();
+        for (let k = 0; k < n; k++){
+          const t = Math.random();
+          const base = A.clone().addScaledVector(dir, t);
+          const phi = Math.random() * Math.PI * 2;
+          const r = rad * Math.sqrt(Math.random());
+          pts.push(
+            base.x + Math.cos(phi) * r,
+            base.y + Math.sin(phi) * r * 0.4,
+            base.z + Math.sin(phi) * r
+          );
+        }
+      };
+      pushCapsule([0, 22, 0], [0, 30, 0], 4.5, 130);   // head
+      pushCapsule([0, 4, 0], [0, 20, 0], 6.5, 260);    // torso
+      pushCapsule([-7, 19, 0], [-12, 6, 0], 2.4, 120); // left arm
+      pushCapsule([7, 19, 0], [12, 6, 0], 2.4, 120);   // right arm
+      pushCapsule([-3.4, 3, 0], [-4.5, -16, 0], 2.8, 130);
+      pushCapsule([3.4, 3, 0], [4.5, -16, 0], 2.8, 130);
+
+      const pg = new THREE.BufferGeometry();
+      pg.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+      disposables.geometries.push(pg);
+      add(new THREE.Points(pg, pointsMaterial(C_ICE, 0.85, 0.95)));
+
+      // converging machine dust
+      const dustN = TIER === 'low' ? 260 : 700;
+      const dg = new THREE.BufferGeometry();
+      const dp = new Float32Array(dustN * 3);
+      for (let k = 0; k < dustN; k++){
+        const t = Math.random() * Math.PI * 2;
+        const p = Math.acos(2 * Math.random() - 1);
+        const r = 20 + Math.random() * 22;
+        dp[k*3]   = r * Math.sin(p) * Math.cos(t);
+        dp[k*3+1] = r * Math.cos(p) + 4;
+        dp[k*3+2] = r * Math.sin(p) * Math.sin(t);
+      }
+      dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+      disposables.geometries.push(dg);
+      add(new THREE.Points(dg, pointsMaterial(C_DIM, 0.6, 0.5)));
+    }
+
+    g.position.z = STATION_Z - i * STATION_GAP;
+    g.userData.mats = mats;
+    return g;
+  }
+
+  for (let i = 0; i < STATION_COUNT; i++){
+    const s = makeStation(i);
+    act2.add(s);
+    stations.push(s);
+  }
+
+  /* ============================================================
+     ACT 3 — HUMAN & AI CONVERGENCE
+     ============================================================ */
+  const act3 = new THREE.Group();
+  act3.position.z = -830;
+  scene.add(act3);
+
+  const convergeCount = TIER === 'low' ? 1400 : TIER === 'medium' ? 3200 : 6000;
+  const cGeo = new THREE.BufferGeometry();
+  const cStart = new Float32Array(convergeCount * 3);
+  const cEnd   = new Float32Array(convergeCount * 3);
+  const cPhase = new Float32Array(convergeCount);
+  for (let i = 0; i < convergeCount; i++){
+    const r  = 55 + Math.random() * 45;
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    cStart[i*3]   = r * Math.sin(ph) * Math.cos(th);
+    cStart[i*3+1] = r * Math.cos(ph) * 0.75;
+    cStart[i*3+2] = r * Math.sin(ph) * Math.sin(th);
+
+    const r2 = Math.random() * 4;
+    const th2 = Math.random() * Math.PI * 2;
+    const ph2 = Math.acos(2 * Math.random() - 1);
+    cEnd[i*3]   = r2 * Math.sin(ph2) * Math.cos(th2);
+    cEnd[i*3+1] = r2 * Math.cos(ph2);
+    cEnd[i*3+2] = r2 * Math.sin(ph2) * Math.sin(th2);
+
+    cPhase[i] = Math.random();
+  }
+  cGeo.setAttribute('position', new THREE.BufferAttribute(cStart.slice(), 3));
+  cGeo.setAttribute('aStart', new THREE.BufferAttribute(cStart, 3));
+  cGeo.setAttribute('aEnd',   new THREE.BufferAttribute(cEnd, 3));
+  cGeo.setAttribute('aPhase', new THREE.BufferAttribute(cPhase, 1));
+  disposables.geometries.push(cGeo);
+
+  const particleUniforms = {
+    uProgress:   { value: 0 },
+    uTime:       { value: 0 },
+    uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, DPR_CAP) }
+  };
+
+  const convergeMat = new THREE.ShaderMaterial({
+    uniforms: particleUniforms,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    fog: false,
+    vertexShader: /* glsl */`
+      attribute vec3 aStart;
+      attribute vec3 aEnd;
+      attribute float aPhase;
+      uniform float uProgress;
+      uniform float uTime;
+      uniform float uPixelRatio;
+      varying float vAlpha;
+      void main(){
+        float p = smoothstep(0.0, 1.0, uProgress);
+        vec3 pos = mix(aStart, aEnd, p);
+        float ang = (1.0 - p) * 0.7 + uTime * 0.06 * (0.4 + aPhase);
+        float c = cos(ang), s = sin(ang);
+        pos.xz = mat2(c, -s, s, c) * pos.xz;
+        pos.y += sin(uTime * 0.9 + aPhase * 6.2831) * (0.9 * (1.0 - p));
+        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = (2.0 + 2.2 * aPhase) * uPixelRatio * (150.0 / max(1.0, -mv.z));
+        vAlpha = 0.25 + 0.75 * p;
+      }`,
+    fragmentShader: /* glsl */`
+      varying float vAlpha;
+      void main(){
+        vec2 uv = gl_PointCoord - 0.5;
+        float d = length(uv);
+        if (d > 0.5) discard;
+        float a = smoothstep(0.5, 0.0, d);
+        vec3 col = mix(vec3(0.32, 0.72, 1.0), vec3(0.88, 0.99, 1.0), vAlpha);
+        gl_FragColor = vec4(col, a * vAlpha * 0.9);
+      }`
+  });
+  disposables.materials.push(convergeMat);
+
+  const convergePts = new THREE.Points(cGeo, convergeMat);
+  convergePts.frustumCulled = false;
+  act3.add(convergePts);
+
+  const coreGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: dotTex, color: 0xcfeeff, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.85
+  }));
+  coreGlow.scale.set(46, 46, 1);
+  act3.add(coreGlow);
+  disposables.materials.push(coreGlow.material);
+
+  const coreGeo = new THREE.SphereGeometry(2.2, 16, 12);
+  disposables.geometries.push(coreGeo);
+  const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 });
+  disposables.materials.push(coreMat);
+  act3.add(new THREE.Mesh(coreGeo, coreMat));
+
+  /* ============================================================
+     ACT 4 — TRANSFORMATION TUNNEL
+     ============================================================ */
+  const act4 = new THREE.Group();
+  scene.add(act4);
+
+  const TUNNEL_START = -880;
+  const TUNNEL_RINGS = TIER === 'low' ? 14 : 24;
+  const TUNNEL_GAP   = 12;
+  const ringMat = new THREE.LineBasicMaterial({
+    color: 0x2aa7c9, transparent: true, opacity: 0.55,
+    blending: THREE.AdditiveBlending, depthWrite: false, fog: true
+  });
+  ringMat.userData.baseOpacity = 0.55;
+  disposables.materials.push(ringMat);
+
+  const rings = [];
+  for (let i = 0; i < TUNNEL_RINGS; i++){
+    const r = 17 + Math.sin(i * 0.45) * 4.5;
+    const seg = TIER === 'low' ? 28 : 52;
+    const pts = [];
+    for (let s = 0; s <= seg; s++){
+      const a = (s / seg) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, 0));
+    }
+    const rg = new THREE.BufferGeometry().setFromPoints(pts);
+    disposables.geometries.push(rg);
+    const ring = new THREE.Line(rg, ringMat);
+    ring.position.z = TUNNEL_START - i * TUNNEL_GAP;
+    act4.add(ring);
+    rings.push(ring);
+  }
+
+  // speed streaks
+  const streakN = TIER === 'low' ? 300 : 900;
+  const sGeo = new THREE.BufferGeometry();
+  const sPos = new Float32Array(streakN * 3);
+  for (let i = 0; i < streakN; i++){
+    const a = Math.random() * Math.PI * 2;
+    const r = 6 + Math.random() * 16;
+    sPos[i*3]   = Math.cos(a) * r;
+    sPos[i*3+1] = Math.sin(a) * r;
+    sPos[i*3+2] = TUNNEL_START - Math.random() * (TUNNEL_RINGS * TUNNEL_GAP);
+  }
+  sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  disposables.geometries.push(sGeo);
+  const streakMat = new THREE.PointsMaterial({
+    size: 0.9, map: dotTex, color: 0x9fe9ff, transparent: true, opacity: 0.75,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, fog: true
+  });
+  streakMat.userData.baseOpacity = 0.75;
+  disposables.materials.push(streakMat);
+  const streaks = new THREE.Points(sGeo, streakMat);
+  streaks.frustumCulled = false;
+  act4.add(streaks);
+
+  /* ============================================================
+     ACT 5 — MINIMAL FINAL ENVIRONMENT
+     ============================================================ */
+  const act5 = new THREE.Group();
+  act5.position.z = -1290;
+  scene.add(act5);
+
+  const gridGeo = new THREE.BufferGeometry();
+  const gp = [];
+  const G = 14, GS = 24;
+  for (let i = -G; i <= G; i++){
+    gp.push(i * GS, -60, -G * GS, i * GS, -60, G * GS);
+    gp.push(-G * GS, -60, i * GS, G * GS, -60, i * GS);
+  }
+  gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(gp, 3));
+  disposables.geometries.push(gridGeo);
+  const gridMat = new THREE.LineBasicMaterial({
+    color: 0x123a4d, transparent: true, opacity: 0.4,
+    blending: THREE.AdditiveBlending, depthWrite: false, fog: true
+  });
+  gridMat.userData.baseOpacity = 0.4;
+  disposables.materials.push(gridMat);
+  act5.add(new THREE.LineSegments(gridGeo, gridMat));
+
+  const dustN = TIER === 'low' ? 400 : 1400;
+  const dGeo = new THREE.BufferGeometry();
+  const dPos = new Float32Array(dustN * 3);
+  for (let i = 0; i < dustN; i++){
+    dPos[i*3]   = (Math.random() - 0.5) * 260;
+    dPos[i*3+1] = (Math.random() - 0.5) * 140;
+    dPos[i*3+2] = (Math.random() - 0.5) * 260;
+  }
+  dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
+  disposables.geometries.push(dGeo);
+  const dustMat = new THREE.PointsMaterial({
+    size: 0.7, map: dotTex, color: 0x7df9ff, transparent: true, opacity: 0.4,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, fog: true
+  });
+  dustMat.userData.baseOpacity = 0.4;
+  disposables.materials.push(dustMat);
+  act5.add(new THREE.Points(dGeo, dustMat));
+
+  /* ============================================================
+     CAMERA CHOREOGRAPHY
+     ============================================================ */
+  const camPos  = new THREE.Vector3(0, 0, 70);
+  const camLook = new THREE.Vector3(0, 0, 0);
+  const lookNow = new THREE.Vector3(0, 0, 0);
+  const pointer  = { x: 0, y: 0, tx: 0, ty: 0 };
+
+  const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const seg = (p, a, b) => clamp01((p - a) / (b - a));
+
+  function computeCamera(p){
+    let roll = 0;
+
+    if (p < 0.20){
+      const a = p / 0.20;
+      const z = 70 - a * 270;                        // 70 → -200
+      camPos.set(Math.sin(a * Math.PI * 1.15) * 6, Math.cos(a * Math.PI * 1.05) * 4, z);
+      camLook.set(0, 0, z - 45);
+    } else if (p < 0.50){
+      const a = seg(p, 0.20, 0.50);
+      const z = -200 - a * 530;                      // -200 → -730
+      camPos.set(Math.sin(a * Math.PI * 2.2) * 5, Math.cos(a * Math.PI * 1.7) * 5, z);
+      camLook.set(0, 0, z - 60);
+    } else if (p < 0.65){
+      const a = seg(p, 0.50, 0.65);
+      const z = -730 - a * 80;                       // -730 → -810
+      camPos.set(Math.sin(a * Math.PI) * 3, Math.cos(a * Math.PI) * 2, z);
+      camLook.set(0, 0, -830);
+    } else if (p < 0.85){
+      const a = seg(p, 0.65, 0.85);
+      const z = -810 - a * 310;                      // -810 → -1120
+      camPos.set(Math.sin(a * Math.PI * 3) * 1.6, Math.cos(a * Math.PI * 3) * 1.6, z);
+      camLook.set(0, 0, z - 60);
+      roll = a * Math.PI * 0.9;
+    } else {
+      const a = seg(p, 0.85, 1);
+      const z = -1120 - a * 40;                      // -1120 → -1160
+      camPos.set(Math.sin(a * Math.PI * 0.5) * 1.2, 0, z);
+      camLook.set(0, 0, -1290);
+      roll = Math.PI * 0.9 * (1 - a);
+    }
+    return roll;
+  }
+
+  /* ------------------------------------------------------------
+     Per-frame scene update
+     ------------------------------------------------------------ */
+  const tmpV = new THREE.Vector3();
+  let elapsed = 0;
+
+  function updateScene(p, dt, time){
+    /* camera target */
+    const roll = computeCamera(p);
+
+    /* damped follow */
+    const lambda = prefersReducedMotion ? 60 : 9;
+    camera.position.x = THREE.MathUtils.damp(camera.position.x, camPos.x, lambda, dt);
+    camera.position.y = THREE.MathUtils.damp(camera.position.y, camPos.y, lambda, dt);
+    camera.position.z = THREE.MathUtils.damp(camera.position.z, camPos.z, lambda, dt);
+
+    lookNow.x = THREE.MathUtils.damp(lookNow.x, camLook.x, lambda, dt);
+    lookNow.y = THREE.MathUtils.damp(lookNow.y, camLook.y, lambda, dt);
+    lookNow.z = THREE.MathUtils.damp(lookNow.z, camLook.z, lambda, dt);
+
+    /* mouse parallax */
+    if (!prefersReducedMotion && !isTouch){
+      pointer.x = THREE.MathUtils.damp(pointer.x, pointer.tx, 4, dt);
+      pointer.y = THREE.MathUtils.damp(pointer.y, pointer.ty, 4, dt);
+    } else {
+      pointer.x = 0; pointer.y = 0;
+    }
+
+    camera.position.x += pointer.x * 2.4;
+    camera.position.y += -pointer.y * 1.6;
+    camera.lookAt(lookNow.x + pointer.x * 3, lookNow.y - pointer.y * 2, lookNow.z);
+    camera.rotateZ(roll);
+
+    const camZ = camera.position.z;
+
+    /* --- ACT 1 : names fade by camera proximity --- */
+    act1.visible = camZ > -260;
+    if (act1.visible){
+      nameSprites.forEach(sp => {
+        const d = Math.abs(sp.position.z - camZ);
+        const o = clamp01((150 - d) / 95);
+        sp.material.opacity = o * o * 0.95;
+      });
+      lightPoint.material.opacity = 0.55 + Math.sin(time * 1.6) * 0.2;
+      const s = 26 + Math.sin(time * 1.2) * 3;
+      lightPoint.scale.set(s, s, 1);
+    }
+
+    /* --- ACT 2 : station windows --- */
+    const a2 = seg(p, 0.20, 0.50);
+    const act2Active = p >= 0.19 && p <= 0.52;
+    act2.visible = act2Active;
+    if (act2Active){
+      stations.forEach((st, i) => {
+        const c = i / (STATION_COUNT - 1);
+        const d = Math.abs(a2 - c);
+        const o = clamp01(1 - d / 0.14);
+        const vis = o > 0.008;
+        st.visible = vis;
+        if (!vis) return;
+        st.userData.mats.forEach(m => {
+          m.opacity = o * (m.userData.baseOpacity ?? 1);
+        });
+        st.rotation.y = Math.sin(time * 0.25 + i) * 0.08;
+      });
+    }
+
+    /* --- ACT 3 : convergence --- */
+    const a3 = seg(p, 0.50, 0.65);
+    act3.visible = p >= 0.49 && p <= 0.67;
+    if (act3.visible){
+      particleUniforms.uProgress.value = a3;
+      particleUniforms.uTime.value = time;
+      const glow = 0.35 + a3 * 0.65;
+      coreGlow.material.opacity = glow;
+      const gs = 18 + a3 * 44 + Math.sin(time * 2.2) * 2;
+      coreGlow.scale.set(gs, gs, 1);
+      coreMat.opacity = 0.5 + a3 * 0.5;
+    }
+
+    /* --- ACT 4 : tunnel --- */
+    const a4 = seg(p, 0.65, 0.85);
+    act4.visible = p >= 0.63 && p <= 0.87;
+    if (act4.visible){
+      rings.forEach((r, i) => {
+        r.rotation.z = time * (0.12 + i * 0.004) * (i % 2 ? -1 : 1);
+      });
+      ringMat.opacity = (0.15 + a4 * 0.6) * 0.9;
+      streakMat.opacity = (0.2 + a4 * 0.6);
+      streaks.position.z = Math.sin(time * 0.5) * 6;
+    }
+
+    /* --- ACT 5 : final environment --- */
+    act5.visible = camZ < -1050;
+    if (act5.visible){
+      const a5 = seg(p, 0.85, 1);
+      gridMat.opacity = 0.15 + a5 * 0.3;
+      dustMat.opacity = 0.2 + a5 * 0.3;
+      act5.rotation.y = Math.sin(time * 0.12) * 0.05;
+    }
+  }
+
+  /* ------------------------------------------------------------
+     Render loop
+     ------------------------------------------------------------ */
+  let running = true;
+  let lastT = performance.now();
+
+  function loop(now){
+    requestAnimationFrame(loop);
+    if (!running) return;
+
+    const dt = Math.min((now - lastT) / 1000, 0.05);
+    lastT = now;
+    elapsed += dt;
+
+    if (prefersReducedMotion && !needsRender) return;
+    needsRender = false;
+
+    // pause when dashboard fully covers the viewport
+    const dashTop = dashboardEl.getBoundingClientRect().top;
+    if (dashTop <= 0) return;
+
+    updateScene(scrollProgress, prefersReducedMotion ? 0.016 : dt, prefersReducedMotion ? 0 : elapsed);
+    renderer.render(scene, camera);
+  }
+
+  /* ------------------------------------------------------------
+     Input
+     ------------------------------------------------------------ */
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
+    pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  window.addEventListener('resize', () => {
+    applySize();
+    needsRender = true;
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    running = !document.hidden;
+    needsRender = true;
+  });
+
+  /* WebGL context loss */
+  canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault();
+    running = false;
+    fallback2d.classList.add('is-visible');
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    fallback2d.classList.remove('is-visible');
+    running = true;
+    needsRender = true;
+  });
+
+  /* ------------------------------------------------------------
+     Dispose on unload
+     ------------------------------------------------------------ */
+  function disposeAll(){
+    disposables.geometries.forEach(g => g.dispose?.());
+    disposables.materials.forEach(m => m.dispose?.());
+    disposables.textures.forEach(t => t.dispose?.());
+    renderer.dispose();
+  }
+  window.addEventListener('pagehide', disposeAll, { once: true });
+
+  /* ------------------------------------------------------------
+     Boot
+     ------------------------------------------------------------ */
+  applySize();
+  camera.position.set(0, 0, 70);
+  camera.lookAt(0, 0, 0);
+  updateScene(0, 0.016, 0);
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+</script>
 </body>
 </html>
