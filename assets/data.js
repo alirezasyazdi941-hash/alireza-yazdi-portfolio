@@ -18,8 +18,8 @@ window.PORTFOLIO = {
     }
   },
   ui: {
-    en: { film: "Watch the film", enter: "Open the phone", hint: "Tap an app to open it", about: "About", github: "GitHub", mail: "Email", openFull: "Open full page", close: "Close", loading: "Loading…", projects: "Projects", live: "Live demo", tech: "Built with", interests: "Research interests", contact: "Contact", scroll: "Explore" },
-    fa: { film: "تماشای فیلم", enter: "باز کردن گوشی", hint: "برای باز کردن یک اپ روی آن بزنید", about: "درباره", github: "گیت‌هاب", mail: "ایمیل", openFull: "باز کردن تمام‌صفحه", close: "بستن", loading: "در حال بارگذاری…", projects: "پروژه‌ها", live: "دموی زنده", tech: "ساخته‌شده با", interests: "علایق پژوهشی", contact: "ارتباط", scroll: "کاوش" }
+    en: { space: "Space Base (tools)", film: "Watch the film", enter: "Open the phone", hint: "Tap an app to open it", about: "About", github: "GitHub", mail: "Email", openFull: "Open full page", close: "Close", loading: "Loading…", projects: "Projects", live: "Live demo", tech: "Built with", interests: "Research interests", contact: "Contact", scroll: "Explore" },
+    fa: { space: "پایگاه فضایی (ابزارها)", film: "تماشای فیلم", enter: "باز کردن گوشی", hint: "برای باز کردن یک اپ روی آن بزنید", about: "درباره", github: "گیت‌هاب", mail: "ایمیل", openFull: "باز کردن تمام‌صفحه", close: "بستن", loading: "در حال بارگذاری…", projects: "پروژه‌ها", live: "دموی زنده", tech: "ساخته‌شده با", interests: "علایق پژوهشی", contact: "ارتباط", scroll: "کاوش" }
   },
   apps: [
     { id: "alireza-path", cat: "research", path: "apps/alireza-path/index.html", glyph: "path", hue: [215, 175],
