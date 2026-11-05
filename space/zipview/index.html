@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>ZIPVIEW · Alireza Yazdi</title>
+<style>
+@font-face{font-family:'JetBrains Mono';font-weight:100 800;font-display:swap;src:url(../fonts/jetbrains-mono-latin-wght-normal.woff2) format('woff2')}
+@font-face{font-family:Unbounded;font-weight:200 900;font-display:swap;src:url(../fonts/unbounded-latin-wght-normal.woff2) format('woff2')}
+@font-face{font-family:Vazirmatn;font-weight:100 900;font-display:swap;src:url(../fonts/vazirmatn-arabic-wght-normal.woff2) format('woff2');unicode-range:U+0600-06FF}
+:root{--bg:#000;--p:#05080b;--line:#16232b;--line2:#26404c;--tx:#dbe9ee;--mut:#6d8794;--ice:#8cf6ff;--amb:#ffb02e;--red:#ff5a4d;--m:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Vazirmatn,system-ui,sans-serif;line-height:1.7}
+.wrap{max-width:900px;margin:auto;padding:16px 16px 60px}
+h1{font-family:Unbounded,Vazirmatn,sans-serif;font-size:22px;margin:6px 0 2px;letter-spacing:-.02em}
+.mono{font-family:var(--m);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.drop{margin:18px 0;border:1px dashed var(--line2);padding:28px 16px;text-align:center;background:var(--p);cursor:pointer}
+.drop.on{border-color:var(--ice);background:#06161c}
+.btn{font:inherit;font-family:var(--m);font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line2);background:#000;color:var(--tx);padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.p{background:var(--ice);color:#001014;border-color:var(--ice)}
+.btn:focus-visible,.row:focus-visible{outline:2px solid var(--ice);outline-offset:2px}
+.warn{border:1px solid var(--amb);color:var(--amb);padding:8px 12px;font-size:13px;margin:12px 0}
+.err{border-color:var(--red);color:var(--red)}
+#list{margin-top:10px;border:1px solid var(--line)}
+.row{display:flex;gap:10px;align-items:center;padding:7px 12px;border-top:1px solid var(--line);font-family:var(--m);font-size:12px;cursor:pointer;direction:ltr;text-align:left}
+.row:first-child{border-top:0}.row:hover{background:#08141a}
+.row .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.row .s{color:var(--mut)}
+.row.html .n{color:var(--ice)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+#view{position:fixed;inset:0;background:#000;z-index:20;display:none;flex-direction:column}
+#view.on{display:flex}
+.vb{display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line2);background:#03070a}
+.vb .t{flex:1;font-family:var(--m);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
+#fr{flex:1;border:0;background:#fff;width:100%}
+pre{margin:0;padding:12px;overflow:auto;font-family:var(--m);font-size:12px;white-space:pre-wrap;word-break:break-all;flex:1;direction:ltr;text-align:left}
+#txt{display:none;flex:1;flex-direction:column;min-height:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="mono">NONONICK · SPACE BASE · MODULE</div>
+ <h1>ZIPVIEW</h1>
+ <p style="margin:0;color:#aac0cb">فایل زیپ را انتخاب کن؛ داخل خود مرورگر باز می‌شود و سایت ثابت داخلش فوراً اجرا می‌شود. هیچ فایلی آپلود نمی‌شود.</p>
+ <label class="drop" id="drop" for="file"><b>انتخاب فایل ZIP</b><br><span class="mono">یا اینجا رها کن · tap to choose</span><input id="file" type="file" accept=".zip,application/zip" hidden></label>
+ <div id="msg"></div>
+ <div id="out" hidden>
+  <div class="bar"><span class="mono" id="info"></span><span style="flex:1"></span><button class="btn p" id="run" type="button">RUN SITE ▶</button></div>
+  <div id="list" role="list"></div>
+ </div>
+ <p class="warn">امنیت: سایت داخل زیپ با همین دامنه اجرا می‌شود. فقط زیپ‌های خودت یا قابل‌اعتماد را اجرا کن. اپ‌های Node (سرور) اجرا نمی‌شوند؛ فقط بخش ثابتشان (مثل <code>dist</code>).</p>
+</div>
+<div id="view">
+ <div class="vb"><button class="btn" id="close" type="button">← BACK</button><span class="t" id="vt"></span><a class="btn" id="vnew" target="_blank" rel="noopener">↗</a></div>
+ <iframe id="fr" title="preview" allow="camera; microphone; clipboard-write; fullscreen" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"></iframe>
+ <div id="txt"><pre id="code"></pre></div>
+</div>
+<script>
+(function(){'use strict';
+var $=function(i){return document.getElementById(i)};
+var MIME={html:'text/html;charset=utf-8',htm:'text/html;charset=utf-8',css:'text/css;charset=utf-8',js:'text/javascript;charset=utf-8',mjs:'text/javascript;charset=utf-8',json:'application/json;charset=utf-8',webmanifest:'application/manifest+json',svg:'image/svg+xml',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',ico:'image/x-icon',avif:'image/avif',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf',otf:'font/otf',txt:'text/plain;charset=utf-8',md:'text/plain;charset=utf-8',wasm:'application/wasm',map:'application/json',xml:'application/xml',mp3:'audio/mpeg',mp4:'video/mp4',webm:'video/webm',pdf:'application/pdf'};
+var TEXT=/\.(html?|css|m?js|json|webmanifest|svg|txt|md|ts|tsx|jsx|xml|yml|yaml|toml|env|example|csv|map|cff|cjs|sh|py)$/i;
+var zip=null,sid=null,entries=new Map(),root='';
+function msg(t,cls){var m=$('msg');m.textContent='';if(!t)return;var d=document.createElement('div');d.className='warn '+(cls||'');d.textContent=t;m.appendChild(d)}
+function ext(n){var m=/\.([a-z0-9]+)$/i.exec(n);return m?m[1].toLowerCase():''}
+function fmt(n){return n>1048576?(n/1048576).toFixed(1)+' MB':n>1024?(n/1024).toFixed(0)+' KB':n+' B'}
+/* ---------- minimal ZIP reader (stored + deflate; no zip64, no encryption) ---------- */
+async function readZip(file){
+  var size=file.size;if(size<22)throw new Error('این فایل ZIP معتبر نیست.');
+  var tail=new DataView(await file.slice(Math.max(0,size-65557),size).arrayBuffer()),eocd=-1;
+  for(var i=tail.byteLength-22;i>=0;i--)if(tail.getUint32(i,true)===0x06054b50){eocd=i;break}
+  if(eocd<0)throw new Error('ساختار ZIP پیدا نشد.');
+  var total=tail.getUint16(eocd+10,true),cdSize=tail.getUint32(eocd+12,true),cdOff=tail.getUint32(eocd+16,true);
+  if(total===0xffff||cdOff===0xffffffff)throw new Error('ZIP64 (فایل خیلی بزرگ) پشتیبانی نمی‌شود.');
+  var cd=new DataView(await file.slice(cdOff,cdOff+cdSize).arrayBuffer()),p=0,out=[],dec=new TextDecoder('utf-8');
+  for(var k=0;k<total;k++){
+    if(cd.getUint32(p,true)!==0x02014b50)throw new Error('فهرست ZIP خراب است.');
+    var flags=cd.getUint16(p+8,true),method=cd.getUint16(p+10,true),csize=cd.getUint32(p+20,true),usize=cd.getUint32(p+24,true),nl=cd.getUint16(p+28,true),el=cd.getUint16(p+30,true),cl=cd.getUint16(p+32,true),off=cd.getUint32(p+42,true);
+    var name=dec.decode(new Uint8Array(cd.buffer,p+46,nl));p+=46+nl+el+cl;
+    if(flags&1)throw new Error('ZIP رمزدار پشتیبانی نمی‌شود.');
+    if(name.endsWith('/')||/(^|\/)(__MACOSX|\.DS_Store|\.git)(\/|$)/.test(name))continue;
+    out.push({name:name,method:method,csize:csize,size:usize,off:off});
+  }
+  return out;
+}
+async function bytes(e){
+  var h=new DataView(await zip.slice(e.off,e.off+30).arrayBuffer());
+  if(h.getUint32(0,true)!==0x04034b50)throw new Error('local header');
+  var start=e.off+30+h.getUint16(26,true)+h.getUint16(28,true),blob=zip.slice(start,start+e.csize);
+  if(e.method===0)return blob.arrayBuffer();
+  if(e.method!==8)throw new Error('روش فشرده‌سازی '+e.method+' پشتیبانی نمی‌شود');
+  if(typeof DecompressionStream==='undefined')throw new Error('مرورگر شما DecompressionStream ندارد (iOS 16.4+ لازم است).');
+  return new Response(blob.stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+}
+/* ---------- service worker bridge ---------- */
+var swReady=null;
+function ensureSW(){
+  if(swReady)return swReady;
+  if(!('serviceWorker' in navigator))return Promise.reject(new Error('Service Worker در این مرورگر/آدرس در دسترس نیست (HTTPS لازم است).'));
+  swReady=navigator.serviceWorker.register('sw.js').then(function(){return navigator.serviceWorker.ready}).then(function(r){
+    if(navigator.serviceWorker.controller)return r;
+    return new Promise(function(res){navigator.serviceWorker.addEventListener('controllerchange',function(){res(r)},{once:true});setTimeout(function(){res(r)},1500)});
+  });
+  return swReady;
+}
+function lookup(path){
+  path=path.replace(/^\/+/,'');var full=root+path;
+  if(entries.has(full))return entries.get(full);
+  if(!path||path.endsWith('/')){var ix=entries.get(full+'index.html');if(ix)return ix}
+  var dir=entries.get(full.replace(/\/?$/,'/')+'index.html');if(dir)return dir;
+  if(!/\.[a-z0-9]+$/i.test(path)){var spa=entries.get(root+'index.html');if(spa)return spa}   // SPA fallback
+  return null;
+}
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(ev){
+  var d=ev.data,port=ev.ports&&ev.ports[0];if(!d||d.type!=='get'||!port)return;
+  if(d.sid!==sid){port.postMessage({ok:false,error:'session expired'});return}
+  var e=lookup(d.path);if(!e){port.postMessage({ok:false,error:'Not in zip: '+d.path});return}
+  bytes(e).then(function(buf){port.postMessage({ok:true,body:buf,mime:MIME[ext(e.name)]||'application/octet-stream'},[buf])},function(err){port.postMessage({ok:false,error:String(err.message||err)})});
+});
+/* ---------- UI ---------- */
+function detectRoot(names){
+  var tops={};names.forEach(function(n){tops[n.split('/')[0]]=1});var k=Object.keys(tops);
+  return(k.length===1&&names.every(function(n){return n.indexOf('/')>0}))?k[0]+'/':'';
+}
+function siteRoots(){ // folders that hold an index.html
+  var r=[];entries.forEach(function(e,n){if(/(^|\/)index\.html$/i.test(n)&&n.split('/').length<=4)r.push(n)});
+  r.sort(function(a,b){return a.split('/').length-b.split('/').length||a.length-b.length});return r;
+}
+async function load(file){
+  msg('');$('out').hidden=true;
+  try{
+    zip=file;var list=await readZip(file);entries=new Map();list.forEach(function(e){entries.set(e.name,e)});
+    root=detectRoot(list.map(function(e){return e.name}));
+    var tot=list.reduce(function(a,e){return a+e.size},0);
+    $('info').textContent=file.name+' · '+list.length+' files · '+fmt(tot);
+    sid=Math.random().toString(36).slice(2,10);
+    var rows=$('list');rows.textContent='';
+    var names=list.map(function(e){return e.name}).sort(function(a,b){return(a.split('/').length-b.split('/').length)||a.localeCompare(b)});
+    names.forEach(function(n){var e=entries.get(n),r=document.createElement('div');r.className='row'+(/\.html?$/i.test(n)?' html':'');r.tabIndex=0;r.setAttribute('role','listitem');
+      var a=document.createElement('span');a.className='n';a.textContent=n;var s=document.createElement('span');s.className='s';s.textContent=fmt(e.size);r.appendChild(a);r.appendChild(s);
+      var go=function(){openFile(n)};r.addEventListener('click',go);r.addEventListener('keydown',function(ev){if(ev.key==='Enter')go()});rows.appendChild(r)});
+    var sites=siteRoots();
+    $('run').disabled=!sites.length;$('run').style.opacity=sites.length?1:.4;
+    if(!sites.length)msg('index.html پیدا نشد: این پروژه سایت ثابت نیست (احتمالاً اپ Node یا سورس). فایل‌ها را از فهرست ببین.');
+    else if(list.some(function(e){return/(^|\/)(server\.(ts|js)|package\.json)$/.test(e.name)})&&!sites.some(function(s){return/(dist|build|out|browser)\//.test(s)}))msg('این پروژه سورس/سرور دارد. فقط بخش ثابت (اگر باشد) اجرا می‌شود؛ برای اپ کامل باید روی سرور Node اجرا شود.');
+    $('out').hidden=false;
+  }catch(err){msg(String(err.message||err),'err')}
+}
+async function openFile(n){
+  var e=entries.get(n);
+  if(/\.html?$/i.test(n)){return runAt(n)}
+  if(TEXT.test(n)&&e.size<400000){
+    try{var buf=await bytes(e);$('code').textContent=new TextDecoder().decode(buf);$('vt').textContent=n;$('fr').style.display='none';$('txt').style.display='flex';$('vnew').hidden=true;$('view').classList.add('on')}catch(err){msg(String(err.message||err),'err')}
+  }else msg('پیش‌نمایش متنی برای این فایل ممکن نیست ('+fmt(e.size)+').');
+}
+async function runAt(indexName){
+  try{await ensureSW()}catch(err){msg(String(err.message||err),'err');return}
+  var rel=indexName.slice(root.length),dirMap=null;
+  // when the chosen index.html sits in a sub-folder (dist/browser), serve that folder as the site root
+  var prefix=indexName.replace(/[^/]*$/,'');var savedRoot=root;root=prefix;rel=indexName.slice(prefix.length);
+  var url='_v/'+sid+'/'+rel;
+  $('vt').textContent=indexName;$('fr').style.display='block';$('txt').style.display='none';$('fr').src=url;$('vnew').href=url;$('vnew').hidden=false;$('view').classList.add('on');
+}
+$('run').addEventListener('click',function(){var s=siteRoots();if(s.length)runAt(s[0])});
+$('close').addEventListener('click',function(){$('view').classList.remove('on');$('fr').src='about:blank';$('code').textContent=''});
+$('file').addEventListener('change',function(){if(this.files[0])load(this.files[0])});
+var dz=$('drop');['dragover','dragenter'].forEach(function(t){dz.addEventListener(t,function(e){e.preventDefault();dz.classList.add('on')})});
+['dragleave','drop'].forEach(function(t){dz.addEventListener(t,function(e){e.preventDefault();dz.classList.remove('on')})});
+dz.addEventListener('drop',function(e){var f=e.dataTransfer.files[0];if(f)load(f)});
+window.__zipview={load:load};
+})();
+</script>
+</body>
+</html>
