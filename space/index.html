@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>NONONICK SPACE BASE · MISSION CONTROL</title>
+<meta name="description" content="Nononick Space Base — mission-control hub for web, API, database, voice, document and research tools.">
+<style>
+@font-face{font-family:Unbounded;font-weight:200 900;font-display:swap;src:url(fonts/unbounded-latin-wght-normal.woff2) format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-weight:100 800;font-display:swap;src:url(fonts/jetbrains-mono-latin-wght-normal.woff2) format('woff2')}
+@font-face{font-family:Vazirmatn;font-weight:100 900;font-display:swap;src:url(fonts/vazirmatn-arabic-wght-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+200C-200E,U+FB50-FDFF,U+FE80-FEFC}
+@font-face{font-family:Vazirmatn;font-weight:100 900;font-display:swap;src:url(fonts/vazirmatn-latin-wght-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+:root{
+  --bg:#000;--p1:#05080b;--p2:#0a1016;--line:#16232b;--line2:#26404c;
+  --tx:#dbe9ee;--mut:#6d8794;--ice:#8cf6ff;--amb:#ffb02e;--grn:#5dffb0;--red:#ff5a4d;--vio:#a58bff;
+  --disp:Unbounded,Vazirmatn,system-ui,sans-serif;--body:Vazirmatn,system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--body);line-height:1.8;overflow-x:hidden}
+#stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+.scan{position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(140,246,255,.025) 0 1px,transparent 1px 3px);mix-blend-mode:screen}
+.grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:80px 80px;opacity:.28;mask-image:radial-gradient(70% 60% at 50% 40%,#000,transparent)}
+a{color:inherit}
+.wrap{position:relative;z-index:1;max-width:1240px;margin:auto;padding:0 20px}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.mono b{color:var(--ice);font-weight:600}
+header{position:sticky;top:0;z-index:10;background:#000000e6;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:16px;padding:10px 0}
+.brand{white-space:nowrap;font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.08em;display:flex;align-items:center;gap:10px;direction:ltr}
+.brand i{width:18px;height:18px;border:1.5px solid var(--ice);border-radius:50%;position:relative;display:inline-block}
+.brand i::before{content:"";position:absolute;left:-5px;right:-5px;top:50%;height:1.5px;background:var(--ice);transform:rotate(-24deg)}
+.sp{flex:1}
+.chip{border:1px solid var(--line2);background:#000;color:var(--tx);border-radius:2px;padding:4px 12px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+.chip:hover{border-color:var(--ice);color:var(--ice)}
+.led{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 8px var(--grn);margin-inline-end:6px;animation:bl 2s infinite}
+@keyframes bl{50%{opacity:.35}}
+/* corner-bracket panel */
+.pn{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,#05080bcc,#000000cc)}
+.pn::before,.pn::after{content:"";position:absolute;width:10px;height:10px;border:1.5px solid var(--ice);pointer-events:none}
+.pn::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.pn::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.hero{display:grid;grid-template-columns:1fr minmax(320px,540px);gap:34px;align-items:center;min-height:calc(100vh - 62px);padding:34px 0 50px}
+.kick{display:flex;gap:18px;flex-wrap:wrap}
+h1{font-family:var(--disp);font-weight:800;line-height:.92;margin:14px 0 18px;font-size:clamp(44px,8.4vw,112px);letter-spacing:-.045em;direction:ltr;text-align:left}
+h1 span{display:block}
+h1 .o{color:var(--ice);text-shadow:0 0 40px rgba(140,246,255,.35)}
+.lead{font-size:clamp(15px,1.5vw,18px);color:#b8cdd6;max-width:48ch}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:2px;padding:10px 20px;cursor:pointer;border:1px solid var(--line2);background:#000;color:var(--tx);text-decoration:none;display:inline-block}
+.btn.p{background:var(--ice);color:#001014;border-color:var(--ice)}
+.btn:hover{filter:brightness(1.15)}
+.btn:focus-visible,.chip:focus-visible,.node:focus-visible,.bay:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
+.tele{display:grid;grid-template-columns:repeat(4,1fr);margin-top:26px;max-width:620px;direction:ltr}
+.tele div{padding:10px 12px;border:1px solid var(--line);margin:0 -1px -1px 0}
+.tele b{display:block;font-family:var(--mono);font-size:20px;color:var(--ice);font-weight:500;letter-spacing:.02em}
+/* orbit display */
+.orbit{position:relative;width:100%;aspect-ratio:1;margin:auto;padding:0}
+.orbit svg{position:absolute;inset:0;width:100%;height:100%}
+.core{position:absolute;left:50%;top:50%;width:19%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#c9fcff,#2f6f8f 42%,#020b14 82%);box-shadow:0 0 70px rgba(140,246,255,.3),inset -8px -8px 20px #000c;display:grid;place-items:center}
+.node{position:absolute;transform:translate(-50%,-50%);border:1px solid var(--line2);background:#000d;color:var(--tx);border-radius:2px;padding:3px 9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;cursor:pointer;white-space:nowrap;direction:ltr}
+.node::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--c,var(--ice));margin-inline-end:7px;box-shadow:0 0 10px var(--c,var(--ice))}
+.node:hover{border-color:var(--c,var(--ice));color:var(--c,var(--ice))}
+.orbit .cap{position:absolute;left:8px;bottom:6px;direction:ltr}
+.orbit .cap2{position:absolute;right:8px;top:6px;direction:ltr}
+section{padding:64px 0}
+h2{font-family:var(--disp);font-weight:700;font-size:clamp(20px,3vw,34px);margin:6px 0 8px;letter-spacing:-.02em;direction:ltr;text-align:start}
+.sub{color:var(--mut);max-width:62ch;margin:0 0 28px}
+.bays{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.bay{display:flex;flex-direction:column;text-align:start;gap:8px;padding:16px 18px 18px;cursor:pointer;font:inherit;color:var(--tx);transition:transform .18s,border-color .18s;border:1px solid var(--line);background:linear-gradient(180deg,#07101a99,#000)}
+.bay:hover{transform:translateY(-3px);border-color:var(--c)}
+.bay .row{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--mut);direction:ltr}
+.bay .row i{font-style:normal;color:var(--c)}
+.bay h3{margin:0;font-family:var(--disp);font-size:16px;font-weight:700;letter-spacing:-.01em;direction:ltr;text-align:start}
+.bay p{margin:0;color:#aac0cb;font-size:14px;flex:1}
+.bay .go{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--c);direction:ltr;text-align:start}
+.bar{height:3px;background:var(--line);position:relative}
+.bar::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w,70%);background:var(--c)}
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.step{padding:16px 18px}
+.step b{font-family:var(--mono);font-size:26px;color:var(--amb);display:block;direction:ltr;text-align:start;font-weight:500}
+footer{padding:36px 0 60px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);position:relative;z-index:1}
+#dock{position:fixed;inset:0;z-index:50;background:#000;display:none;flex-direction:column}
+#dock.on{display:flex}
+.dbar{display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid var(--line2);background:#03070a}
+.dbar .t{font-family:var(--disp);font-weight:700;font-size:12px;direction:ltr;letter-spacing:.06em}
+#frame{flex:1;border:0;width:100%;background:#000}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+@media(max-width:900px){.hero{grid-template-columns:1fr;min-height:0}.orbit{max-width:440px}}
+@media(max-width:560px){.brand{font-size:10.5px}.top .hide-s{display:none}.tele{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}.led{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas><div class="grid"></div><div class="scan"></div>
+<header><div class="wrap top">
+  <div class="brand"><i></i>NONONICK · SPACE BASE</div><div class="sp"></div>
+  <span class="mono hide-s"><span class="led"></span><b id="clock">--:--:--</b> UTC</span>
+  <span class="mono hide-s">MET <b id="met">000:00:00:00</b></span>
+  <button class="chip" id="lang" aria-label="language">EN / فا</button>
+</div></header>
+
+<main class="wrap">
+<div class="hero">
+  <div>
+    <div class="kick mono"><span data-i="eyebrow"></span><span>· SYS NOMINAL</span></div>
+    <h1><span>SPACE</span><span class="o">BASE</span></h1>
+    <p class="lead" data-i="lead"></p>
+    <div class="cta"><a class="btn p" href="#bays" data-i="cta1"></a><button class="btn" id="random" data-i="cta2"></button></div>
+    <div class="tele pn" aria-label="telemetry">
+      <div><span class="mono" data-i="t1"></span><b id="tMods">0</b></div>
+      <div><span class="mono" data-i="t2"></span><b>100%</b></div>
+      <div><span class="mono" data-i="t3"></span><b>0 KB</b></div>
+      <div><span class="mono" data-i="t4"></span><b id="tTeh">--:--</b></div>
+    </div>
+  </div>
+  <div class="orbit pn" id="orbit" aria-label="orbit map">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <g stroke="#26404c" fill="none" stroke-width=".28">
+        <line x1="0" y1="50" x2="100" y2="50" stroke-dasharray="1 1.5"/><line x1="50" y1="0" x2="50" y2="100" stroke-dasharray="1 1.5"/>
+        <ellipse cx="50" cy="50" rx="46" ry="30" transform="rotate(-22 50 50)"/>
+        <ellipse cx="50" cy="50" rx="35" ry="22" transform="rotate(-22 50 50)" stroke-dasharray="1.2 1.2"/>
+        <ellipse cx="50" cy="50" rx="24" ry="14" transform="rotate(-22 50 50)"/>
+        <circle cx="50" cy="50" r="48"/>
+      </g>
+      <g stroke="#8cf6ff" stroke-width=".25" opacity=".6" id="ticks"></g>
+    </svg>
+    <div class="core"></div>
+    <span class="mono cap">ORBIT PLANE · INCL 22°</span><span class="mono cap2" id="orbN">N=0</span>
+  </div>
+</div>
+
+<section id="bays" class="reveal">
+  <div class="mono" data-i="baysEy"></div>
+  <h2 data-i="baysH"></h2>
+  <p class="sub" data-i="baysP"></p>
+  <div class="bays" id="baysGrid"></div>
+</section>
+
+<section class="reveal">
+  <div class="mono">FLIGHT PLAN</div>
+  <h2 data-i="growH"></h2>
+  <p class="sub" data-i="growP"></p>
+  <div class="pipe" id="pipe"></div>
+</section>
+</main>
+
+<footer><div class="wrap" data-i="foot"></div></footer>
+
+<div id="dock" role="dialog" aria-modal="true" aria-label="Dock">
+  <div class="dbar">
+    <button class="chip" id="back" data-i="back"></button>
+    <span class="t" id="dtitle"></span><span class="sp"></span>
+    <a class="chip" id="newtab" target="_blank" rel="noopener" data-i="newtab"></a>
+  </div>
+  <iframe id="frame" title="module" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads allow-clipboard-write"></iframe>
+</div>
+
+<script>
+/* ---------- REGISTRY: add a new tool = add one object here ---------- */
+var MODULES=[
+ {id:'digital-os',file:'digital-os.html',c:'#8cf6ff',tag:'OS',name:'DIGITAL OS',fa:'سیستم‌عامل دیجیتال',
+  d:{fa:'مرکز فرمان: کد، SSH، گیت، API، جستجو و پروژه‌ها در یک رابط.',en:'Command hub: code, SSH, git, API, search and projects in one interface.'}},
+ {id:'database-os',file:'database-os.html',c:'#a58bff',tag:'DATA',name:'DATABASE OS',fa:'طراح پایگاه‌داده',
+  d:{fa:'طراحی بصری جدول و رابطه و تولید مهاجرت و بک‌اند.',en:'Visual schema designer with migrations and backend generation.'}},
+ {id:'api-forge',file:'api-forge.html',c:'#5dffb0',tag:'API',name:'API FORGE',fa:'کارخانه‌ی API',
+  d:{fa:'ارسال و تست درخواست، وارد/خروجی cURL، تاریخچه و بررسی طرح.',en:'Send and test requests, cURL import/export, history and schema checks.'}},
+ {id:'global-voice',file:'global-voice.html',c:'#ffb02e',tag:'VOICE',name:'GLOBAL VOICE',fa:'تماس و فوروارد',
+  d:{fa:'ابزار مدیریت تماس و هدایت صوتی.',en:'Call management and forwarding tool.'}},
+ {id:'site-os',file:'site-os.html',c:'#ff7ab8',tag:'WEB',name:'SITE OS',fa:'سازنده‌ی سایت',
+  d:{fa:'ساخت و خروجی گرفتن سایت از ویرایشگر.',en:'Build and export websites from the editor.'}},
+ {id:'docscan',file:'docscan/index.html',c:'#7ad7ff',tag:'DOC',name:'DOCSCAN IRAN',fa:'اسکنر مدارک دانشگاهی',
+  d:{fa:'اسکن، تصحیح پرسپکتیو و کنترل دقیق حجم مدارک. پردازش کاملاً محلی.',en:'Scan, deskew and size-control university documents. Fully local processing.'}},
+ {id:'rah-alireza',file:'rah-alireza/index.html',c:'#ffd166',tag:'PATH',name:'RAH-E ALIREZA',fa:'راه علیرضا',
+  d:{fa:'داشبورد مسیر علمی: دانشگاه‌ها، مهارت‌ها، ددلاین‌ها و بک‌آپ JSON.',en:'Academic-path dashboard: universities, skills, deadlines and JSON backup.'}}
+];
+var T={
+ fa:{eyebrow:'کنترل مأموریت · نونونیک',lead:'به‌جای گوشی، یک پایگاه فضایی: ابزارهای وب، API، دیتابیس، صوت، مدارک و مسیر علمی در یک اتاق فرمان. هر ابزار یک بِی (Bay) است که داخل پایگاه باز می‌شود و ابزار تازه هر روز اضافه می‌شود.',
+  cta1:'ورود به بِی‌ها',cta2:'یک ابزار تصادفی',t1:'ماژول',t2:'آپ‌تایم',t3:'ارسال داده',t4:'تهران',
+  baysEy:'BAYS · MODULES',baysH:'BAYS · ابزارها',baysP:'روی هر بِی بزن تا داخل همین صفحه باز شود. با «بازگشت» به اتاق فرمان برگرد.',
+  growH:'FLIGHT PLAN · رشد پایگاه',growP:'پایگاه با ثبت یک خط در فهرست ابزارها بزرگ می‌شود.',
+  back:'← بازگشت',newtab:'تب جدید ↗',foot:'NONONICK SPACE BASE · ابزارها داخل مرورگر اجرا می‌شوند و داده‌ی هر ابزار روی همین دستگاه می‌ماند، مگر خودت سرویس خارجی وصل کنی.',dock:'DOCK →',
+  g:[['01','ثبت ابزار','یک آبجکت به MODULES اضافه کن: نام، فایل، رنگ.'],['02','آزمون','ابزار پیش از ورود به پایگاه تست شود.'],['03','انتشار','فایل را به مخزن یا هاست بفرست؛ پایگاه خودش آن را نشان می‌دهد.']]},
+ en:{eyebrow:'Mission control · Nononick',lead:'Instead of a phone, a space base: web, API, database, voice, document and research-path tools in one control room. Every tool is a bay that opens inside the base, and new tools keep docking.',
+  cta1:'Enter the bays',cta2:'Random tool',t1:'MODULES',t2:'UPTIME',t3:'DATA SENT',t4:'TEHRAN',
+  baysEy:'BAYS · MODULES',baysH:'BAYS · Tools',baysP:'Tap a bay to open it right here. “Back” returns to the control room.',
+  growH:'FLIGHT PLAN · Grow the base',growP:'The base grows by adding one line to the module list.',
+  back:'← Back',newtab:'New tab ↗',foot:'NONONICK SPACE BASE · Tools run in your browser and each keeps its data on this device unless you connect an external service.',dock:'DOCK →',
+  g:[['01','Register','Add an object to MODULES: name, file, colour.'],['02','Test','Each tool is tested before it docks.'],['03','Ship','Push the file to the repo or host; the base lists it automatically.']]}
+};
+var lang='fa';try{lang=localStorage.getItem('nn-space-lang')||'fa';}catch(e){}
+var $=function(s){return document.querySelector(s)};
+function apply(){
+  var t=T[lang];document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(function(e){var k=e.getAttribute('data-i');if(t[k]!==undefined)e.textContent=t[k];});
+  var g=$('#baysGrid');g.textContent='';
+  MODULES.forEach(function(m,i){
+    var b=document.createElement('button');b.className='bay pn';b.style.setProperty('--c',m.c);b.setAttribute('data-id',m.id);
+    var r=document.createElement('div');r.className='row';
+    var a=document.createElement('span');a.textContent='BAY-'+String(i+1).padStart(2,'0')+' · '+m.tag;var s=document.createElement('i');s.textContent='● READY';r.appendChild(a);r.appendChild(s);
+    var h=document.createElement('h3');h.textContent=m.name;
+    var p=document.createElement('p');p.textContent=(lang==='fa'?m.fa+' — ':'')+m.d[lang];
+    var bar=document.createElement('div');bar.className='bar';bar.style.setProperty('--w',(70+((i*13)%30))+'%');
+    var go=document.createElement('div');go.className='go';go.textContent=t.dock;
+    b.appendChild(r);b.appendChild(h);b.appendChild(p);b.appendChild(bar);b.appendChild(go);
+    b.addEventListener('click',function(){openDock(m.id)});g.appendChild(b);
+  });
+  var pp=$('#pipe');pp.textContent='';
+  t.g.forEach(function(x){var d=document.createElement('div');d.className='step pn';var n=document.createElement('b');n.textContent=x[0];var h=document.createElement('div');h.style.fontWeight='700';h.textContent=x[1];var q=document.createElement('div');q.style.color='#8ea6b2';q.style.fontSize='13.5px';q.textContent=x[2];d.appendChild(n);d.appendChild(h);d.appendChild(q);pp.appendChild(d);});
+  $('#tMods').textContent=MODULES.length;$('#orbN').textContent='N='+MODULES.length;
+  document.querySelectorAll('.node').forEach(function(n){n.remove()});buildNodes();
+}
+/* ---------- orbit (inclined ellipses) ---------- */
+var nodes=[],TILT=-22*Math.PI/180;
+function buildNodes(){
+  nodes=[];var o=$('#orbit'),rings=[[46,30],[35,22],[24,14]];
+  MODULES.forEach(function(m,i){
+    var n=document.createElement('button');n.className='node';n.style.setProperty('--c',m.c);n.textContent=m.name;n.setAttribute('data-id',m.id);
+    n.addEventListener('click',function(){openDock(m.id)});o.appendChild(n);
+    var ring=rings[i%3];nodes.push({el:n,a:i*2.399,rx:ring[0],ry:ring[1],sp:(.00005+(i%3)*.00004)*(i%2?-1:1)});
+  });
+}
+function ticks(){var g=$('#ticks'),h='';for(var i=0;i<72;i++){var a=i*5*Math.PI/180,l=i%6?1:2.2;var x1=50+Math.cos(a)*48,y1=50+Math.sin(a)*48,x2=50+Math.cos(a)*(48-l),y2=50+Math.sin(a)*(48-l);h+='<line x1="'+x1.toFixed(2)+'" y1="'+y1.toFixed(2)+'" x2="'+x2.toFixed(2)+'" y2="'+y2.toFixed(2)+'"/>';}g.innerHTML=h;}
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,last=0;
+function tick(ts){
+  var dt=last?ts-last:16;last=ts;var c=Math.cos(TILT),s=Math.sin(TILT);
+  nodes.forEach(function(n){if(!reduce)n.a+=n.sp*dt;var x=Math.cos(n.a)*n.rx,y=Math.sin(n.a)*n.ry;n.el.style.left=(50+x*c-y*s)+'%';n.el.style.top=(50+x*s+y*c)+'%';});
+  requestAnimationFrame(tick);
+}
+/* ---------- deep-space starfield ---------- */
+var cv=$('#stars'),cx=cv.getContext('2d'),W,H,stars=[],px=0,py=0,tx=0,ty=0;
+function size(){var d=Math.min(window.devicePixelRatio||1,2);W=cv.width=innerWidth*d;H=cv.height=innerHeight*d;stars=[];var n=Math.round(innerWidth*innerHeight/5500);for(var i=0;i<n;i++)stars.push({x:Math.random(),y:Math.random(),z:Math.random()*.9+.1,tw:Math.random()*6});}
+function sky(ts){
+  px+=(tx-px)*.05;py+=(ty-py)*.05;cx.clearRect(0,0,W,H);
+  for(var i=0;i<stars.length;i++){var s=stars[i];var x=((s.x*W+px*s.z*40*(W/1000))%W+W)%W,y=((s.y*H+py*s.z*40*(W/1000)+(reduce?0:ts*.003*s.z))%H+H)%H;
+    var a=.3+.7*Math.abs(Math.sin(ts*.001+s.tw));if(reduce)a=.6;cx.fillStyle='rgba(210,235,255,'+(a*s.z).toFixed(2)+')';var r=s.z*1.5*(W/1400+.6);cx.fillRect(x,y,r,r);}
+  requestAnimationFrame(sky);
+}
+addEventListener('pointermove',function(e){tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2;},{passive:true});
+addEventListener('resize',size);
+/* ---------- dock ---------- */
+function openDock(id,noHash){
+  var m=MODULES.filter(function(x){return x.id===id})[0];if(!m)return;
+  $('#dtitle').textContent=m.name;$('#frame').src=m.file;$('#newtab').href=m.file;$('#dock').classList.add('on');
+  document.body.style.overflow='hidden';if(!noHash)history.replaceState(null,'','#'+id);$('#back').focus();
+}
+function closeDock(){$('#dock').classList.remove('on');$('#frame').src='about:blank';document.body.style.overflow='';history.replaceState(null,'',location.pathname);}
+$('#back').addEventListener('click',closeDock);
+addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#dock').classList.contains('on'))closeDock();});
+$('#random').addEventListener('click',function(){openDock(MODULES[Math.floor(Math.random()*MODULES.length)].id);});
+$('#lang').addEventListener('click',function(){lang=lang==='fa'?'en':'fa';try{localStorage.setItem('nn-space-lang',lang);}catch(e){}apply();});
+/* ---------- clocks: UTC, Mission Elapsed Time (since 2026-11-01), Tehran ---------- */
+var T0=Date.UTC(2026,10,1,0,0,0);
+function p2(n){return String(n).padStart(2,'0')}
+function clock(){
+  var d=new Date();$('#clock').textContent=p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+':'+p2(d.getUTCSeconds());
+  var s=Math.max(0,Math.floor((d-T0)/1000)),dd=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;
+  $('#met').textContent=String(dd).padStart(3,'0')+':'+p2(hh)+':'+p2(mm)+':'+p2(ss);
+  var th=new Date(d.getTime()+3.5*3600000);$('#tTeh').textContent=p2(th.getUTCHours())+':'+p2(th.getUTCMinutes());
+}
+setInterval(clock,1000);clock();
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.1}):null;
+document.querySelectorAll('.reveal').forEach(function(e){io?io.observe(e):e.classList.add('in')});
+ticks();apply();size();requestAnimationFrame(tick);requestAnimationFrame(sky);
+if(location.hash.length>1)openDock(location.hash.slice(1),true);
+addEventListener('hashchange',function(){if(location.hash.length>1)openDock(location.hash.slice(1),true);});
+</script>
+</body>
+</html>

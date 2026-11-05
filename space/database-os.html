@@ -1,0 +1,4076 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04050a">
+<title>DATABASE OS — Visual Database Builder & Backend Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --bg:#04050a;
+  --bg-2:#070912;
+  --bg-3:#0c0f1a;
+  --surface:rgba(255,255,255,.028);
+  --surface-2:rgba(255,255,255,.05);
+  --surface-3:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.075);
+  --line-2:rgba(255,255,255,.14);
+  --line-3:rgba(255,255,255,.22);
+  --text:#e9edf6;
+  --dim:#8b93a7;
+  --dim-2:#565e72;
+  --blue:#6aa6ff;
+  --blue-2:#3b82f6;
+  --violet:#8b5cf6;
+  --violet-2:#a78bfa;
+  --cyan:#22d3ee;
+  --green:#4ade80;
+  --amber:#fbbf24;
+  --red:#f87171;
+  --pink:#ec4899;
+  --grad:linear-gradient(120deg,#6aa6ff 0%,#8b5cf6 52%,#22d3ee 100%);
+  --grad-soft:linear-gradient(120deg,rgba(106,166,255,.15),rgba(139,92,246,.15) 52%,rgba(34,211,238,.15));
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --fa:'Vazirmatn','Space Grotesk',sans-serif;
+  --r-xs:6px;--r-sm:8px;--r:12px;--r-lg:16px;--r-xl:22px;--r-2xl:28px;
+  --sh-1:0 4px 12px rgba(0,0,0,.35);
+  --sh-2:0 12px 32px rgba(0,0,0,.5);
+  --sh-3:0 30px 80px rgba(0,0,0,.7);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.4,.5,1);
+  --topbar-h:56px;
+  --sidenav-w:230px;
+  --inspector-w:340px;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+}
+[data-theme="light"]{
+  --bg:#f4f5f8;
+  --bg-2:#ffffff;
+  --bg-3:#f8f9fc;
+  --surface:rgba(255,255,255,.85);
+  --surface-2:rgba(255,255,255,.95);
+  --surface-3:rgba(0,0,0,.05);
+  --line:rgba(15,23,42,.09);
+  --line-2:rgba(15,23,42,.16);
+  --line-3:rgba(15,23,42,.26);
+  --text:#0b1220;
+  --dim:#5b6473;
+  --dim-2:#8b93a7;
+  --blue:#2b6ee5;
+  --blue-2:#1e56c8;
+  --violet:#7c3aed;
+  --cyan:#0891b2;
+  --sh-1:0 4px 12px rgba(15,23,42,.08);
+  --sh-2:0 12px 32px rgba(15,23,42,.12);
+  --sh-3:0 30px 80px rgba(15,23,42,.18);
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+html{background:var(--bg);color-scheme:dark;-webkit-text-size-adjust:100%}
+[data-theme="light"] html{color-scheme:light}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  line-height:1.5;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  letter-spacing:-.006em;
+}
+html[dir="rtl"] body{font-family:var(--fa);letter-spacing:0;line-height:1.6}
+button,input,textarea,select{font:inherit;color:inherit;background:none;border:none}
+button{cursor:pointer}
+a{color:var(--blue);text-decoration:none}
+img,svg,canvas{display:block;max-width:100%}
+ul,ol{list-style:none}
+::selection{background:rgba(139,92,246,.4);color:#fff}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
+::-webkit-scrollbar-track{background:transparent}
+[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15)}
+
+/* Atmospheric background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(70% 45% at 12% -8%, rgba(106,166,255,.09), transparent 60%),
+    radial-gradient(60% 40% at 100% 6%, rgba(139,92,246,.08), transparent 65%),
+    radial-gradient(70% 50% at 50% 112%, rgba(34,211,238,.06), transparent 62%);
+}
+[data-theme="light"] body::before{opacity:.5}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.mono{font-family:var(--mono)}
+.hidden{display:none!important}
+.trunc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row{display:flex;align-items:center;gap:10px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll-x::-webkit-scrollbar{display:none}
+.flex-1{flex:1;min-width:0}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+#app{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:var(--sidenav-w) 1fr;
+  grid-template-rows:var(--topbar-h) 1fr;
+  grid-template-areas:"topbar topbar" "sidenav main";
+  height:100dvh;
+  transition:grid-template-columns .3s var(--ease);
+}
+#app.sidenav-collapsed{grid-template-columns:64px 1fr}
+
+/* TOPBAR */
+.topbar{
+  grid-area:topbar;
+  display:flex;align-items:center;gap:10px;
+  padding:0 calc(12px + var(--safe-r)) 0 calc(12px + var(--safe-l));
+  padding-top:var(--safe-t);
+  background:rgba(4,5,10,.75);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--line);
+  z-index:30;
+}
+[data-theme="light"] .topbar{background:rgba(244,245,248,.8)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{
+  width:26px;height:26px;border-radius:8px;
+  background:var(--grad);
+  box-shadow:0 0 20px rgba(106,166,255,.45);
+  position:relative;flex-shrink:0;
+}
+.brand-mark::after{content:'';position:absolute;inset:5px;border-radius:3px;background:var(--bg)}
+.brand-text{
+  font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;font-weight:500;white-space:nowrap;
+}
+.brand-text em{font-style:normal;color:var(--blue)}
+.topbar-spacer{flex:1}
+.topbar-actions{display:flex;align-items:center;gap:6px}
+.project-pill{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 12px;border-radius:100px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  font-family:var(--mono);font-size:10.5px;
+  max-width:260px;white-space:nowrap;overflow:hidden;
+  cursor:pointer;transition:all .2s;
+}
+.project-pill:hover{background:var(--surface-2);border-color:var(--line-2)}
+.project-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
+.project-pill .dot.off{background:var(--dim-2);box-shadow:none}
+.project-pill .name{overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.project-pill .name em{font-style:normal;color:var(--dim-2)}
+@media(max-width:640px){.project-pill{max-width:140px}}
+
+/* SIDENAV */
+.sidenav{
+  grid-area:sidenav;
+  display:flex;flex-direction:column;
+  background:var(--bg-2);
+  border-right:1px solid var(--line);
+  padding:12px 10px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:25;
+}
+html[dir="rtl"] .sidenav{border-right:none;border-left:1px solid var(--line)}
+.nav-section{margin-bottom:18px}
+.nav-label{
+  padding:6px 10px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--dim-2);
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  width:100%;padding:9px 10px;border-radius:8px;
+  color:var(--dim);font-size:13.5px;font-weight:450;
+  text-align:left;position:relative;
+  transition:all .15s var(--ease);
+  margin-bottom:1px;
+}
+html[dir="rtl"] .nav-item{text-align:right}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.on{background:var(--surface-2);color:var(--text);font-weight:500}
+.nav-item.on::before{
+  content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);
+  width:3px;height:16px;border-radius:0 3px 3px 0;background:var(--blue);
+}
+html[dir="rtl"] .nav-item.on::before{left:auto;right:-10px;border-radius:3px 0 0 3px}
+.nav-item svg{
+  width:16px;height:16px;stroke-width:1.75;fill:none;stroke:currentColor;
+  flex-shrink:0;opacity:.75;
+}
+.nav-item.on svg{color:var(--blue);opacity:1}
+.nav-item .badge{
+  margin-left:auto;font-size:10px;padding:1px 6px;border-radius:4px;
+  background:var(--surface-3);color:var(--dim-2);font-family:var(--mono);
+}
+html[dir="rtl"] .nav-item .badge{margin-left:0;margin-right:auto}
+#app.sidenav-collapsed .nav-label,
+#app.sidenav-collapsed .nav-item span:not(.badge),
+#app.sidenav-collapsed .nav-item .badge{display:none}
+#app.sidenav-collapsed .nav-item{justify-content:center;padding:9px 0}
+
+/* MAIN WORKSPACE */
+.main{
+  grid-area:main;
+  position:relative;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  min-height:0;
+}
+.view{display:none;flex:1;min-height:0;overflow:hidden;flex-direction:column}
+.view.on{display:flex}
+
+/* ============================================================
+   BUTTONS & CONTROLS
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:36px;padding:0 14px;border-radius:10px;
+  font-size:13px;font-weight:500;letter-spacing:-.005em;
+  border:1px solid var(--line-2);color:var(--text);
+  background:var(--surface);transition:all .18s var(--ease);
+  white-space:nowrap;
+}
+.btn svg{width:15px;height:15px;stroke-width:1.85;fill:none;stroke:currentColor;flex-shrink:0}
+.btn:hover{background:var(--surface-2);transform:translateY(-1px);border-color:var(--line-3)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.primary{background:var(--grad);color:#04050a;border-color:transparent;font-weight:600;box-shadow:0 8px 22px -8px rgba(106,166,255,.55)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--dim)}
+.btn.ghost:hover{background:var(--surface);color:var(--text)}
+.btn.danger{color:var(--red);border-color:rgba(248,113,113,.3)}
+.btn.danger:hover{background:rgba(248,113,113,.1)}
+.btn.sm{min-height:30px;padding:0 10px;font-size:12px;border-radius:8px}
+.btn.sm svg{width:13px;height:13px}
+.btn.block{width:100%}
+.btn.icon{padding:0;width:36px;min-width:36px}
+
+.iconbtn{
+  width:34px;height:34px;border-radius:9px;
+  display:grid;place-items:center;color:var(--dim);
+  border:1px solid transparent;
+  transition:all .18s var(--ease);
+  flex-shrink:0;
+}
+.iconbtn svg{width:16px;height:16px;stroke-width:1.85;fill:none;stroke:currentColor}
+.iconbtn:hover{background:var(--surface);color:var(--text);border-color:var(--line)}
+.iconbtn:active{transform:scale(.92)}
+.iconbtn.on{background:var(--surface-2);color:var(--text)}
+
+.input,.select,.textarea{
+  width:100%;min-height:36px;padding:8px 11px;
+  background:var(--surface);border:1px solid var(--line);border-radius:9px;
+  font-size:13.5px;color:var(--text);
+  transition:border-color .15s,background .15s;
+}
+.textarea{min-height:100px;padding:9px 11px;line-height:1.55;resize:vertical;font-family:var(--sans)}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:rgba(106,166,255,.55);background:var(--surface-2)}
+.select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b93a7' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;background-size:13px;
+  padding-right:30px;
+}
+html[dir="rtl"] .select{background-position:left 9px center;padding-right:11px;padding-left:30px}
+.input::placeholder,.textarea::placeholder{color:var(--dim-2)}
+
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim-2);font-weight:500;
+}
+.field .hint{font-size:11.5px;color:var(--dim-2)}
+
+.switch{
+  width:40px;height:22px;border-radius:100px;background:var(--surface-3);
+  position:relative;cursor:pointer;flex-shrink:0;
+  transition:background .25s var(--ease);
+}
+.switch::after{
+  content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);
+  transition:transform .3s var(--spring);
+}
+html[dir="rtl"] .switch::after{left:auto;right:2px}
+.switch.on{background:var(--grad)}
+.switch.on::after{transform:translateX(18px)}
+html[dir="rtl"] .switch.on::after{transform:translateX(-18px)}
+
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 8px;border-radius:6px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:500;
+  background:var(--surface-2);color:var(--dim);white-space:nowrap;
+}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.badge.green{background:rgba(74,222,128,.12);color:var(--green)}
+.badge.blue{background:rgba(106,166,255,.12);color:var(--blue)}
+.badge.violet{background:rgba(139,92,246,.12);color:var(--violet-2)}
+.badge.amber{background:rgba(251,191,36,.12);color:var(--amber)}
+.badge.red{background:rgba(248,113,113,.12);color:var(--red)}
+.badge.cyan{background:rgba(34,211,238,.12);color:var(--cyan)}
+.badge.plain::before{display:none}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:100px;
+  font-size:12px;font-weight:500;
+  background:var(--surface-2);border:1px solid transparent;
+  color:var(--dim);cursor:pointer;
+  transition:all .15s var(--ease);white-space:nowrap;
+}
+.chip:hover{background:var(--surface-3);color:var(--text)}
+.chip.on{background:rgba(106,166,255,.12);border-color:rgba(106,166,255,.3);color:var(--blue)}
+
+/* ============================================================
+   VIEW: HOME / DASHBOARD
+   ============================================================ */
+.view-scroll{
+  flex:1;min-height:0;overflow-y:auto;
+  padding:24px;
+  padding-bottom:calc(24px + var(--safe-b));
+  max-width:1400px;width:100%;margin:0 auto;
+}
+@media(max-width:768px){.view-scroll{padding:16px;padding-bottom:calc(16px + var(--safe-b))}}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.page-eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim-2);display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.page-eyebrow::before{content:'';width:20px;height:1px;background:var(--blue)}
+.page-title{font-size:clamp(22px,4.5vw,34px);font-weight:500;letter-spacing:-.03em;line-height:1.1;margin:0}
+.page-sub{color:var(--dim);font-size:13.5px;margin-top:6px;max-width:520px}
+
+.hero-panel{
+  padding:32px;
+  border:1px solid var(--line);
+  border-radius:var(--r-xl);
+  background:
+    radial-gradient(120% 100% at 12% -10%, rgba(106,166,255,.12), transparent 60%),
+    radial-gradient(110% 90% at 100% 110%, rgba(139,92,246,.10), transparent 60%),
+    var(--surface);
+  position:relative;overflow:hidden;
+}
+.hero-panel::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);pointer-events:none;
+}
+[data-theme="light"] .hero-panel::after{box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.hero-panel h1{font-size:clamp(26px,5vw,42px);font-weight:500;letter-spacing:-.035em;line-height:1.08;margin:0 0 14px}
+.hero-panel h1 .accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-panel p{color:var(--dim);max-width:640px;font-size:14px;line-height:1.65;margin:0 0 22px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.tile{
+  padding:16px;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--surface);transition:all .2s var(--ease);
+}
+.tile:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.tile b{display:block;font-family:var(--mono);font-size:26px;font-weight:500;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim-2);margin-top:8px;text-transform:uppercase}
+.tile small{display:block;font-size:11.5px;color:var(--dim);margin-top:4px;font-family:var(--sans);letter-spacing:0}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:18px;transition:border-color .15s;
+}
+.card:hover{border-color:var(--line-2)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.card-title{font-size:14.5px;font-weight:500;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
+.card-title svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:1.75}
+.card-sub{font-size:12px;color:var(--dim-2);margin-top:3px}
+
+.empty{
+  padding:50px 20px;text-align:center;color:var(--dim-2);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.empty svg{width:34px;height:34px;stroke-width:1.4;fill:none;stroke:currentColor;opacity:.4}
+.empty h4{font-size:14px;font-weight:500;color:var(--text);margin:0}
+.empty p{font-size:12.5px;max-width:340px;margin:0}
+
+/* ============================================================
+   VIEW: SCHEMA DESIGNER (Canvas)
+   ============================================================ */
+.designer-wrap{
+  flex:1;min-height:0;
+  display:grid;
+  grid-template-columns:1fr var(--inspector-w);
+  position:relative;
+}
+.designer-wrap.inspector-closed{grid-template-columns:1fr 0}
+
+.canvas-host{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--bg);
+}
+[data-theme="light"] .canvas-host{
+  background:
+    linear-gradient(rgba(15,23,42,.03) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, rgba(15,23,42,.03) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--bg);
+}
+.canvas{
+  position:absolute;inset:0;
+  cursor:grab;
+  overflow:hidden;
+}
+.canvas.grabbing{cursor:grabbing}
+.canvas-inner{
+  position:absolute;left:0;top:0;
+  transform-origin:0 0;
+  will-change:transform;
+}
+
+/* SVG for relation lines */
+.canvas-svg{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:1;
+  overflow:visible;
+}
+.canvas-svg path{
+  fill:none;stroke:var(--blue);stroke-width:1.5;opacity:.55;
+  transition:opacity .2s,stroke .2s;
+}
+.canvas-svg path.fk-line{stroke:var(--violet-2)}
+.canvas-svg path.on{stroke:var(--cyan);opacity:1;stroke-width:2}
+
+/* Table card */
+.tbl{
+  position:absolute;
+  min-width:220px;
+  background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+  border:1px solid var(--line-2);
+  border-radius:var(--r);
+  box-shadow:var(--sh-2);
+  z-index:2;
+  cursor:pointer;
+  transition:border-color .18s,box-shadow .18s;
+  overflow:hidden;
+}
+[data-theme="light"] .tbl{background:linear-gradient(180deg,#fff,#fafbff)}
+.tbl:hover{border-color:var(--line-3)}
+.tbl.on{border-color:var(--blue);box-shadow:0 0 0 2px rgba(106,166,255,.2), var(--sh-2)}
+.tbl-head{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  background:linear-gradient(180deg, rgba(106,166,255,.10), rgba(106,166,255,.02));
+  border-bottom:1px solid var(--line);
+  cursor:grab;
+  user-select:none;
+}
+.tbl-head:active{cursor:grabbing}
+.tbl-ico{
+  width:22px;height:22px;border-radius:6px;
+  background:var(--grad);display:grid;place-items:center;
+  flex-shrink:0;color:#04050a;
+}
+.tbl-ico svg{width:13px;height:13px;stroke-width:2.4;fill:none;stroke:currentColor}
+.tbl-name{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.02em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl-menu{color:var(--dim-2);width:18px;height:18px;display:grid;place-items:center;flex-shrink:0;font-size:14px;line-height:1}
+.tbl-menu:hover{color:var(--text)}
+.tbl-body{padding:6px 0}
+.tbl-col{
+  display:grid;
+  grid-template-columns:20px 1fr auto auto;
+  align-items:center;gap:6px;
+  padding:6px 12px;
+  font-size:12px;font-family:var(--mono);
+  color:var(--dim);
+  transition:background .15s;
+  cursor:pointer;
+}
+.tbl-col:hover{background:rgba(255,255,255,.03)}
+.tbl-col.on{background:rgba(106,166,255,.1);color:var(--text)}
+.col-icon{display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.col-icon svg{width:11px;height:11px;stroke-width:2;fill:none;stroke:currentColor;opacity:.7}
+.tbl-col .col-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.tbl-col .col-type{font-size:10px;color:var(--dim-2);text-transform:uppercase;letter-spacing:.04em}
+.tbl-col .col-badges{display:flex;gap:3px}
+.col-badge{
+  font-size:8.5px;padding:1px 5px;border-radius:3px;
+  background:var(--surface-2);color:var(--dim-2);
+  font-weight:600;letter-spacing:.04em;
+}
+.col-badge.pk{background:rgba(251,191,36,.15);color:var(--amber)}
+.col-badge.fk{background:rgba(139,92,246,.15);color:var(--violet-2)}
+.col-badge.uq{background:rgba(34,211,238,.15);color:var(--cyan)}
+.tbl-foot{
+  padding:8px 12px;
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:6px;
+  font-size:11.5px;color:var(--dim-2);font-family:var(--mono);
+}
+.tbl-foot button{
+  display:flex;align-items:center;gap:5px;
+  color:var(--blue);font-weight:500;
+  padding:3px 6px;border-radius:5px;
+  transition:background .15s;
+}
+.tbl-foot button:hover{background:rgba(106,166,255,.1)}
+.tbl-foot button svg{width:11px;height:11px;stroke-width:2.2;fill:none;stroke:currentColor}
+
+/* Canvas floating toolbar */
+.canvas-toolbar{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:4px;
+  padding:5px;border-radius:100px;
+  background:rgba(10,12,20,.85);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--line-2);
+  box-shadow:var(--sh-2);
+  z-index:10;
+}
+[data-theme="light"] .canvas-toolbar{background:rgba(255,255,255,.92)}
+.canvas-toolbar .btn{min-height:32px;padding:0 10px;font-size:12px;border-radius:100px;background:transparent;border:none}
+.canvas-toolbar .btn:hover{background:var(--surface-2)}
+.canvas-toolbar .divider{width:1px;height:20px;background:var(--line);margin:0 2px}
+
+.canvas-zoom{
+  position:absolute;bottom:14px;right:14px;
+  display:flex;flex-direction:column;gap:4px;
+  padding:5px;border-radius:12px;
+  background:rgba(10,12,20,.85);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--line-2);
+  z-index:10;
+}
+[data-theme="light"] .canvas-zoom{background:rgba(255,255,255,.92)}
+.canvas-zoom button{
+  width:32px;height:32px;border-radius:8px;
+  display:grid;place-items:center;color:var(--dim);
+}
+.canvas-zoom button:hover{background:var(--surface-2);color:var(--text)}
+.canvas-zoom span{
+  font-family:var(--mono);font-size:10px;text-align:center;
+  color:var(--dim-2);padding:2px 0;
+}
+
+/* ============================================================
+   INSPECTOR (Right Panel)
+   ============================================================ */
+.inspector{
+  background:var(--bg-2);
+  border-left:1px solid var(--line);
+  overflow-y:auto;
+  overflow-x:hidden;
+  position:relative;
+  transition:width .3s var(--ease);
+}
+html[dir="rtl"] .inspector{border-left:none;border-right:1px solid var(--line)}
+.inspector-head{
+  position:sticky;top:0;z-index:2;
+  padding:14px 16px;
+  background:rgba(4,5,10,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+[data-theme="light"] .inspector-head{background:rgba(244,245,248,.9)}
+.inspector-title{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--dim-2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.inspector-body{padding:16px}
+
+@media(max-width:1023px){
+  .designer-wrap{grid-template-columns:1fr}
+  .inspector{
+    position:fixed;right:0;bottom:0;top:var(--topbar-h);
+    width:min(380px,100vw);
+    transform:translateX(100%);
+    transition:transform .3s var(--ease);
+    z-index:40;
+    padding-bottom:var(--safe-b);
+  }
+  html[dir="rtl"] .inspector{right:auto;left:0;transform:translateX(-100%)}
+  .inspector.open{transform:none}
+  .inspector-backdrop{
+    position:fixed;inset:0;top:var(--topbar-h);z-index:39;
+    background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .inspector-backdrop.on{opacity:1;pointer-events:auto}
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.data-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-lg);overflow:hidden;
+  font-size:13px;
+}
+.data-table thead th{
+  text-align:left;padding:10px 14px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim-2);
+  background:var(--surface-2);
+  border-bottom:1px solid var(--line);
+  font-weight:500;white-space:nowrap;
+}
+html[dir="rtl"] .data-table thead th{text-align:right}
+.data-table tbody td{
+  padding:11px 14px;
+  border-bottom:1px solid var(--line);
+  color:var(--text);
+  vertical-align:middle;
+}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table tbody tr{transition:background .15s}
+.data-table tbody tr:hover{background:var(--surface)}
+.data-table .cell-muted{color:var(--dim-2);font-family:var(--mono);font-size:11.5px}
+.data-table .actions{text-align:right;white-space:nowrap}
+html[dir="rtl"] .data-table .actions{text-align:left}
+
+/* ============================================================
+   TOASTS / MODAL / SHEET
+   ============================================================ */
+.toasts{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  z-index:200;
+  display:flex;flex-direction:column;gap:8px;
+  max-width:min(440px,calc(100vw - 24px));
+  width:100%;pointer-events:none;
+}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:var(--r);
+  background:rgba(14,16,22,.96);
+  border:1px solid var(--line-2);
+  box-shadow:var(--sh-3);
+  font-size:13px;color:var(--text);
+  animation:toastIn .3s var(--ease);
+  pointer-events:auto;
+}
+[data-theme="light"] .toast{background:rgba(255,255,255,.98)}
+.toast svg{width:16px;height:16px;stroke-width:2;fill:none;stroke:currentColor;flex-shrink:0}
+.toast.ok svg{stroke:var(--green)}
+.toast.err svg{stroke:var(--red)}
+.toast.warn svg{stroke:var(--amber)}
+.toast.info svg{stroke:var(--blue)}
+.toast .msg{flex:1;min-width:0}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+
+.scrim{
+  position:fixed;inset:0;z-index:80;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease);
+}
+.scrim.on{opacity:1;pointer-events:auto}
+
+.modal-wrap{
+  position:fixed;inset:0;z-index:90;
+  display:grid;place-items:center;
+  padding:16px;
+  padding-bottom:calc(16px + var(--safe-b));
+  opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease);
+}
+.modal-wrap.on{opacity:1;pointer-events:auto}
+.modal-card{
+  width:100%;max-width:600px;max-height:88dvh;
+  background:var(--bg-2);
+  border:1px solid var(--line-2);
+  border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);
+  display:flex;flex-direction:column;
+  transform:scale(.95) translateY(12px);
+  transition:transform .3s var(--spring);
+  overflow:hidden;
+}
+.modal-wrap.on .modal-card{transform:none}
+.modal-head{
+  padding:16px 20px;border-bottom:1px solid var(--line);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+}
+.modal-title{font-size:15px;font-weight:500;letter-spacing:-.015em;margin:0}
+.modal-sub{font-size:12px;color:var(--dim-2);margin-top:3px}
+.modal-body{padding:18px 20px;overflow-y:auto;flex:1;min-height:0}
+.modal-foot{
+  padding:14px 20px;border-top:1px solid var(--line);
+  display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;
+}
+@media(max-width:600px){
+  .modal-wrap{align-items:flex-end;padding:0}
+  .modal-card{border-radius:var(--r-xl) var(--r-xl) 0 0;max-height:92dvh;transform:translateY(100%)}
+  .modal-wrap.on .modal-card{transform:translateY(0)}
+}
+
+/* ============================================================
+   COMMAND PALETTE
+   ============================================================ */
+.cmdk{
+  position:fixed;inset:0;z-index:120;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  display:grid;place-items:flex-start center;
+  padding-top:12vh;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s var(--ease);
+}
+.cmdk.on{opacity:1;pointer-events:auto}
+.cmdk-inner{
+  width:min(560px,calc(100vw - 24px));
+  background:var(--bg-2);border:1px solid var(--line-2);
+  border-radius:var(--r-lg);box-shadow:var(--sh-3);
+  overflow:hidden;
+  transform:scale(.96) translateY(-8px);
+  transition:transform .25s var(--spring);
+}
+.cmdk.on .cmdk-inner{transform:none}
+.cmdk-input{
+  width:100%;padding:16px 20px;
+  border-bottom:1px solid var(--line);
+  font-size:15px;
+}
+.cmdk-input:focus{outline:none}
+.cmdk-input::placeholder{color:var(--dim-2)}
+.cmdk-list{max-height:min(52vh,420px);overflow-y:auto;padding:8px}
+.cmdk-item{
+  display:flex;align-items:center;gap:12px;
+  width:100%;padding:10px 12px;border-radius:8px;
+  font-size:13px;color:var(--text);text-align:left;
+  transition:background .12s;
+}
+html[dir="rtl"] .cmdk-item{text-align:right}
+.cmdk-item:hover,.cmdk-item.on{background:var(--surface-2)}
+.cmdk-item svg{width:15px;height:15px;stroke:var(--dim);stroke-width:1.75;fill:none;flex-shrink:0}
+.cmdk-item.on svg{stroke:var(--blue)}
+.cmdk-item .cat{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--dim-2);letter-spacing:.14em;text-transform:uppercase}
+html[dir="rtl"] .cmdk-item .cat{margin-left:0;margin-right:auto}
+
+/* ============================================================
+   ONBOARDING WIZARD
+   ============================================================ */
+.wizard{
+  flex:1;min-height:0;overflow-y:auto;
+  padding:32px 24px;
+  display:flex;flex-direction:column;align-items:center;
+}
+.wizard-inner{width:100%;max-width:760px;margin:auto}
+.wizard-step{display:none}
+.wizard-step.on{display:block;animation:stepIn .4s var(--ease)}
+@keyframes stepIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.wizard-head{text-align:center;margin-bottom:36px}
+.wizard-step-no{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+.wizard-title{font-size:clamp(24px,4.5vw,38px);font-weight:500;letter-spacing:-.03em;line-height:1.15;margin:0 0 12px}
+.wizard-title .accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.wizard-sub{color:var(--dim);font-size:14px;max-width:520px;margin:0 auto;line-height:1.65}
+
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:28px}
+.choice{
+  padding:20px;border:1px solid var(--line);border-radius:var(--r-lg);
+  background:var(--surface);cursor:pointer;
+  transition:all .2s var(--ease);
+  display:flex;flex-direction:column;gap:10px;
+}
+.choice:hover{border-color:var(--line-2);transform:translateY(-2px);background:var(--surface-2)}
+.choice.on{border-color:var(--blue);background:rgba(106,166,255,.08);box-shadow:0 0 0 2px rgba(106,166,255,.15)}
+.choice-ico{
+  width:40px;height:40px;border-radius:12px;
+  background:var(--grad-soft);border:1px solid var(--line);
+  display:grid;place-items:center;color:var(--blue);
+}
+.choice-ico svg{width:20px;height:20px;stroke-width:1.75;fill:none;stroke:currentColor}
+.choice-name{font-size:15px;font-weight:500;letter-spacing:-.015em}
+.choice-desc{font-size:12.5px;color:var(--dim);line-height:1.55}
+.choice-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+
+.wizard-actions{display:flex;gap:10px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:24px}
+.template{
+  padding:14px;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--surface);cursor:pointer;text-align:left;
+  transition:all .18s var(--ease);
+}
+html[dir="rtl"] .template{text-align:right}
+.template:hover{border-color:var(--line-2);background:var(--surface-2)}
+.template.on{border-color:var(--blue);background:rgba(106,166,255,.08)}
+.template-name{font-size:13.5px;font-weight:500;margin-bottom:3px}
+.template-desc{font-size:11.5px;color:var(--dim-2);line-height:1.4}
+
+.nl-input{
+  width:100%;min-height:120px;padding:14px 16px;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-lg);font-size:14px;line-height:1.65;
+  resize:vertical;font-family:var(--sans);
+}
+.nl-input:focus{outline:none;border-color:var(--blue);background:var(--surface-2)}
+
+/* ============================================================
+   RECORDS EDITOR
+   ============================================================ */
+.records-wrap{
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+}
+.records-toolbar{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--bg-2);
+}
+.records-body{flex:1;overflow:auto;padding:16px}
+@media(max-width:768px){.records-body{padding:10px}.records-toolbar{padding:10px 12px}}
+
+/* ============================================================
+   MIGRATIONS VIEW
+   ============================================================ */
+.mig-item{
+  padding:14px 16px;
+  border:1px solid var(--line);border-radius:var(--r);
+  background:var(--surface);margin-bottom:8px;
+  transition:border-color .18s;
+}
+.mig-item:hover{border-color:var(--line-2)}
+.mig-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mig-num{font-family:var(--mono);font-size:10.5px;color:var(--blue);font-weight:600}
+.mig-name{font-size:13.5px;font-weight:500;flex:1;min-width:0}
+.mig-meta{font-family:var(--mono);font-size:10px;color:var(--dim-2)}
+.mig-sql{
+  font-family:var(--mono);font-size:11.5px;line-height:1.6;
+  padding:10px 12px;border-radius:8px;
+  background:rgba(0,0,0,.35);border:1px solid var(--line);
+  overflow-x:auto;white-space:pre-wrap;word-break:break-word;
+  color:#c4cbd9;
+  max-height:240px;overflow-y:auto;
+}
+[data-theme="light"] .mig-sql{background:#0a0b0e;color:#c4cbd9}
+.mig-sql .kw{color:#c4b5fd}
+.mig-sql .str{color:#86efac}
+.mig-sql .com{color:#71717a;font-style:italic}
+.mig-sql .type{color:#fbbf24}
+
+/* ============================================================
+   API VIEW
+   ============================================================ */
+.api-endpoint{
+  padding:12px 14px;
+  border:1px solid var(--line);border-radius:var(--r);
+  background:var(--surface);margin-bottom:6px;
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:12px;
+}
+.method{
+  padding:3px 8px;border-radius:5px;font-size:10.5px;font-weight:700;letter-spacing:.08em;
+  flex-shrink:0;
+}
+.method.GET{background:rgba(74,222,128,.15);color:var(--green)}
+.method.POST{background:rgba(106,166,255,.15);color:var(--blue)}
+.method.PUT{background:rgba(251,191,36,.15);color:var(--amber)}
+.method.DELETE{background:rgba(248,113,113,.15);color:var(--red)}
+.api-path{color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.api-desc{color:var(--dim-2);font-size:11px}
+
+/* ============================================================
+   PROVIDER CARDS
+   ============================================================ */
+.provider-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.provider{
+  padding:16px;border:1px solid var(--line);border-radius:var(--r-lg);
+  background:var(--surface);
+  transition:all .2s var(--ease);
+  display:flex;flex-direction:column;gap:10px;
+}
+.provider:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.provider.on{border-color:var(--blue);background:rgba(106,166,255,.06);box-shadow:0 0 0 2px rgba(106,166,255,.15)}
+.provider-head{display:flex;align-items:center;gap:10px}
+.provider-ico{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--grad-soft);
+  border:1px solid var(--line);
+  display:grid;place-items:center;
+  flex-shrink:0;
+}
+.provider-ico svg{width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:1.85}
+.provider-name{font-size:14px;font-weight:500;letter-spacing:-.01em}
+.provider-type{font-family:var(--mono);font-size:9.5px;color:var(--dim-2);letter-spacing:.14em;text-transform:uppercase}
+.provider-desc{font-size:12px;color:var(--dim);line-height:1.5}
+.provider-caps{display:flex;gap:3px;flex-wrap:wrap}
+.provider-caps span{
+  font-family:var(--mono);font-size:8.5px;padding:2px 6px;border-radius:4px;
+  background:var(--surface-2);color:var(--dim-2);letter-spacing:.05em;
+}
+.provider-status{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+}
+.provider-status .dot{width:6px;height:6px;border-radius:50%;background:var(--dim-2)}
+.provider-status .dot.connected{background:var(--green);box-shadow:0 0 8px var(--green)}
+.provider-status .dot.error{background:var(--red)}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.form-grid{grid-template-columns:1fr}}
+.form-grid .full{grid-column:1/-1}
+
+.checkbox-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;font-size:13px;
+  cursor:pointer;
+}
+.checkbox-row input[type=checkbox]{
+  width:16px;height:16px;accent-color:var(--blue);cursor:pointer;
+}
+
+/* ============================================================
+   MOBILE BOTTOM NAV
+   ============================================================ */
+.mobile-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  padding:6px 4px calc(6px + var(--safe-b));
+  background:rgba(10,12,20,.92);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border-top:1px solid var(--line);
+  z-index:50;
+}
+[data-theme="light"] .mobile-nav{background:rgba(255,255,255,.95)}
+.mobile-nav-inner{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:2px;
+  max-width:640px;margin:0 auto;
+}
+.mobile-nav button{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:8px 2px;border-radius:10px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--dim-2);
+  transition:color .2s,background .2s;
+}
+.mobile-nav button svg{width:20px;height:20px;stroke-width:1.75;fill:none;stroke:currentColor}
+.mobile-nav button.on{color:var(--text);background:var(--surface-2)}
+.mobile-nav button.on svg{color:var(--blue)}
+
+@media(max-width:1023px){
+  #app{grid-template-columns:1fr;grid-template-areas:"topbar" "main"}
+  .sidenav{display:none}
+  .view-scroll{padding-bottom:calc(80px + var(--safe-b))}
+  .mobile-nav{display:block}
+  .records-body{padding-bottom:calc(80px + var(--safe-b))}
+}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.divider{height:1px;background:var(--line);margin:16px 0}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--dim-2)}
+.kv .v{color:var(--text);font-family:var(--mono);font-size:11.5px;text-align:right;word-break:break-all;max-width:60%}
+
+.code-inline{
+  font-family:var(--mono);font-size:11.5px;
+  padding:2px 6px;border-radius:5px;
+  background:var(--surface-2);color:var(--text);
+}
+
+.spinner{
+  display:inline-block;width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.15);border-top-color:var(--blue);
+  animation:spin .7s linear infinite;vertical-align:-2px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+/* --- FIX: mobile topbar overflow + slide-in nav drawer --- */
+.topbar-actions{min-width:0}
+.project-pill{min-width:0;flex:0 1 auto}
+.nav-scrim{display:none}
+@media(max-width:1023px){
+  #app{grid-template-columns:minmax(0,1fr)}
+  .main{min-width:0}
+  .sidenav{
+    display:flex;position:fixed;z-index:60;
+    top:calc(var(--topbar-h) + var(--safe-t));bottom:0;left:0;
+    width:min(288px,84vw);
+    transform:translateX(-105%);visibility:hidden;
+    transition:transform .25s var(--ease),visibility 0s linear .25s;
+    box-shadow:8px 0 40px rgba(0,0,0,.45);
+    padding-bottom:calc(12px + var(--safe-b));
+  }
+  html[dir="rtl"] .sidenav{left:auto;right:0;transform:translateX(105%)}
+  #app.nav-open .sidenav{transform:none;visibility:visible;transition:transform .25s var(--ease),visibility 0s}
+  .nav-scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5)}
+  #app.nav-open > .nav-scrim{display:block}
+}
+@media(max-width:480px){
+  .brand-text{display:none}
+  .topbar{gap:6px}
+  .project-pill{max-width:120px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="app" class="sidenav-expanded">
+  <div class="nav-scrim" id="navScrim"></div>
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <button class="iconbtn" id="btnToggleNav" aria-label="Toggle sidebar">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-text">DATABASE<em>OS</em></span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="project-pill" id="projectPill">
+        <span class="dot off" id="projectDot"></span>
+        <span class="name" id="projectName">No project<em> — click to create</em></span>
+      </button>
+      <button class="iconbtn" id="btnCmd" title="Command palette (⌘K)">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+      <button class="iconbtn" id="btnTheme" title="Theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ SIDENAV ============ -->
+  <aside class="sidenav" id="sidenav">
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <button class="nav-item on" data-view="home">
+        <svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-view="designer">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Schema Designer</span>
+      </button>
+      <button class="nav-item" data-view="tables">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        <span>Tables</span>
+        <span class="badge" id="navTablesCount">0</span>
+      </button>
+      <button class="nav-item" data-view="records">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M4 14h16"/></svg>
+        <span>Records</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Deploy</div>
+      <button class="nav-item" data-view="migrations">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>Migrations</span>
+      </button>
+      <button class="nav-item" data-view="api">
+        <svg viewBox="0 0 24 24"><path d="M8 6l-6 6 6 6"/><path d="M16 6l6 6-6 6"/></svg>
+        <span>API</span>
+      </button>
+      <button class="nav-item" data-view="providers">
+        <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="4"/></svg>
+        <span>Providers</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Project</div>
+      <button class="nav-item" data-view="export">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        <span>Import / Export</span>
+      </button>
+      <button class="nav-item" data-view="logs">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6"/></svg>
+        <span>Activity Log</span>
+      </button>
+    </div>
+
+    <div class="nav-section" style="margin-top:auto">
+      <button class="nav-item" data-view="about">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>About</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- ============ HOME VIEW ============ -->
+    <section class="view on" data-view="home">
+      <div class="view-scroll">
+        <div id="homeContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ SCHEMA DESIGNER ============ -->
+    <section class="view" data-view="designer">
+      <div class="designer-wrap" id="designerWrap">
+        <div class="canvas-host">
+          <div class="canvas" id="canvas">
+            <div class="canvas-inner" id="canvasInner">
+              <svg class="canvas-svg" id="canvasSvg"></svg>
+              <!-- tables injected here -->
+            </div>
+          </div>
+
+          <div class="canvas-toolbar">
+            <button class="btn sm" id="btnAddTable">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Add Table
+            </button>
+            <div class="divider"></div>
+            <button class="btn sm" id="btnTemplates">Templates</button>
+            <div class="divider"></div>
+            <button class="btn sm" id="btnAutoLayout">Auto Layout</button>
+            <button class="btn sm" id="btnFit">Fit</button>
+          </div>
+
+          <div class="canvas-zoom">
+            <button id="btnZoomIn" aria-label="Zoom in">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <span id="zoomLabel">100%</span>
+            <button id="btnZoomOut" aria-label="Zoom out">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <aside class="inspector" id="inspector">
+          <div class="inspector-head">
+            <div class="inspector-title" id="inspectorTitle">INSPECTOR</div>
+            <button class="iconbtn" id="btnInspectorClose" aria-label="Close">
+              <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="inspector-body" id="inspectorBody">
+            <div class="empty">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6v6H9z"/></svg>
+              <h4>Nothing selected</h4>
+              <p>Click a table or column on the canvas to inspect and edit.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ TABLES VIEW ============ -->
+    <section class="view" data-view="tables">
+      <div class="view-scroll">
+        <div id="tablesContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ RECORDS VIEW ============ -->
+    <section class="view" data-view="records">
+      <div class="records-wrap">
+        <div class="records-toolbar" id="recordsToolbar"></div>
+        <div class="records-body" id="recordsBody"></div>
+      </div>
+    </section>
+
+    <!-- ============ MIGRATIONS VIEW ============ -->
+    <section class="view" data-view="migrations">
+      <div class="view-scroll">
+        <div id="migrationsContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ API VIEW ============ -->
+    <section class="view" data-view="api">
+      <div class="view-scroll">
+        <div id="apiContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ PROVIDERS VIEW ============ -->
+    <section class="view" data-view="providers">
+      <div class="view-scroll">
+        <div id="providersContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ EXPORT VIEW ============ -->
+    <section class="view" data-view="export">
+      <div class="view-scroll">
+        <div id="exportContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ LOGS VIEW ============ -->
+    <section class="view" data-view="logs">
+      <div class="view-scroll">
+        <div id="logsContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT VIEW ============ -->
+    <section class="view" data-view="about">
+      <div class="view-scroll">
+        <div id="aboutContent"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ MOBILE NAV ============ -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-inner">
+    <button data-view="home" class="on">
+      <svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      <span>Home</span>
+    </button>
+    <button data-view="designer">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Design</span>
+    </button>
+    <button data-view="records">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M4 14h16"/></svg>
+      <span>Data</span>
+    </button>
+    <button data-view="providers">
+      <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="4"/></svg>
+      <span>Cloud</span>
+    </button>
+    <button data-view="__cmd">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <span>Cmd</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============ GLOBAL LAYERS ============ -->
+<div class="scrim" id="scrim"></div>
+
+<div class="modal-wrap" id="modalWrap">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 class="modal-title" id="modalTitle">Modal</h3>
+        <div class="modal-sub" id="modalSub"></div>
+      </div>
+      <button class="iconbtn" id="modalClose">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="cmdk" id="cmdk">
+  <div class="cmdk-inner">
+    <input class="cmdk-input" id="cmdkInput" placeholder="Type a command…" autocomplete="off">
+    <div class="cmdk-list" id="cmdkList"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<!-- ============================================================
+   JAVASCRIPT — Full app
+   ============================================================ -->
+<script>
+"use strict";
+
+/* ============================================================
+   1. UTILITIES
+   ============================================================ */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const uid = (p='id') => p + '_' + Math.random().toString(36).slice(2,10);
+const esc = (s) => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const debounce = (fn, ms=300) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
+const nowISO = () => new Date().toISOString();
+const safeJSON = (s, d) => { try { return JSON.parse(s); } catch(e){ return d; } };
+const fmtDate = (iso) => { try { return new Date(iso).toLocaleString(); } catch(e){ return '—'; } };
+
+/* ============================================================
+   2. TOAST / MODAL / SCRIM
+   ============================================================ */
+function toast(msg, kind='info', ms=2600){
+  const host = $('#toasts');
+  if (!host) return;
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind;
+  const icons = {
+    ok:'<path d="M20 6L9 17l-5-5"/>',
+    err:'<circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/>',
+    warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 16h.01"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>'
+  };
+  t.innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none">' + (icons[kind]||icons.info) + '</svg><span class="msg">' + esc(msg) + '</span>';
+  host.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateY(8px)'; setTimeout(()=>t.remove(), 260); }, ms);
+}
+
+const Modal = {
+  open({ title, sub, body, foot, onMount }){
+    $('#modalTitle').textContent = title || '';
+    $('#modalSub').textContent = sub || '';
+    $('#modalBody').innerHTML = body || '';
+    $('#modalFoot').innerHTML = foot || '';
+    $('#modalWrap').classList.add('on');
+    $('#scrim').classList.add('on');
+    if (typeof onMount === 'function') onMount($('#modalBody'));
+  },
+  close(){
+    $('#modalWrap').classList.remove('on');
+    $('#scrim').classList.remove('on');
+  }
+};
+
+/* ============================================================
+   3. INDEXEDDB — LOCAL DATABASE ENGINE
+   ============================================================ */
+const IDB = (() => {
+  let dbp = null;
+  const DB_NAME = 'database_os';
+  const DB_VER = 1;
+  const STORE_PROJECTS = 'projects';
+  const STORE_RECORDS  = 'records';
+  const STORE_SNAPSHOTS = 'snapshots';
+  const STORE_LOGS     = 'logs';
+
+  function open(){
+    if (dbp) return dbp;
+    dbp = new Promise((resolve, reject) => {
+      if (!('indexedDB' in window)) return reject(new Error('IndexedDB not supported'));
+      const r = indexedDB.open(DB_NAME, DB_VER);
+      r.onupgradeneeded = () => {
+        const db = r.result;
+        if (!db.objectStoreNames.contains(STORE_PROJECTS)) db.createObjectStore(STORE_PROJECTS, { keyPath: 'id' });
+        if (!db.objectStoreNames.contains(STORE_RECORDS)) {
+          const s = db.createObjectStore(STORE_RECORDS, { keyPath: 'pk' });
+          s.createIndex('table', 'tableId');
+        }
+        if (!db.objectStoreNames.contains(STORE_SNAPSHOTS)) {
+          const s = db.createObjectStore(STORE_SNAPSHOTS, { keyPath: 'id' });
+          s.createIndex('project', 'projectId');
+        }
+        if (!db.objectStoreNames.contains(STORE_LOGS)) {
+          const s = db.createObjectStore(STORE_LOGS, { keyPath: 'id', autoIncrement: true });
+          s.createIndex('ts', 'ts');
+        }
+      };
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+    return dbp;
+  }
+  const tx = async (store, mode, fn) => {
+    const db = await open();
+    return new Promise((resolve, reject) => {
+      const t = db.transaction(store, mode);
+      const s = t.objectStore(store);
+      let out;
+      try { out = fn(s); } catch (e) { return reject(e); }
+      t.oncomplete = () => resolve(out && out.result !== undefined ? out.result : out);
+      t.onerror = () => reject(t.error);
+    });
+  };
+  return {
+    async put(store, value){ return tx(store, 'readwrite', s => s.put(value)); },
+    async get(store, key){ return tx(store, 'readonly', s => s.get(key)); },
+    async all(store){ return tx(store, 'readonly', s => s.getAll()); },
+    async del(store, key){ return tx(store, 'readwrite', s => s.delete(key)); },
+    async byIndex(store, indexName, value){
+      const db = await open();
+      return new Promise((resolve, reject) => {
+        const t = db.transaction(store, 'readonly');
+        const s = t.objectStore(store);
+        const idx = s.index(indexName);
+        const req = idx.getAll(value);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+  };
+})();
+
+/* ============================================================
+   4. STATE + PROJECT MODEL
+   ============================================================ */
+const DEFAULT_PROJECT = () => ({
+  id: uid('prj'),
+  name: 'Untitled Project',
+  mode: 'local',          // local | cloud
+  providerId: 'local',    // local, supabase, neon, postgres, firebase, custom
+  providerConfig: {},     // NEVER store secrets here — only non-sensitive config
+  createdAt: nowISO(),
+  updatedAt: nowISO(),
+  schema: {
+    version: 1,
+    tables: []           // { id, name, displayName, description, x, y, columns: [], indexes: [], uniques: [] }
+  },
+  migrations: [],         // { id, num, name, sql, createdAt, applied, appliedAt }
+  apiSpec: null,
+  records: {},            // { [tableId]: [ {id, ...fields} ] } — mirrors IndexedDB
+  settings: {
+    theme: 'dark',
+    lang: 'en',
+    autoLayout: false
+  }
+});
+
+let STATE = {
+  project: null,
+  view: 'home',
+  selectedTableId: null,
+  selectedColumnId: null,
+  zoom: 1,
+  panX: 0, panY: 0,
+  history: [],
+  redo: [],
+  logs: [],
+  providers: {}           // in-memory provider connection state
+};
+
+/* ============================================================
+   5. LOCAL DB PROVIDER
+   ============================================================ */
+const LocalProvider = {
+  id: 'local',
+  name: 'Local (Browser)',
+  type: 'local',
+  capabilities: ['createDatabase','createTable','alterTable','deleteTable','query','transactions','auth','storage'],
+
+  async connect(config){
+    await IDB.put('projects', clone(STATE.project));
+    return { ok: true, message: 'Local storage ready' };
+  },
+  async disconnect(){ return { ok: true }; },
+  async createProject(project){
+    await IDB.put('projects', project);
+    return { ok: true };
+  },
+  async createTable(table){
+    const p = STATE.project;
+    p.schema.tables.push(table);
+    await IDB.put('projects', clone(p));
+    await IDB.put('records', { tableId: table.id, data: [] });
+    return { ok: true };
+  },
+  async alterTable(tableId, changes){
+    const p = STATE.project;
+    const t = p.schema.tables.find(x => x.id === tableId);
+    if (!t) return { ok: false, error: 'Table not found' };
+    Object.assign(t, changes);
+    await IDB.put('projects', clone(p));
+    return { ok: true };
+  },
+  async deleteTable(tableId){
+    const p = STATE.project;
+    p.schema.tables = p.schema.tables.filter(x => x.id !== tableId);
+    await IDB.put('projects', clone(p));
+    return { ok: true };
+  },
+  async insert(tableId, record){
+    const existing = (await IDB.get('records', tableId)) || { tableId, data: [] };
+    existing.data.push(record);
+    await IDB.put('records', existing);
+    return { ok: true, record };
+  },
+  async update(tableId, pk, changes){
+    const existing = (await IDB.get('records', tableId)) || { tableId, data: [] };
+    const rec = existing.data.find(r => r.id === pk);
+    if (rec) Object.assign(rec, changes);
+    await IDB.put('records', existing);
+    return { ok: true };
+  },
+  async delete(tableId, pk){
+    const existing = (await IDB.get('records', tableId)) || { tableId, data: [] };
+    existing.data = existing.data.filter(r => r.id !== pk);
+    await IDB.put('records', existing);
+    return { ok: true };
+  },
+  async query(tableId, filter){
+    const existing = (await IDB.get('records', tableId)) || { tableId, data: [] };
+    let rows = existing.data.slice();
+    if (filter && filter.where){
+      try {
+        const fn = new Function('row', `with(row){ return ${filter.where}; }`);
+        rows = rows.filter(r => { try { return fn(r); } catch(e){ return false; } });
+      } catch(e){}
+    }
+    return { ok: true, rows };
+  },
+  async runMigration(sql){
+    // Local provider doesn't execute SQL. It validates & records.
+    return { ok: true, message: 'Migration recorded (local mode — no SQL execution)' };
+  }
+};
+
+/* ============================================================
+   6. CLOUD PROVIDER ADAPTERS (structural, real when configured)
+   ============================================================ */
+function createCloudProvider(cfg){
+  return {
+    id: cfg.id,
+    name: cfg.name,
+    type: cfg.type,
+    capabilities: cfg.capabilities || ['createDatabase','createTable','alterTable','deleteTable','query','transactions'],
+    _config: cfg,
+    _connection: null,
+    async connect(){
+      // Real connection requires backend gateway — never expose keys in frontend.
+      if (!cfg.gatewayUrl){
+        return { ok: false, error: 'Provider not configured. A secure backend gateway URL is required.', action: 'connectProvider' };
+      }
+      try {
+        const res = await fetch(cfg.gatewayUrl + '/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: cfg.id, config: cfg.publicConfig || {} })
+        });
+        if (!res.ok) return { ok: false, error: 'Connection failed: HTTP ' + res.status };
+        const data = await res.json();
+        if (data.ok){
+          this._connection = data;
+          return { ok: true, message: 'Connected to ' + cfg.name };
+        }
+        return { ok: false, error: data.error || 'Connection refused' };
+      } catch(e){
+        return { ok: false, error: 'Gateway unreachable: ' + e.message, action: 'connectProvider' };
+      }
+    },
+    async disconnect(){ this._connection = null; return { ok: true }; },
+    async createDatabase(name){
+      if (!this._connection) return { ok: false, error: 'Not connected. Please connect first.', action: 'connectProvider' };
+      return this._gw('/createDatabase', { name });
+    },
+    async createTable(table){
+      if (!this._connection) return { ok: false, error: 'Not connected. Please connect first.', action: 'connectProvider' };
+      return this._gw('/createTable', { table });
+    },
+    async alterTable(tableId, changes){
+      if (!this._connection) return { ok: false, error: 'Not connected.' };
+      return this._gw('/alterTable', { tableId, changes });
+    },
+    async deleteTable(tableId){
+      if (!this._connection) return { ok: false, error: 'Not connected.' };
+      return this._gw('/deleteTable', { tableId });
+    },
+    async runMigration(sql){
+      if (!this._connection) return { ok: false, error: 'Not connected.' };
+      return this._gw('/runMigration', { sql });
+    },
+    async query(tableId, filter){
+      if (!this._connection) return { ok: false, error: 'Not connected.' };
+      return this._gw('/query', { tableId, filter });
+    },
+    async _gw(path, body){
+      try {
+        const res = await fetch(this._connection.gatewayUrl + path, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-Token': this._connection.sessionToken || ''
+          },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.ok === false){
+          return { ok: false, error: data.error || ('Gateway error: HTTP ' + res.status) };
+        }
+        return data;
+      } catch(e){
+        return { ok: false, error: 'Gateway error: ' + e.message };
+      }
+    }
+  };
+}
+
+const PROVIDERS = {
+  local: LocalProvider,
+  supabase: createCloudProvider({
+    id: 'supabase',
+    name: 'Supabase',
+    type: 'postgres',
+    capabilities: ['createDatabase','createTable','alterTable','deleteTable','query','transactions','auth','storage','realtime'],
+    gatewayUrl: null,
+    publicConfig: {}
+  }),
+  neon: createCloudProvider({
+    id: 'neon',
+    name: 'Neon',
+    type: 'postgres',
+    capabilities: ['createDatabase','createTable','alterTable','deleteTable','query','transactions'],
+    gatewayUrl: null
+  }),
+  postgres: createCloudProvider({
+    id: 'postgres',
+    name: 'PostgreSQL',
+    type: 'postgres',
+    capabilities: ['createDatabase','createTable','alterTable','deleteTable','query','transactions'],
+    gatewayUrl: null
+  }),
+  firebase: createCloudProvider({
+    id: 'firebase',
+    name: 'Firebase Firestore',
+    type: 'nosql',
+    capabilities: ['createDatabase','createTable','deleteTable','query','auth','storage','realtime'],
+    gatewayUrl: null
+  }),
+  custom: createCloudProvider({
+    id: 'custom',
+    name: 'Custom Gateway',
+    type: 'custom',
+    capabilities: ['createDatabase','createTable','alterTable','deleteTable','query'],
+    gatewayUrl: null
+  })
+};
+
+/* ============================================================
+   7. SQL GENERATOR
+   ============================================================ */
+const SQLGen = {
+  typeMap(pg, type){
+    const map = {
+      UUID: pg ? 'UUID' : 'VARCHAR(36)',
+      TEXT: 'TEXT',
+      VARCHAR: (len) => `VARCHAR(${len || 255})`,
+      CHAR: (len) => `CHAR(${len || 1})`,
+      INTEGER: pg ? 'INTEGER' : 'INT',
+      BIGINT: 'BIGINT',
+      DECIMAL: (len) => `DECIMAL(${len || '10,2'})`,
+      FLOAT: pg ? 'REAL' : 'FLOAT',
+      DOUBLE: 'DOUBLE PRECISION',
+      BOOLEAN: pg ? 'BOOLEAN' : 'TINYINT(1)',
+      DATE: 'DATE',
+      TIME: 'TIME',
+      TIMESTAMP: pg ? 'TIMESTAMP' : 'DATETIME',
+      JSON: pg ? 'JSON' : 'JSON',
+      JSONB: 'JSONB',
+      BLOB: pg ? 'BYTEA' : 'BLOB',
+      ENUM: 'VARCHAR(64)'
+    };
+    return map[type] || 'TEXT';
+  },
+
+  columnSQL(col, pg=true){
+    const t = this.typeMap(pg, col.type);
+    const type = typeof t === 'function' ? t(col.length) : t;
+    const parts = [`"${col.name}"`, type];
+    if (col.primaryKey) parts.push('PRIMARY KEY');
+    if (col.autoIncrement){
+      if (pg && (col.type === 'INTEGER' || col.type === 'BIGINT')) {
+        // SERIAL / BIGSERIAL handled by caller (replacing type)
+      } else if (!pg) parts.push('AUTO_INCREMENT');
+    }
+    if (col.unique && !col.primaryKey) parts.push('UNIQUE');
+    if (!col.nullable && !col.primaryKey) parts.push('NOT NULL');
+    if (col.default !== undefined && col.default !== null && col.default !== ''){
+      const d = String(col.default);
+      if (/^(now\(\)|current_timestamp)$/i.test(d)) parts.push('DEFAULT ' + d);
+      else if (/^-?\d+(\.\d+)?$/.test(d)) parts.push('DEFAULT ' + d);
+      else if (/^(true|false)$/i.test(d)) parts.push('DEFAULT ' + d.toUpperCase());
+      else parts.push("DEFAULT '" + d.replace(/'/g,"''") + "'");
+    }
+    return parts.join(' ');
+  },
+
+  createTable(table, pg=true){
+    const lines = [];
+    const pkCols = table.columns.filter(c => c.primaryKey);
+    for (const c of table.columns){
+      let sql = this.columnSQL(c, pg);
+      // Handle SERIAL
+      if (pg && c.primaryKey && c.autoIncrement && c.type === 'INTEGER'){
+        sql = `"${c.name}" SERIAL PRIMARY KEY`;
+      } else if (pg && c.primaryKey && c.autoIncrement && c.type === 'BIGINT'){
+        sql = `"${c.name}" BIGSERIAL PRIMARY KEY`;
+      }
+      lines.push('  ' + sql);
+    }
+    // Composite PK
+    if (pkCols.length > 1){
+      lines.push('  PRIMARY KEY (' + pkCols.map(c => `"${c.name}"`).join(', ') + ')');
+    }
+    // Foreign keys
+    for (const c of table.columns){
+      if (c.foreignKey && c.foreignKey.table && c.foreignKey.column){
+        const rule = c.foreignKey.onDelete || 'NO ACTION';
+        lines.push(`  FOREIGN KEY ("${c.name}") REFERENCES "${c.foreignKey.table}"("${c.foreignKey.column}") ON DELETE ${rule}`);
+      }
+    }
+    return `CREATE TABLE "${table.name}" (\n${lines.join(',\n')}\n);`;
+  },
+
+  createIndexes(table){
+    const out = [];
+    for (const idx of (table.indexes || [])){
+      const cols = (idx.columns || []).map(c => `"${c}"`).join(', ');
+      if (!cols) continue;
+      if (idx.unique) out.push(`CREATE UNIQUE INDEX "${idx.name || (table.name + '_' + (idx.columns||[]).join('_'))}" ON "${table.name}" (${cols});`);
+      else out.push(`CREATE INDEX "${idx.name || (table.name + '_' + (idx.columns||[]).join('_'))}" ON "${table.name}" (${cols});`);
+    }
+    return out;
+  },
+
+  migrationSQL(project, pg=true){
+    const out = [];
+    out.push('-- Migration generated by DATABASE OS');
+    out.push('-- Project: ' + project.name);
+    out.push('-- Provider: ' + project.providerId);
+    out.push('-- Timestamp: ' + nowISO());
+    out.push('');
+    for (const t of project.schema.tables){
+      out.push(this.createTable(t, pg));
+      for (const ix of this.createIndexes(t)) out.push(ix);
+      out.push('');
+    }
+    return out.join('\n');
+  }
+};
+
+/* ============================================================
+   8. VALIDATION ENGINE
+   ============================================================ */
+const Validator = {
+  validate(project){
+    const errors = [];
+    const warnings = [];
+    const info = [];
+    const tableNames = new Set();
+    const tables = project.schema.tables;
+
+    for (const t of tables){
+      if (!t.name || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(t.name)){
+        errors.push({ level:'error', table: t.id, message: `Table "${t.name || '(unnamed)'}" has an invalid name. Must start with a letter/underscore.` });
+      }
+      if (tableNames.has(t.name)) errors.push({ level:'error', table: t.id, message: `Duplicate table name "${t.name}".` });
+      tableNames.add(t.name);
+
+      if (!t.columns || !t.columns.length){
+        errors.push({ level:'error', table: t.id, message: `Table "${t.name}" has no columns.` });
+        continue;
+      }
+      const colNames = new Set();
+      for (const c of t.columns){
+        if (!c.name || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(c.name)){
+          errors.push({ level:'error', table: t.id, column: c.id, message: `Column name "${c.name || '(unnamed)'}" is invalid.` });
+        }
+        if (colNames.has(c.name)){
+          errors.push({ level:'error', table: t.id, column: c.id, message: `Duplicate column "${c.name}" in table "${t.name}".` });
+        }
+        colNames.add(c.name);
+        if (c.foreignKey && c.foreignKey.table){
+          const ref = tables.find(x => x.name === c.foreignKey.table || x.id === c.foreignKey.table);
+          if (!ref) errors.push({ level:'error', table: t.id, column: c.id, message: `Foreign key "${c.name}" references unknown table "${c.foreignKey.table}".` });
+        }
+      }
+      const pkCount = t.columns.filter(c => c.primaryKey).length;
+      if (pkCount === 0) warnings.push({ level:'warning', table: t.id, message: `Table "${t.name}" has no primary key.` });
+      const autoIncCount = t.columns.filter(c => c.autoIncrement).length;
+      if (autoIncCount > 1) errors.push({ level:'error', table: t.id, message: `Table "${t.name}" has ${autoIncCount} auto-increment columns (max 1 allowed).` });
+    }
+
+    // Circular dependency check (simple: table A → table B → table A)
+    const fkGraph = {};
+    for (const t of tables){
+      fkGraph[t.name] = t.columns.filter(c => c.foreignKey && c.foreignKey.table).map(c => c.foreignKey.table);
+    }
+    for (const tname in fkGraph){
+      const visited = new Set();
+      const stack = [tname];
+      while (stack.length){
+        const cur = stack.pop();
+        if (visited.has(cur)) continue;
+        visited.add(cur);
+        for (const nxt of (fkGraph[cur]||[])){
+          if (nxt === tname && cur !== tname){
+            warnings.push({ level:'warning', message: `Circular foreign key detected involving "${tname}".` });
+            stack.length = 0; break;
+          }
+          if (fkGraph[nxt]) stack.push(nxt);
+        }
+      }
+    }
+
+    if (tables.length === 0) info.push({ level:'info', message: 'No tables defined yet.' });
+
+    return {
+      errors, warnings, info,
+      valid: errors.length === 0
+    };
+  }
+};
+
+/* ============================================================
+   9. TEMPLATES
+   ============================================================ */
+const TEMPLATES = {
+  blog: {
+    name: 'Blog',
+    desc: 'Posts, authors, categories',
+    build(){
+      return [
+        mkTable('users', [
+          mkCol('id', 'UUID', { primaryKey:true, nullable:false }),
+          mkCol('name', 'VARCHAR', { length:'120', nullable:false }),
+          mkCol('email', 'VARCHAR', { length:'180', nullable:false, unique:true }),
+          mkCol('created_at', 'TIMESTAMP', { default:'now()' })
+        ]),
+        mkTable('posts', [
+          mkCol('id', 'UUID', { primaryKey:true }),
+          mkCol('author_id', 'UUID', { nullable:false, foreignKey:{ table:'users', column:'id', onDelete:'CASCADE' } }),
+          mkCol('title', 'VARCHAR', { length:'200', nullable:false }),
+          mkCol('content', 'TEXT'),
+          mkCol('published', 'BOOLEAN', { default:'false' }),
+          mkCol('created_at', 'TIMESTAMP', { default:'now()' })
+        ]),
+        mkTable('categories', [
+          mkCol('id', 'UUID', { primaryKey:true }),
+          mkCol('name', 'VARCHAR', { length:'80', nullable:false, unique:true })
+        ])
+      ];
+    }
+  },
+  ecommerce: {
+    name: 'E-commerce',
+    desc: 'Products, orders, customers',
+    build(){
+      return [
+        mkTable('customers', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'120',nullable:false}),
+          mkCol('email','VARCHAR',{length:'180',unique:true}),
+          mkCol('created_at','TIMESTAMP',{default:'now()'})
+        ]),
+        mkTable('products', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'200',nullable:false}),
+          mkCol('price','DECIMAL',{length:'10,2',nullable:false}),
+          mkCol('stock','INTEGER',{default:'0'}),
+          mkCol('description','TEXT')
+        ]),
+        mkTable('orders', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('customer_id','UUID',{nullable:false,foreignKey:{table:'customers',column:'id',onDelete:'CASCADE'}}),
+          mkCol('total','DECIMAL',{length:'10,2'}),
+          mkCol('status','VARCHAR',{length:'30',default:'pending'}),
+          mkCol('created_at','TIMESTAMP',{default:'now()'})
+        ]),
+        mkTable('order_items', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('order_id','UUID',{foreignKey:{table:'orders',column:'id',onDelete:'CASCADE'}}),
+          mkCol('product_id','UUID',{foreignKey:{table:'products',column:'id',onDelete:'RESTRICT'}}),
+          mkCol('quantity','INTEGER',{default:'1'})
+        ])
+      ];
+    }
+  },
+  crm: {
+    name: 'CRM',
+    desc: 'Contacts, companies, deals',
+    build(){
+      return [
+        mkTable('companies', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'200',nullable:false}),
+          mkCol('website','VARCHAR',{length:'255'}),
+          mkCol('created_at','TIMESTAMP',{default:'now()'})
+        ]),
+        mkTable('contacts', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('company_id','UUID',{foreignKey:{table:'companies',column:'id',onDelete:'SET NULL'}}),
+          mkCol('first_name','VARCHAR',{length:'80'}),
+          mkCol('last_name','VARCHAR',{length:'80'}),
+          mkCol('email','VARCHAR',{length:'180'})
+        ]),
+        mkTable('deals', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('contact_id','UUID',{foreignKey:{table:'contacts',column:'id',onDelete:'CASCADE'}}),
+          mkCol('value','DECIMAL',{length:'12,2'}),
+          mkCol('stage','VARCHAR',{length:'40',default:'lead'})
+        ])
+      ];
+    }
+  },
+  portfolio: {
+    name: 'Portfolio',
+    desc: 'Projects, tags',
+    build(){
+      return [
+        mkTable('projects', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('title','VARCHAR',{length:'200',nullable:false}),
+          mkCol('description','TEXT'),
+          mkCol('url','VARCHAR',{length:'255'}),
+          mkCol('created_at','TIMESTAMP',{default:'now()'})
+        ]),
+        mkTable('tags', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'60',nullable:false,unique:true})
+        ]),
+        mkTable('project_tags', [
+          mkCol('project_id','UUID',{primaryKey:true,foreignKey:{table:'projects',column:'id',onDelete:'CASCADE'}}),
+          mkCol('tag_id','UUID',{primaryKey:true,foreignKey:{table:'tags',column:'id',onDelete:'CASCADE'}})
+        ])
+      ];
+    }
+  },
+  booking: {
+    name: 'Booking',
+    desc: 'Services, slots, appointments',
+    build(){
+      return [
+        mkTable('services', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'150',nullable:false}),
+          mkCol('duration_minutes','INTEGER',{default:'30'}),
+          mkCol('price','DECIMAL',{length:'10,2'})
+        ]),
+        mkTable('appointments', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('service_id','UUID',{foreignKey:{table:'services',column:'id',onDelete:'RESTRICT'}}),
+          mkCol('customer_name','VARCHAR',{length:'150'}),
+          mkCol('starts_at','TIMESTAMP',{nullable:false}),
+          mkCol('ends_at','TIMESTAMP'),
+          mkCol('status','VARCHAR',{length:'30',default:'booked'})
+        ])
+      ];
+    }
+  },
+  gym: {
+    name: 'Gym',
+    desc: 'Members, trainers, plans',
+    build(){
+      return [
+        mkTable('members', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('full_name','VARCHAR',{length:'150',nullable:false}),
+          mkCol('email','VARCHAR',{length:'180',unique:true}),
+          mkCol('phone','VARCHAR',{length:'40'}),
+          mkCol('joined_at','TIMESTAMP',{default:'now()'})
+        ]),
+        mkTable('trainers', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('full_name','VARCHAR',{length:'150',nullable:false}),
+          mkCol('specialty','VARCHAR',{length:'120'})
+        ]),
+        mkTable('plans', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'80',nullable:false}),
+          mkCol('price','DECIMAL',{length:'10,2'}),
+          mkCol('duration_days','INTEGER',{default:'30'})
+        ]),
+        mkTable('subscriptions', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('member_id','UUID',{foreignKey:{table:'members',column:'id',onDelete:'CASCADE'}}),
+          mkCol('plan_id','UUID',{foreignKey:{table:'plans',column:'id',onDelete:'RESTRICT'}}),
+          mkCol('starts_at','TIMESTAMP',{default:'now()'}),
+          mkCol('ends_at','TIMESTAMP')
+        ]),
+        mkTable('payments', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('subscription_id','UUID',{foreignKey:{table:'subscriptions',column:'id',onDelete:'CASCADE'}}),
+          mkCol('amount','DECIMAL',{length:'10,2'}),
+          mkCol('paid_at','TIMESTAMP',{default:'now()'})
+        ])
+      ];
+    }
+  },
+  inventory: {
+    name: 'Inventory',
+    desc: 'Items, suppliers, stock',
+    build(){
+      return [
+        mkTable('items', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('sku','VARCHAR',{length:'64',unique:true}),
+          mkCol('name','VARCHAR',{length:'200',nullable:false}),
+          mkCol('quantity','INTEGER',{default:'0'}),
+          mkCol('price','DECIMAL',{length:'10,2'})
+        ]),
+        mkTable('suppliers', [
+          mkCol('id','UUID',{primaryKey:true}),
+          mkCol('name','VARCHAR',{length:'200',nullable:false}),
+          mkCol('contact','VARCHAR',{length:'200'})
+        ]),
+        mkTable('item_suppliers', [
+          mkCol('item_id','UUID',{primaryKey:true,foreignKey:{table:'items',column:'id',onDelete:'CASCADE'}}),
+          mkCol('supplier_id','UUID',{primaryKey:true,foreignKey:{table:'suppliers',column:'id',onDelete:'CASCADE'}})
+        ])
+      ];
+    }
+  }
+};
+
+function mkTable(name, columns){
+  return {
+    id: uid('tbl'),
+    name,
+    displayName: name.charAt(0).toUpperCase() + name.slice(1),
+    description: '',
+    x: 60 + Math.random()*400,
+    y: 60 + Math.random()*300,
+    columns: columns || [],
+    indexes: [],
+    uniques: []
+  };
+}
+
+function mkCol(name, type, opts={}){
+  return {
+    id: uid('col'),
+    name,
+    type,
+    length: opts.length || '',
+    nullable: opts.nullable !== false,
+    default: opts.default !== undefined ? opts.default : null,
+    primaryKey: !!opts.primaryKey,
+    unique: !!opts.unique,
+    autoIncrement: !!opts.autoIncrement,
+    generated: false,
+    indexed: false,
+    foreignKey: opts.foreignKey || null
+  };
+}
+
+/* ============================================================
+   10. MIGRATIONS ENGINE
+   ============================================================ */
+const Migrations = {
+  generate(project){
+    const pg = project.providerId !== 'local' && project.providerId !== 'firebase';
+    const out = [];
+    let num = 1;
+
+    for (const t of project.schema.tables){
+      const sql = SQLGen.createTable(t, pg);
+      out.push({
+        id: uid('mig'),
+        num: num++,
+        name: `Create table ${t.name}`,
+        sql,
+        createdAt: nowISO(),
+        applied: false,
+        appliedAt: null,
+        tableId: t.id
+      });
+      for (const ix of SQLGen.createIndexes(t)){
+        out.push({
+          id: uid('mig'),
+          num: num++,
+          name: `Index on ${t.name}`,
+          sql: ix,
+          createdAt: nowISO(),
+          applied: false,
+          tableId: t.id
+        });
+      }
+    }
+
+    project.migrations = out;
+    return out;
+  }
+};
+
+/* ============================================================
+   11. RENDERING HELPERS
+   ============================================================ */
+function renderIcon(name){
+  const icons = {
+    table: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',
+    key: '<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07L11.75 5"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07L12.25 19"/>',
+    text: '<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',
+    number: '<path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' + (icons[name] || icons.table) + '</svg>';
+}
+
+function colIcon(col){
+  if (col.primaryKey) return renderIcon('key');
+  if (col.foreignKey) return renderIcon('link');
+  if (['INTEGER','BIGINT','DECIMAL','FLOAT','DOUBLE'].includes(col.type)) return renderIcon('number');
+  return renderIcon('text');
+}
+
+/* ============================================================
+   12. VIEW: HOME / DASHBOARD
+   ============================================================ */
+function renderHome(){
+  const p = STATE.project;
+  const host = $('#homeContent');
+  if (!p){
+    host.innerHTML = `
+      <div class="hero-panel">
+        <div class="page-eyebrow">DATABASE OS</div>
+        <h1>Design, deploy and manage <span class="accent">real databases</span> — visually.</h1>
+        <p>Create schemas, generate SQL migrations, produce CRUD admin panels and connect to cloud providers — all from your browser. Local mode works offline. Cloud mode requires a secure gateway.</p>
+        <div class="hero-actions">
+          <button class="btn primary" id="btnStartLocal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M12 5v14M5 12h14"/></svg>
+            Start Local Project
+          </button>
+          <button class="btn" id="btnStartCloud">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M4 15a4 4 0 0 1 4-4h1a5 5 0 0 1 10 0 3 3 0 0 1 0 6H8a4 4 0 0 1-4-2z"/></svg>
+            Cloud Project
+          </button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <h2 class="page-title" style="margin-bottom:14px">Templates</h2>
+      <div class="template-grid" id="homeTemplates"></div>
+    `;
+    const grid = $('#homeTemplates');
+    grid.innerHTML = Object.entries(TEMPLATES).map(([k, t]) => `
+      <button class="template" data-tpl="${k}">
+        <div class="template-name">${esc(t.name)}</div>
+        <div class="template-desc">${esc(t.desc)}</div>
+      </button>
+    `).join('');
+    grid.onclick = e => {
+      const b = e.target.closest('[data-tpl]');
+      if (!b) return;
+      startProjectFromTemplate(b.dataset.tpl);
+    };
+    $('#btnStartLocal').onclick = () => startNewProject('local');
+    $('#btnStartCloud').onclick = () => startNewProject('cloud');
+    return;
+  }
+
+  const tableCount = p.schema.tables.length;
+  const colCount = p.schema.tables.reduce((s, t) => s + (t.columns?.length || 0), 0);
+  const relCount = p.schema.tables.reduce((s, t) => s + (t.columns?.filter(c => c.foreignKey)?.length || 0), 0);
+  const migCount = (p.migrations || []).length;
+
+  host.innerHTML = `
+    <div class="hero-panel">
+      <div class="page-eyebrow">PROJECT · ${esc(p.providerId.toUpperCase())}</div>
+      <h1>${esc(p.name)}</h1>
+      <p>${p.mode === 'local' ? 'Local mode — schema and records stay on this device.' : 'Cloud mode — connect a provider to deploy.'}</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="btnOpenDesigner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Open Designer
+        </button>
+        <button class="btn" id="btnGenerateMigrations">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+          Generate Migrations
+        </button>
+        <button class="btn" id="btnValidate">
+          Validate Schema
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tiles">
+      <div class="tile"><b>${tableCount}</b><span>Tables</span></div>
+      <div class="tile"><b>${colCount}</b><span>Columns</span></div>
+      <div class="tile"><b>${relCount}</b><span>Relations</span></div>
+      <div class="tile"><b>${migCount}</b><span>Migrations</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Quick actions</div>
+        </div>
+      </div>
+      <div class="grid-3">
+        <button class="btn" id="qaAddTable">+ Add Table</button>
+        <button class="btn" id="qaTemplates">Load Template</button>
+        <button class="btn" id="qaRecords">Open Records</button>
+        <button class="btn" id="qaProviders">Connect Provider</button>
+        <button class="btn" id="qaExport">Export Project</button>
+        <button class="btn" id="qaImport">Import Project</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Recent activity</div>
+          <div class="card-sub">Last 10 events</div>
+        </div>
+      </div>
+      <div id="homeActivity"></div>
+    </div>
+  `;
+
+  $('#btnOpenDesigner').onclick = () => switchView('designer');
+  $('#btnGenerateMigrations').onclick = generateMigrations;
+  $('#btnValidate').onclick = () => {
+    const r = Validator.validate(STATE.project);
+    const lines = [];
+    if (r.errors.length) lines.push('❌ ' + r.errors.length + ' error(s)');
+    if (r.warnings.length) lines.push('⚠️ ' + r.warnings.length + ' warning(s)');
+    if (r.info.length) lines.push('ℹ️ ' + r.info.length + ' info');
+    if (!lines.length) lines.push('✅ Schema is valid');
+    toast(lines.join(' · '), r.errors.length ? 'err' : r.warnings.length ? 'warn' : 'ok', 3200);
+    showValidationModal(r);
+  };
+  $('#qaAddTable').onclick = () => addTableDialog();
+  $('#qaTemplates').onclick = () => showTemplatesModal();
+  $('#qaRecords').onclick = () => switchView('records');
+  $('#qaProviders').onclick = () => switchView('providers');
+  $('#qaExport').onclick = () => switchView('export');
+  $('#qaImport').onclick = () => switchView('export');
+
+  const act = STATE.logs.slice(-10).reverse();
+  $('#homeActivity').innerHTML = act.length ? act.map(l => `
+    <div class="kv">
+      <span class="k">${esc(l.op)}</span>
+      <span class="v">${esc(fmtDate(l.ts))}</span>
+    </div>
+  `).join('') : '<div class="empty"><p>No activity yet.</p></div>';
+}
+
+function showValidationModal(r){
+  const body = `
+    ${r.errors.length ? `<div class="card" style="border-color:rgba(248,113,113,.3);margin-bottom:12px">
+      <div class="card-title" style="color:var(--red)">Errors (${r.errors.length})</div>
+      ${r.errors.map(e => `<div style="padding:6px 0;font-size:12.5px">${esc(e.message)}</div>`).join('')}
+    </div>` : ''}
+    ${r.warnings.length ? `<div class="card" style="border-color:rgba(251,191,36,.3);margin-bottom:12px">
+      <div class="card-title" style="color:var(--amber)">Warnings (${r.warnings.length})</div>
+      ${r.warnings.map(e => `<div style="padding:6px 0;font-size:12.5px">${esc(e.message)}</div>`).join('')}
+    </div>` : ''}
+    ${r.info.length ? `<div class="card">
+      <div class="card-title">Info (${r.info.length})</div>
+      ${r.info.map(e => `<div style="padding:6px 0;font-size:12.5px">${esc(e.message)}</div>`).join('')}
+    </div>` : ''}
+    ${(!r.errors.length && !r.warnings.length && !r.info.length) ? '<p class="page-sub">Schema is empty.</p>' : ''}
+  `;
+  Modal.open({
+    title: 'Schema Validation',
+    sub: r.valid ? 'No blocking errors' : 'Fix errors before deployment',
+    body,
+    foot: `<button class="btn primary" onclick="Modal.close()">Close</button>`
+  });
+}
+
+/* ============================================================
+   13. PROJECT LIFECYCLE
+   ============================================================ */
+function startNewProject(mode){
+  Modal.open({
+    title: 'New Project',
+    sub: 'Give your project a name',
+    body: `
+      <div class="field">
+        <label>Project name</label>
+        <input class="input" id="newProjName" placeholder="My Database" value="My Project">
+      </div>
+      <div class="field">
+        <label>Mode</label>
+        <div class="chips">
+          <button class="chip ${mode==='local'?'on':''}" data-mode="local">Local</button>
+          <button class="chip ${mode==='cloud'?'on':''}" data-mode="cloud">Cloud</button>
+        </div>
+      </div>
+    `,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="btnCreateProj">Create</button>
+    `,
+    onMount(){
+      let selectedMode = mode;
+      $$('.chip[data-mode]').forEach(c => {
+        c.onclick = () => {
+          selectedMode = c.dataset.mode;
+          $$('.chip[data-mode]').forEach(x => x.classList.toggle('on', x === c));
+        };
+      });
+      $('#btnCreateProj').onclick = async () => {
+        const name = $('#newProjName').value.trim() || 'Untitled Project';
+        STATE.project = DEFAULT_PROJECT();
+        STATE.project.name = name;
+        STATE.project.mode = selectedMode;
+        STATE.project.providerId = selectedMode === 'cloud' ? 'supabase' : 'local';
+        await IDB.put('projects', clone(STATE.project));
+        logActivity('Created project');
+        Modal.close();
+        toast('Project created', 'ok');
+        renderAll();
+      };
+    }
+  });
+}
+
+function startProjectFromTemplate(key){
+  const tpl = TEMPLATES[key];
+  if (!tpl) return;
+  Modal.open({
+    title: 'Load Template: ' + tpl.name,
+    sub: 'This will replace the current schema (if any)',
+    body: `
+      <div class="field">
+        <label>Project name</label>
+        <input class="input" id="tplProjName" value="${esc(tpl.name)} Project">
+      </div>
+      <p class="page-sub">Tables: ${tpl.build().map(t => t.name).join(', ')}</p>
+    `,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="btnLoadTpl">Load Template</button>
+    `,
+    onMount(){
+      $('#btnLoadTpl').onclick = async () => {
+        const name = $('#tplProjName').value.trim() || 'Untitled Project';
+        STATE.project = DEFAULT_PROJECT();
+        STATE.project.name = name;
+        STATE.project.mode = 'local';
+        STATE.project.providerId = 'local';
+        STATE.project.schema.tables = tpl.build();
+        autoLayoutTables();
+        Migrations.generate(STATE.project);
+        await IDB.put('projects', clone(STATE.project));
+        logActivity('Loaded template: ' + tpl.name);
+        Modal.close();
+        toast('Template loaded: ' + tpl.name, 'ok');
+        switchView('designer');
+      };
+    }
+  });
+}
+
+async function persistProject(){
+  if (!STATE.project) return;
+  STATE.project.updatedAt = nowISO();
+  await IDB.put('projects', clone(STATE.project));
+}
+
+async function loadProjectFromIDB(){
+  try {
+    const all = await IDB.all('projects');
+    if (all && all.length){
+      STATE.project = all[all.length - 1];
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
+
+function autoLayoutTables(){
+  const p = STATE.project;
+  if (!p) return;
+  const cols = 3;
+  const cellW = 280, cellH = 220;
+  p.schema.tables.forEach((t, i) => {
+    t.x = 60 + (i % cols) * cellW;
+    t.y = 60 + Math.floor(i / cols) * cellH;
+  });
+}
+
+/* ============================================================
+   14. TABLE + COLUMN OPERATIONS
+   ============================================================ */
+function addTableDialog(){
+  if (!STATE.project){
+    toast('Create a project first', 'warn');
+    return;
+  }
+  Modal.open({
+    title: 'New Table',
+    body: `
+      <div class="field"><label>Table name</label><input class="input" id="ntName" placeholder="users"></div>
+      <div class="field"><label>Display name</label><input class="input" id="ntDisplay" placeholder="Users"></div>
+      <div class="field"><label>Description</label><input class="input" id="ntDesc" placeholder="User accounts"></div>
+    `,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="btnCreateTable">Create Table</button>
+    `,
+    onMount(){
+      $('#btnCreateTable').onclick = async () => {
+        const name = $('#ntName').value.trim();
+        if (!name){ toast('Name required', 'err'); return; }
+        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)){ toast('Invalid identifier. Use letters, numbers, underscores.', 'err'); return; }
+        if (STATE.project.schema.tables.find(t => t.name === name)){ toast('Table name already exists', 'err'); return; }
+
+        const table = mkTable(name, [
+          mkCol('id', 'UUID', { primaryKey:true, nullable:false }),
+          mkCol('created_at', 'TIMESTAMP', { default:'now()' })
+        ]);
+        table.displayName = $('#ntDisplay').value.trim() || table.displayName;
+        table.description = $('#ntDesc').value.trim();
+        STATE.project.schema.tables.push(table);
+        autoLayoutTables();
+        Migrations.generate(STATE.project);
+        await persistProject();
+        logActivity('Created table: ' + name);
+        Modal.close();
+        toast('Table created', 'ok');
+        renderAll();
+        renderDesigner();
+      };
+    }
+  });
+}
+
+function addColumnDialog(tableId){
+  const t = STATE.project.schema.tables.find(x => x.id === tableId);
+  if (!t) return;
+  const TYPES = ['UUID','TEXT','VARCHAR','CHAR','INTEGER','BIGINT','DECIMAL','FLOAT','DOUBLE','BOOLEAN','DATE','TIME','TIMESTAMP','JSON','JSONB','BLOB'];
+  Modal.open({
+    title: 'Add Column to ' + t.name,
+    body: `
+      <div class="form-grid">
+        <div class="field"><label>Name</label><input class="input" id="ncName" placeholder="email"></div>
+        <div class="field"><label>Type</label>
+          <select class="select" id="ncType">
+            ${TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field full"><label>Length / precision</label><input class="input" id="ncLen" placeholder="e.g. 255 or 10,2"></div>
+        <div class="field full"><label>Default value</label><input class="input" id="ncDef" placeholder="e.g. now() or 0"></div>
+      </div>
+      <label class="checkbox-row"><input type="checkbox" id="ncNullable"> Nullable</label>
+      <label class="checkbox-row"><input type="checkbox" id="ncPK"> Primary key</label>
+      <label class="checkbox-row"><input type="checkbox" id="ncUnique"> Unique</label>
+      <label class="checkbox-row"><input type="checkbox" id="ncAuto"> Auto increment</label>
+      <div class="field"><label>Foreign key (optional)</label>
+        <select class="select" id="ncFk">
+          <option value="">— None —</option>
+          ${STATE.project.schema.tables
+            .filter(x => x.id !== tableId)
+            .map(x => x.columns.map(c => `<option value="${x.name}.${c.name}">${x.name}.${c.name}</option>`).join(''))
+            .join('')}
+        </select>
+      </div>
+    `,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="btnAddCol">Add Column</button>
+    `,
+    onMount(){
+      $('#ncNullable').checked = true;
+      $('#btnAddCol').onclick = async () => {
+        const name = $('#ncName').value.trim();
+        if (!name){ toast('Name required', 'err'); return; }
+        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)){ toast('Invalid identifier', 'err'); return; }
+        if (t.columns.find(c => c.name === name)){ toast('Column already exists', 'err'); return; }
+        const fk = $('#ncFk').value ? (() => {
+          const [tbl, col] = $('#ncFk').value.split('.');
+          return { table: tbl, column: col, onDelete: 'NO ACTION' };
+        })() : null;
+        const col = mkCol(name, $('#ncType').value, {
+          length: $('#ncLen').value.trim(),
+          default: $('#ncDef').value.trim() || null,
+          nullable: $('#ncNullable').checked,
+          primaryKey: $('#ncPK').checked,
+          unique: $('#ncUnique').checked,
+          autoIncrement: $('#ncAuto').checked,
+          foreignKey: fk
+        });
+        t.columns.push(col);
+        Migrations.generate(STATE.project);
+        await persistProject();
+        logActivity('Added column ' + name + ' to ' + t.name);
+        Modal.close();
+        toast('Column added', 'ok');
+        renderAll();
+        renderDesigner();
+      };
+    }
+  });
+}
+
+function editColumnDialog(tableId, colId){
+  const t = STATE.project.schema.tables.find(x => x.id === tableId);
+  if (!t) return;
+  const col = t.columns.find(c => c.id === colId);
+  if (!col) return;
+  const TYPES = ['UUID','TEXT','VARCHAR','CHAR','INTEGER','BIGINT','DECIMAL','FLOAT','DOUBLE','BOOLEAN','DATE','TIME','TIMESTAMP','JSON','JSONB','BLOB'];
+  Modal.open({
+    title: 'Edit Column',
+    sub: t.name + '.' + col.name,
+    body: `
+      <div class="form-grid">
+        <div class="field"><label>Name</label><input class="input" id="ecName" value="${esc(col.name)}"></div>
+        <div class="field"><label>Type</label>
+          <select class="select" id="ecType">
+            ${TYPES.map(tt => `<option value="${tt}" ${tt===col.type?'selected':''}>${tt}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field full"><label>Length</label><input class="input" id="ecLen" value="${esc(col.length||'')}"></div>
+        <div class="field full"><label>Default</label><input class="input" id="ecDef" value="${esc(col.default||'')}"></div>
+      </div>
+      <label class="checkbox-row"><input type="checkbox" id="ecNullable" ${col.nullable?'checked':''}> Nullable</label>
+      <label class="checkbox-row"><input type="checkbox" id="ecPK" ${col.primaryKey?'checked':''}> Primary key</label>
+      <label class="checkbox-row"><input type="checkbox" id="ecUnique" ${col.unique?'checked':''}> Unique</label>
+      <label class="checkbox-row"><input type="checkbox" id="ecAuto" ${col.autoIncrement?'checked':''}> Auto increment</label>
+    `,
+    foot: `
+      <button class="btn danger" id="ecDelete">Delete</button>
+      <span style="flex:1"></span>
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="ecSave">Save</button>
+    `,
+    onMount(){
+      $('#ecSave').onclick = async () => {
+        col.name = $('#ecName').value.trim() || col.name;
+        col.type = $('#ecType').value;
+        col.length = $('#ecLen').value.trim();
+        col.default = $('#ecDef').value.trim() || null;
+        col.nullable = $('#ecNullable').checked;
+        col.primaryKey = $('#ecPK').checked;
+        col.unique = $('#ecUnique').checked;
+        col.autoIncrement = $('#ecAuto').checked;
+        Migrations.generate(STATE.project);
+        await persistProject();
+        logActivity('Edited column ' + col.name);
+        Modal.close();
+        toast('Column saved', 'ok');
+        renderAll();
+        renderDesigner();
+      };
+      $('#ecDelete').onclick = async () => {
+        if (!confirm('Delete column "' + col.name + '"?')) return;
+        t.columns = t.columns.filter(c => c.id !== colId);
+        Migrations.generate(STATE.project);
+        await persistProject();
+        logActivity('Deleted column ' + col.name);
+        Modal.close();
+        toast('Column deleted', 'ok');
+        renderAll();
+        renderDesigner();
+      };
+    }
+  });
+}
+
+/* ============================================================
+   15. SCHEMA DESIGNER (canvas)
+   ============================================================ */
+function renderDesigner(){
+  if (!STATE.project) return;
+  const inner = $('#canvasInner');
+  const svg = $('#canvasSvg');
+  const tables = STATE.project.schema.tables;
+
+  // Render tables
+  const existing = new Set($$('.tbl', inner).map(el => el.dataset.id));
+  const current = new Set(tables.map(t => t.id));
+
+  // Remove deleted
+  $$('.tbl', inner).forEach(el => {
+    if (!current.has(el.dataset.id)) el.remove();
+  });
+
+  for (const t of tables){
+    let el = $(`.tbl[data-id="${t.id}"]`, inner);
+    if (!el){
+      el = document.createElement('div');
+      el.className = 'tbl';
+      el.dataset.id = t.id;
+      el.style.left = t.x + 'px';
+      el.style.top = t.y + 'px';
+      inner.appendChild(el);
+      setupTableDrag(el, t);
+    } else {
+      el.style.left = t.x + 'px';
+      el.style.top = t.y + 'px';
+    }
+    el.classList.toggle('on', STATE.selectedTableId === t.id);
+
+    el.innerHTML = `
+      <div class="tbl-head">
+        <div class="tbl-ico">${renderIcon('table')}</div>
+        <div class="tbl-name">${esc(t.name)}</div>
+        <div class="tbl-menu">⋯</div>
+      </div>
+      <div class="tbl-body">
+        ${t.columns.map(c => `
+          <div class="tbl-col" data-col-id="${c.id}">
+            <span class="col-icon">${colIcon(c)}</span>
+            <span class="col-name">${esc(c.name)}</span>
+            <span class="col-type">${esc(c.type)}</span>
+            <span class="col-badges">
+              ${c.primaryKey ? '<span class="col-badge pk">PK</span>' : ''}
+              ${c.foreignKey ? '<span class="col-badge fk">FK</span>' : ''}
+              ${c.unique && !c.primaryKey ? '<span class="col-badge uq">UQ</span>' : ''}
+            </span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="tbl-foot">
+        <button data-act="add-col">+ Add column</button>
+      </div>
+    `;
+
+    el.onclick = (e) => {
+      if (e.target.closest('.tbl-head')) return;
+      const colEl = e.target.closest('.tbl-col');
+      if (colEl){
+        STATE.selectedTableId = t.id;
+        STATE.selectedColumnId = colEl.dataset.colId;
+        renderDesigner();
+        renderInspector();
+        return;
+      }
+      const addBtn = e.target.closest('[data-act="add-col"]');
+      if (addBtn){ addColumnDialog(t.id); return; }
+      STATE.selectedTableId = t.id;
+      STATE.selectedColumnId = null;
+      renderDesigner();
+      renderInspector();
+    };
+  }
+
+  // Render relation lines
+  renderRelations();
+
+  // Apply pan/zoom
+  inner.style.transform = `translate(${STATE.panX}px, ${STATE.panY}px) scale(${STATE.zoom})`;
+  $('#zoomLabel').textContent = Math.round(STATE.zoom * 100) + '%';
+}
+
+function renderRelations(){
+  const svg = $('#canvasSvg');
+  const inner = $('#canvasInner');
+  const tables = STATE.project.schema.tables;
+  const rects = {};
+  for (const t of tables){
+    const el = $(`.tbl[data-id="${t.id}"]`, inner);
+    if (!el) continue;
+    rects[t.id] = {
+      x: t.x, y: t.y,
+      w: el.offsetWidth || 240,
+      h: el.offsetHeight || 120
+    };
+  }
+  let html = '';
+  for (const t of tables){
+    for (const c of t.columns){
+      if (!c.foreignKey || !c.foreignKey.table) continue;
+      const ref = tables.find(x => x.name === c.foreignKey.table || x.id === c.foreignKey.table);
+      if (!ref) continue;
+      const a = rects[t.id], b = rects[ref.id];
+      if (!a || !b) continue;
+      const ax = a.x + a.w/2, ay = a.y + a.h/2;
+      const bx = b.x + b.w/2, by = b.y + b.h/2;
+      const active = STATE.selectedTableId === t.id || STATE.selectedTableId === ref.id;
+      html += `<path class="fk-line ${active?'on':''}" d="M${ax},${ay} C${(ax+bx)/2},${ay} ${(ax+bx)/2},${by} ${bx},${by}" />`;
+    }
+  }
+  svg.innerHTML = html;
+}
+
+function setupTableDrag(el, table){
+  const head = el.querySelector('.tbl-head');
+  if (!head) return;
+  let sx = 0, sy = 0, ox = 0, oy = 0, dragging = false;
+
+  head.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.tbl-menu')) return;
+    dragging = true;
+    head.setPointerCapture(e.pointerId);
+    sx = e.clientX; sy = e.clientY;
+    ox = table.x; oy = table.y;
+    el.style.zIndex = '100';
+    e.preventDefault();
+  });
+  head.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = (e.clientX - sx) / STATE.zoom;
+    const dy = (e.clientY - sy) / STATE.zoom;
+    table.x = ox + dx;
+    table.y = oy + dy;
+    el.style.left = table.x + 'px';
+    el.style.top = table.y + 'px';
+    renderRelations();
+  });
+  head.addEventListener('pointerup', () => {
+    if (!dragging) return;
+    dragging = false;
+    el.style.zIndex = '';
+    persistProject();
+  });
+  head.addEventListener('pointercancel', () => {
+    dragging = false;
+    el.style.zIndex = '';
+  });
+}
+
+function setupCanvasPanZoom(){
+  const canvas = $('#canvas');
+  const inner = $('#canvasInner');
+  let panning = false, sx = 0, sy = 0, ox = 0, oy = 0;
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.tbl')) return;
+    panning = true;
+    canvas.classList.add('grabbing');
+    canvas.setPointerCapture(e.pointerId);
+    sx = e.clientX; sy = e.clientY;
+    ox = STATE.panX; oy = STATE.panY;
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!panning) return;
+    STATE.panX = ox + (e.clientX - sx);
+    STATE.panY = oy + (e.clientY - sy);
+    inner.style.transform = `translate(${STATE.panX}px, ${STATE.panY}px) scale(${STATE.zoom})`;
+  });
+  canvas.addEventListener('pointerup', () => {
+    panning = false;
+    canvas.classList.remove('grabbing');
+  });
+  canvas.addEventListener('pointercancel', () => {
+    panning = false;
+    canvas.classList.remove('grabbing');
+  });
+
+  canvas.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey || e.deltaMode === 1){
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      setZoom(STATE.zoom * delta);
+    }
+  }, { passive: false });
+
+  // Touch pinch
+  let pinchStart = 0, pinchZoom = 1;
+  canvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2){
+      pinchStart = dist(e.touches[0], e.touches[1]);
+      pinchZoom = STATE.zoom;
+    }
+  }, { passive: true });
+  canvas.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2 && pinchStart){
+      const d = dist(e.touches[0], e.touches[1]);
+      setZoom(clamp(pinchZoom * (d / pinchStart), 0.25, 2.5));
+    }
+  }, { passive: true });
+  function dist(a, b){ return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); }
+}
+
+function setZoom(z){
+  STATE.zoom = clamp(z, 0.25, 2.5);
+  const inner = $('#canvasInner');
+  inner.style.transform = `translate(${STATE.panX}px, ${STATE.panY}px) scale(${STATE.zoom})`;
+  $('#zoomLabel').textContent = Math.round(STATE.zoom * 100) + '%';
+  renderRelations();
+}
+
+/* ============================================================
+   16. INSPECTOR (contextual panel)
+   ============================================================ */
+function renderInspector(){
+  const body = $('#inspectorBody');
+  const title = $('#inspectorTitle');
+  if (!STATE.project){ title.textContent = 'INSPECTOR'; body.innerHTML = emptyInspector(); return; }
+
+  if (!STATE.selectedTableId){
+    title.textContent = 'INSPECTOR';
+    body.innerHTML = emptyInspector();
+    return;
+  }
+
+  const t = STATE.project.schema.tables.find(x => x.id === STATE.selectedTableId);
+  if (!t){ title.textContent = 'INSPECTOR'; body.innerHTML = emptyInspector(); return; }
+
+  if (STATE.selectedColumnId){
+    const col = t.columns.find(c => c.id === STATE.selectedColumnId);
+    if (!col){ STATE.selectedColumnId = null; return renderInspector(); }
+    title.textContent = 'COLUMN · ' + col.name;
+    body.innerHTML = `
+      <div class="field"><label>Name</label><input class="input" id="inspColName" value="${esc(col.name)}"></div>
+      <div class="field"><label>Type</label>
+        <select class="select" id="inspColType">
+          ${['UUID','TEXT','VARCHAR','CHAR','INTEGER','BIGINT','DECIMAL','FLOAT','DOUBLE','BOOLEAN','DATE','TIME','TIMESTAMP','JSON','JSONB','BLOB']
+            .map(t => `<option value="${t}" ${t===col.type?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Length</label><input class="input" id="inspColLen" value="${esc(col.length||'')}"></div>
+      <div class="field"><label>Default</label><input class="input" id="inspColDef" value="${esc(col.default||'')}"></div>
+      <label class="checkbox-row"><input type="checkbox" id="inspNullable" ${col.nullable?'checked':''}> Nullable</label>
+      <label class="checkbox-row"><input type="checkbox" id="inspPK" ${col.primaryKey?'checked':''}> Primary key</label>
+      <label class="checkbox-row"><input type="checkbox" id="inspUnique" ${col.unique?'checked':''}> Unique</label>
+      <label class="checkbox-row"><input type="checkbox" id="inspAuto" ${col.autoIncrement?'checked':''}> Auto increment</label>
+      <div class="row" style="margin-top:14px;gap:6px">
+        <button class="btn danger sm" id="inspDeleteCol">Delete</button>
+        <span style="flex:1"></span>
+        <button class="btn primary sm" id="inspSaveCol">Save</button>
+      </div>
+    `;
+    $('#inspSaveCol').onclick = async () => {
+      col.name = $('#inspColName').value.trim() || col.name;
+      col.type = $('#inspColType').value;
+      col.length = $('#inspColLen').value.trim();
+      col.default = $('#inspColDef').value.trim() || null;
+      col.nullable = $('#inspNullable').checked;
+      col.primaryKey = $('#inspPK').checked;
+      col.unique = $('#inspUnique').checked;
+      col.autoIncrement = $('#inspAuto').checked;
+      Migrations.generate(STATE.project);
+      await persistProject();
+      renderDesigner();
+      renderInspector();
+      toast('Column saved', 'ok');
+    };
+    $('#inspDeleteCol').onclick = async () => {
+      if (!confirm('Delete this column?')) return;
+      t.columns = t.columns.filter(c => c.id !== col.id);
+      STATE.selectedColumnId = null;
+      Migrations.generate(STATE.project);
+      await persistProject();
+      renderDesigner();
+      renderInspector();
+      toast('Column deleted', 'ok');
+    };
+    return;
+  }
+
+  title.textContent = 'TABLE · ' + t.name;
+  body.innerHTML = `
+    <div class="field"><label>Table name</label><input class="input" id="inspTblName" value="${esc(t.name)}"></div>
+    <div class="field"><label>Display name</label><input class="input" id="inspTblDisplay" value="${esc(t.displayName||'')}"></div>
+    <div class="field"><label>Description</label><input class="input" id="inspTblDesc" value="${esc(t.description||'')}"></div>
+
+    <div class="divider"></div>
+
+    <div class="row-between" style="margin-bottom:10px">
+      <div class="inspector-title">Columns (${t.columns.length})</div>
+      <button class="btn sm" id="inspAddCol">+ Add</button>
+    </div>
+    ${t.columns.map(c => `
+      <div class="list-item" data-col="${c.id}" style="cursor:pointer">
+        <div class="info">
+          <b>${esc(c.name)}</b>
+          <span>${esc(c.type)}${c.length?'('+esc(c.length)+')':''}${c.primaryKey?' · PK':''}${c.foreignKey?' · FK→'+esc(c.foreignKey.table):''}</span>
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="divider"></div>
+
+    <div class="row" style="gap:6px">
+      <button class="btn danger sm" id="inspDeleteTbl">Delete Table</button>
+      <span style="flex:1"></span>
+      <button class="btn primary sm" id="inspSaveTbl">Save</button>
+    </div>
+  `;
+
+  $('#inspAddCol').onclick = () => addColumnDialog(t.id);
+  body.querySelectorAll('[data-col]').forEach(el => {
+    el.onclick = () => {
+      STATE.selectedColumnId = el.dataset.col;
+      renderDesigner();
+      renderInspector();
+    };
+  });
+  $('#inspSaveTbl').onclick = async () => {
+    t.name = $('#inspTblName').value.trim() || t.name;
+    t.displayName = $('#inspTblDisplay').value.trim();
+    t.description = $('#inspTblDesc').value.trim();
+    Migrations.generate(STATE.project);
+    await persistProject();
+    renderDesigner();
+    toast('Table saved', 'ok');
+  };
+  $('#inspDeleteTbl').onclick = async () => {
+    if (!confirm('Delete table "' + t.name + '"? This cannot be undone.')) return;
+    STATE.project.schema.tables = STATE.project.schema.tables.filter(x => x.id !== t.id);
+    STATE.selectedTableId = null;
+    Migrations.generate(STATE.project);
+    await persistProject();
+    renderDesigner();
+    renderInspector();
+    toast('Table deleted', 'ok');
+  };
+}
+
+function emptyInspector(){
+  return `<div class="empty">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6v6H9z"/></svg>
+    <h4>Nothing selected</h4>
+    <p>Click a table or column on the canvas to inspect and edit.</p>
+  </div>`;
+}
+
+function openInspector(){
+  $('#inspector').classList.add('open');
+}
+function closeInspector(){
+  $('#inspector').classList.remove('open');
+}
+
+/* ============================================================
+   17. TABLES VIEW
+   ============================================================ */
+function renderTables(){
+  const host = $('#tablesContent');
+  if (!STATE.project){ host.innerHTML = '<div class="empty"><p>No project.</p></div>'; return; }
+  const tables = STATE.project.schema.tables;
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Tables</div>
+        <h1 class="page-title">${tables.length} table${tables.length===1?'':'s'}</h1>
+      </div>
+      <button class="btn primary" id="tblNew">+ New Table</button>
+    </div>
+    ${tables.length ? `
+      <table class="data-table">
+        <thead><tr><th>Name</th><th>Columns</th><th>Relations</th><th></th></tr></thead>
+        <tbody>
+          ${tables.map(t => {
+            const fks = t.columns.filter(c => c.foreignKey).length;
+            return `<tr>
+              <td><strong>${esc(t.name)}</strong>${t.displayName && t.displayName !== t.name ? '<div class="cell-muted">'+esc(t.displayName)+'</div>' : ''}</td>
+              <td class="cell-muted">${t.columns.length} columns</td>
+              <td class="cell-muted">${fks} FK</td>
+              <td class="actions">
+                <button class="btn sm" data-open="${t.id}">Open</button>
+                <button class="btn sm" data-records="${t.id}">Data</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    ` : '<div class="empty"><h4>No tables yet</h4><p>Create your first table to get started.</p></div>'}
+  `;
+  const btn = $('#tblNew');
+  if (btn) btn.onclick = () => addTableDialog();
+  host.onclick = (e) => {
+    const op = e.target.closest('[data-open]');
+    if (op){ STATE.selectedTableId = op.dataset.open; STATE.selectedColumnId = null; switchView('designer'); renderDesigner(); renderInspector(); return; }
+    const rc = e.target.closest('[data-records]');
+    if (rc){ STATE.selectedTableId = rc.dataset.records; switchView('records'); return; }
+  };
+}
+
+/* ============================================================
+   18. RECORDS VIEW — CRUD generator
+   ============================================================ */
+let recordsState = { tableId: null, rows: [], page: 1, perPage: 20, search: '' };
+
+async function renderRecords(){
+  if (!STATE.project){ $('#recordsBody').innerHTML = '<div class="empty"><p>No project.</p></div>'; return; }
+  const tables = STATE.project.schema.tables;
+  if (!tables.length){ $('#recordsToolbar').innerHTML = ''; $('#recordsBody').innerHTML = '<div class="empty"><p>No tables defined.</p></div>'; return; }
+
+  const activeTableId = recordsState.tableId || (STATE.selectedTableId || tables[0].id);
+  recordsState.tableId = activeTableId;
+  const t = tables.find(x => x.id === activeTableId);
+  if (!t){ recordsState.tableId = tables[0].id; return renderRecords(); }
+
+  $('#recordsToolbar').innerHTML = `
+    <select class="select" id="recTableSelect" style="min-width:160px;max-width:220px">
+      ${tables.map(x => `<option value="${x.id}" ${x.id===t.id?'selected':''}>${esc(x.name)}</option>`).join('')}
+    </select>
+    <input class="input" id="recSearch" placeholder="Search…" style="max-width:240px;flex:1" value="${esc(recordsState.search)}">
+    <button class="btn primary sm" id="recAdd">+ Add Row</button>
+    <button class="btn sm" id="recRefresh">Refresh</button>
+  `;
+
+  const existing = (await IDB.get('records', t.id)) || { tableId: t.id, data: [] };
+  let rows = existing.data.slice();
+  if (recordsState.search){
+    const q = recordsState.search.toLowerCase();
+    rows = rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
+  }
+
+  const start = (recordsState.page - 1) * recordsState.perPage;
+  const pageRows = rows.slice(start, start + recordsState.perPage);
+  const total = rows.length;
+
+  $('#recordsBody').innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>${t.columns.map(c => `<th>${esc(c.name)}${c.primaryKey?' <span class="col-badge pk">PK</span>':''}</th>`).join('')}<th></th></tr>
+      </thead>
+      <tbody>
+        ${pageRows.length ? pageRows.map(r => `
+          <tr>
+            ${t.columns.map(c => {
+              const v = r[c.name];
+              return `<td class="${v===undefined||v===null?'cell-muted':''}">${v===undefined||v===null?'—':esc(String(v).slice(0,60))}</td>`;
+            }).join('')}
+            <td class="actions">
+              <button class="btn sm" data-edit="${r.id}">Edit</button>
+              <button class="btn sm danger" data-del="${r.id}">Del</button>
+            </td>
+          </tr>
+        `).join('') : `<tr><td colspan="${t.columns.length+1}"><div class="empty"><h4>No records</h4><p>Add your first row.</p></div></td></tr>`}
+      </tbody>
+    </table>
+    <div class="row-between" style="margin-top:14px">
+      <div class="cell-muted" style="font-family:var(--mono);font-size:12px">${total} total · page ${recordsState.page}</div>
+      <div class="row" style="gap:6px">
+        <button class="btn sm" id="recPrev" ${recordsState.page<=1?'disabled':''}>Prev</button>
+        <button class="btn sm" id="recNext" ${start+recordsState.perPage>=total?'disabled':''}>Next</button>
+      </div>
+    </div>
+  `;
+
+  $('#recTableSelect').onchange = (e) => { recordsState.tableId = e.target.value; recordsState.page = 1; recordsState.search = ''; renderRecords(); };
+  $('#recSearch').oninput = debounce((e) => { recordsState.search = e.target.value; recordsState.page = 1; renderRecords(); }, 200);
+  $('#recAdd').onclick = () => addRecordDialog(t.id);
+  $('#recRefresh').onclick = () => renderRecords();
+  $('#recPrev').onclick = () => { if (recordsState.page>1){ recordsState.page--; renderRecords(); } };
+  $('#recNext').onclick = () => { recordsState.page++; renderRecords(); };
+
+  $('#recordsBody').onclick = (e) => {
+    const ed = e.target.closest('[data-edit]');
+    if (ed){ editRecordDialog(t.id, ed.dataset.edit); return; }
+    const dl = e.target.closest('[data-del]');
+    if (dl){ deleteRecord(t.id, dl.dataset.del); return; }
+  };
+}
+
+function recordFormFields(t, values={}){
+  return t.columns.map(c => {
+    const v = values[c.name] !== undefined ? values[c.name] : (c.default || '');
+    const label = c.name + (c.primaryKey ? ' · PK' : '') + (c.foreignKey ? ' · FK' : '');
+    if (c.type === 'BOOLEAN'){
+      return `<label class="checkbox-row"><input type="checkbox" data-col="${esc(c.name)}" ${v===true||v==='true'?'checked':''}> ${esc(c.name)}</label>`;
+    }
+    if (c.type === 'TEXT' || c.type === 'JSON' || c.type === 'JSONB'){
+      return `<div class="field"><label>${esc(label)}</label><textarea class="textarea" data-col="${esc(c.name)}">${esc(v)}</textarea></div>`;
+    }
+    return `<div class="field"><label>${esc(label)}</label><input class="input" data-col="${esc(c.name)}" value="${esc(v)}" placeholder="${esc(c.type)}"></div>`;
+  }).join('');
+}
+
+function collectRecordForm(t){
+  const rec = {};
+  t.columns.forEach(c => {
+    const el = $(`[data-col="${c.name}"]`);
+    if (!el) return;
+    if (c.type === 'BOOLEAN') rec[c.name] = el.checked;
+    else rec[c.name] = el.value;
+  });
+  return rec;
+}
+
+function addRecordDialog(tableId){
+  const t = STATE.project.schema.tables.find(x => x.id === tableId);
+  if (!t) return;
+  Modal.open({
+    title: 'Add Record to ' + t.name,
+    body: `<div>${recordFormFields(t)}</div>`,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="recSave">Save</button>
+    `,
+    onMount(){
+      $('#recSave').onclick = async () => {
+        const rec = collectRecordForm(t);
+        rec.id = rec.id || uid('rec');
+        await PROVIDERS.local.insert(t.id, rec);
+        logActivity('Inserted record into ' + t.name);
+        Modal.close();
+        toast('Record added', 'ok');
+        renderRecords();
+      };
+    }
+  });
+}
+
+async function editRecordDialog(tableId, pk){
+  const t = STATE.project.schema.tables.find(x => x.id === tableId);
+  if (!t) return;
+  const existing = (await IDB.get('records', t.id)) || { data: [] };
+  const row = existing.data.find(r => r.id === pk);
+  if (!row) return;
+  Modal.open({
+    title: 'Edit Record',
+    body: `<div>${recordFormFields(t, row)}</div>`,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="recSave">Save</button>
+    `,
+    onMount(){
+      $('#recSave').onclick = async () => {
+        const rec = collectRecordForm(t);
+        await PROVIDERS.local.update(t.id, pk, rec);
+        logActivity('Updated record in ' + t.name);
+        Modal.close();
+        toast('Record updated', 'ok');
+        renderRecords();
+      };
+    }
+  });
+}
+
+async function deleteRecord(tableId, pk){
+  if (!confirm('Delete this record?')) return;
+  await PROVIDERS.local.delete(tableId, pk);
+  logActivity('Deleted record from ' + tableId);
+  toast('Record deleted', 'ok');
+  renderRecords();
+}
+
+/* ============================================================
+   19. MIGRATIONS VIEW
+   ============================================================ */
+function renderMigrations(){
+  const host = $('#migrationsContent');
+  if (!STATE.project){ host.innerHTML = '<div class="empty"><p>No project.</p></div>'; return; }
+  const migs = STATE.project.migrations || [];
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Migrations</div>
+        <h1 class="page-title">${migs.length} migration${migs.length===1?'':'s'}</h1>
+        <p class="page-sub">Each schema change produces a migration record. Apply them against your provider to deploy.</p>
+      </div>
+      <div class="row" style="gap:6px">
+        <button class="btn" id="migRegen">Regenerate</button>
+        <button class="btn primary" id="migApply">Apply All</button>
+      </div>
+    </div>
+    <div id="migList"></div>
+  `;
+  $('#migRegen').onclick = () => { Migrations.generate(STATE.project); persistProject(); renderMigrations(); toast('Migrations regenerated', 'ok'); };
+  $('#migApply').onclick = applyAllMigrations;
+
+  const listEl = $('#migList');
+  if (!migs.length){ listEl.innerHTML = '<div class="empty"><p>No migrations yet. Add tables to generate.</p></div>'; return; }
+  listEl.innerHTML = migs.map(m => `
+    <div class="mig-item">
+      <div class="mig-head">
+        <span class="mig-num">${String(m.num).padStart(3,'0')}</span>
+        <span class="mig-name">${esc(m.name)}</span>
+        <span class="badge ${m.applied?'green':'amber'}">${m.applied?'applied':'pending'}</span>
+      </div>
+      <div class="mig-sql">${highlightSQL(m.sql)}</div>
+    </div>
+  `).join('');
+}
+
+function highlightSQL(sql){
+  let s = esc(sql);
+  s = s.replace(/\b(CREATE|TABLE|ALTER|INDEX|UNIQUE|PRIMARY|KEY|FOREIGN|REFERENCES|ON|DELETE|CASCADE|SET|NULL|NOT|DEFAULT|INSERT|INTO|VALUES|SELECT|FROM|WHERE|UPDATE|AND|OR)\b/g, '<span class="kw">$1</span>');
+  s = s.replace(/\b(UUID|TEXT|VARCHAR|INTEGER|BIGINT|BOOLEAN|TIMESTAMP|SERIAL|JSON|JSONB|DECIMAL|FLOAT|DOUBLE|DATE|TIME|BLOB)\b/g, '<span class="type">$1</span>');
+  s = s.replace(/--[^\n]*/g, '<span class="com">$&</span>');
+  return s;
+}
+
+async function applyAllMigrations(){
+  const p = STATE.project;
+  if (!p || !p.migrations || !p.migrations.length){ toast('No migrations', 'warn'); return; }
+  const provider = PROVIDERS[p.providerId] || PROVIDERS.local;
+  if (p.providerId !== 'local' && !provider._connection){
+    toast('Provider not connected. Open Providers view.', 'err', 4000);
+    return;
+  }
+  let applied = 0;
+  for (const m of p.migrations){
+    if (m.applied) continue;
+    const res = await provider.runMigration(m.sql);
+    if (res.ok){
+      m.applied = true;
+      m.appliedAt = nowISO();
+      applied++;
+    } else {
+      toast('Failed: ' + (res.error || 'unknown'), 'err', 4000);
+      break;
+    }
+  }
+  await persistProject();
+  logActivity('Applied ' + applied + ' migration(s)');
+  toast(applied + ' migration(s) applied', 'ok');
+  renderMigrations();
+}
+
+/* ============================================================
+   20. API VIEW
+   ============================================================ */
+function renderApi(){
+  const host = $('#apiContent');
+  if (!STATE.project){ host.innerHTML = '<div class="empty"><p>No project.</p></div>'; return; }
+  const tables = STATE.project.schema.tables;
+  const api = generateAPISpec(STATE.project);
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">API</div>
+        <h1 class="page-title">Auto-generated REST API</h1>
+        <p class="page-sub">Generated from your schema. Export as OpenAPI JSON for integration with any toolchain.</p>
+      </div>
+      <div class="row" style="gap:6px">
+        <button class="btn" id="apiExportJson">Export OpenAPI JSON</button>
+        <button class="btn" id="apiExportYaml">Export YAML</button>
+      </div>
+    </div>
+    <div class="card">
+      ${api.endpoints.map(e => `
+        <div class="api-endpoint">
+          <span class="method ${e.method}">${e.method}</span>
+          <span class="api-path">${esc(e.path)}</span>
+          <span class="api-desc">${esc(e.description)}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  $('#apiExportJson').onclick = () => downloadJSON(api.openapi, 'openapi.json');
+  $('#apiExportYaml').onclick = () => {
+    const yaml = jsonToYaml(api.openapi);
+    downloadBlob(new Blob([yaml], { type:'text/yaml' }), 'openapi.yaml');
+  };
+}
+
+function generateAPISpec(project){
+  const endpoints = [];
+  const paths = {};
+  for (const t of project.schema.tables){
+    const base = '/' + t.name;
+    endpoints.push({ method:'GET', path: base, description: 'List ' + t.name });
+    endpoints.push({ method:'GET', path: base + '/:id', description: 'Get ' + t.name + ' by id' });
+    endpoints.push({ method:'POST', path: base, description: 'Create ' + t.name });
+    endpoints.push({ method:'PUT', path: base + '/:id', description: 'Update ' + t.name });
+    endpoints.push({ method:'DELETE', path: base + '/:id', description: 'Delete ' + t.name });
+    paths[base] = {
+      get: { summary: 'List ' + t.name, responses: { '200': { description:'OK' } } },
+      post: { summary: 'Create ' + t.name, responses: { '201': { description:'Created' } } }
+    };
+    paths[base + '/{id}'] = {
+      get: { summary: 'Get ' + t.name, parameters:[{ name:'id', in:'path', required:true, schema:{ type:'string' } }] },
+      put: { summary: 'Update ' + t.name, parameters:[{ name:'id', in:'path', required:true, schema:{ type:'string' } }] },
+      delete: { summary: 'Delete ' + t.name, parameters:[{ name:'id', in:'path', required:true, schema:{ type:'string' } }] }
+    };
+  }
+  return {
+    endpoints,
+    openapi: {
+      openapi: '3.0.0',
+      info: { title: project.name, version: '1.0.0', description: 'Auto-generated by DATABASE OS' },
+      servers: [{ url: '/' }],
+      paths
+    }
+  };
+}
+
+function jsonToYaml(obj, indent=0){
+  const pad = '  '.repeat(indent);
+  if (obj === null) return 'null';
+  if (typeof obj !== 'object') return JSON.stringify(obj);
+  if (Array.isArray(obj)) return '\n' + obj.map(v => pad + '- ' + jsonToYaml(v, indent+1)).join('\n');
+  return '\n' + Object.entries(obj).map(([k,v]) => pad + k + ':' + (typeof v === 'object' && v !== null ? jsonToYaml(v, indent+1) : ' ' + jsonToYaml(v))).join('\n');
+}
+
+/* ============================================================
+   21. PROVIDERS VIEW
+   ============================================================ */
+function renderProviders(){
+  const host = $('#providersContent');
+  const list = [
+    { id:'local', name:'Local (Browser)', type:'Local', desc:'IndexedDB-backed. Works offline. No cloud account needed.', caps:['createDatabase','createTable','query','transactions','storage'] },
+    { id:'supabase', name:'Supabase', type:'PostgreSQL', desc:'Full Postgres with auth, storage and realtime. Requires backend gateway.', caps:['createDatabase','createTable','alterTable','deleteTable','query','auth','storage','realtime'] },
+    { id:'neon', name:'Neon', type:'PostgreSQL', desc:'Serverless Postgres with branching. Requires backend gateway.', caps:['createDatabase','createTable','alterTable','deleteTable','query'] },
+    { id:'postgres', name:'PostgreSQL', type:'Self-hosted', desc:'Bring your own Postgres. Requires backend gateway.', caps:['createDatabase','createTable','alterTable','deleteTable','query','transactions'] },
+    { id:'firebase', name:'Firebase Firestore', type:'NoSQL', desc:'Document database. Requires backend gateway.', caps:['createDatabase','createTable','deleteTable','query','auth','storage','realtime'] },
+    { id:'custom', name:'Custom Gateway', type:'Custom', desc:'Any backend that implements the provider contract.', caps:['createDatabase','createTable','alterTable','deleteTable','query'] }
+  ];
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Providers</div>
+        <h1 class="page-title">Database Providers</h1>
+        <p class="page-sub">Choose where your database lives. Local works offline. Cloud providers require a secure backend gateway — never store privileged keys in the browser.</p>
+      </div>
+    </div>
+    <div class="provider-grid">
+      ${list.map(p => `
+        <div class="provider" data-provider="${p.id}">
+          <div class="provider-head">
+            <div class="provider-ico">${renderIcon('table')}</div>
+            <div style="flex:1;min-width:0">
+              <div class="provider-name">${esc(p.name)}</div>
+              <div class="provider-type">${esc(p.type)}</div>
+            </div>
+            ${STATE.project && STATE.project.providerId === p.id ? '<span class="badge green">Current</span>' : ''}
+          </div>
+          <div class="provider-desc">${esc(p.desc)}</div>
+          <div class="provider-caps">${p.caps.map(c => `<span>${esc(c)}</span>`).join('')}</div>
+          <div class="provider-status">
+            <span class="dot ${STATE.providers[p.id]?'connected':''}"></span>
+            <span>${STATE.providers[p.id]?'Connected':'Not connected'}</span>
+          </div>
+          <div class="row" style="gap:6px">
+            ${p.id === 'local'
+              ? '<button class="btn primary sm" data-connect>Use Local</button>'
+              : `<button class="btn sm" data-configure>Configure</button>
+                 <button class="btn sm" data-connect>${STATE.providers[p.id]?'Disconnect':'Connect'}</button>`}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="divider"></div>
+    <div class="card" style="border-color:rgba(251,191,36,.3)">
+      <div class="card-title" style="color:var(--amber)">⚠ Security Notice</div>
+      <p class="page-sub" style="margin-top:8px">Cloud providers require a backend "gateway" that holds privileged credentials server-side. DATABASE OS never stores your API keys or database passwords in the browser. The gateway must be deployed separately (see About → Gateway Contract).</p>
+    </div>
+  `;
+  host.onclick = (e) => {
+    const cfg = e.target.closest('[data-configure]');
+    const con = e.target.closest('[data-connect]');
+    const card = e.target.closest('[data-provider]');
+    if (!card) return;
+    const pid = card.dataset.provider;
+    if (cfg){ configureProviderDialog(pid); return; }
+    if (con){ connectProvider(pid); return; }
+  };
+}
+
+function configureProviderDialog(pid){
+  const p = PROVIDERS[pid];
+  if (!p) return;
+  Modal.open({
+    title: 'Configure ' + p.name,
+    sub: 'Set the secure gateway URL. No secrets are stored here.',
+    body: `
+      <div class="field">
+        <label>Gateway URL</label>
+        <input class="input" id="gwUrl" placeholder="https://your-backend.example.com/api/gateway" value="${esc(p._config?.gatewayUrl||'')}">
+        <div class="hint">A backend service that holds your provider credentials.</div>
+      </div>
+      <div class="field">
+        <label>Project reference (optional)</label>
+        <input class="input" id="gwProject" placeholder="project-id" value="${esc(p._config?.publicConfig?.projectRef||'')}">
+      </div>
+      <div class="card" style="border-color:rgba(106,166,255,.3);margin-top:12px">
+        <div class="card-title" style="color:var(--blue)">Gateway Contract</div>
+        <p class="page-sub" style="margin-top:8px;font-size:12.5px">Your gateway must expose:</p>
+        <div class="mig-sql" style="margin-top:8px">POST /connect              → { ok, sessionToken }
+POST /createDatabase       → { ok, databaseId }
+POST /createTable          → { ok, tableId }
+POST /alterTable           → { ok }
+POST /deleteTable          → { ok }
+POST /runMigration         → { ok }
+POST /query                → { ok, rows }</div>
+      </div>
+    `,
+    foot: `
+      <button class="btn ghost" onclick="Modal.close()">Cancel</button>
+      <button class="btn primary" id="gwSave">Save</button>
+    `,
+    onMount(){
+      $('#gwSave').onclick = () => {
+        const url = $('#gwUrl').value.trim();
+        p._config.gatewayUrl = url || null;
+        p._config.publicConfig = { projectRef: $('#gwProject').value.trim() };
+        Modal.close();
+        toast('Configuration saved', 'ok');
+        renderProviders();
+      };
+    }
+  });
+}
+
+async function connectProvider(pid){
+  const p = PROVIDERS[pid];
+  if (!p) return;
+  if (pid === 'local'){
+    const res = await p.connect();
+    STATE.providers[pid] = true;
+    STATE.project.providerId = 'local';
+    STATE.project.mode = 'local';
+    persistProject();
+    toast(res.message || 'Local ready', 'ok');
+    renderProviders();
+    return;
+  }
+  if (STATE.providers[pid]){
+    await p.disconnect();
+    delete STATE.providers[pid];
+    toast('Disconnected from ' + p.name, 'info');
+    renderProviders();
+    return;
+  }
+  toast('Connecting to ' + p.name + '…', 'info');
+  const res = await p.connect();
+  if (res.ok){
+    STATE.providers[pid] = true;
+    STATE.project.providerId = pid;
+    STATE.project.mode = 'cloud';
+    persistProject();
+    toast(res.message || 'Connected', 'ok');
+    renderProviders();
+  } else {
+    Modal.open({
+      title: 'Connection Failed',
+      body: `
+        <p class="page-sub">${esc(res.error || 'Unknown error')}</p>
+        ${res.action === 'connectProvider' ? '<p class="page-sub" style="margin-top:12px">This provider requires a configured secure backend gateway. Click Configure on the provider card to set the gateway URL.</p>' : ''}
+      `,
+      foot: `<button class="btn primary" onclick="Modal.close()">OK</button>`
+    });
+    toast('Connection failed: ' + (res.error || 'unknown'), 'err', 4500);
+  }
+}
+
+/* ============================================================
+   22. EXPORT / IMPORT VIEW
+   ============================================================ */
+function renderExport(){
+  const host = $('#exportContent');
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Import / Export</div>
+        <h1 class="page-title">Project Portability</h1>
+        <p class="page-sub">Export your entire project as JSON or ZIP. Import it later on any machine.</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Export</div>
+        <div class="stack" style="margin-top:14px">
+          <button class="btn block" id="expJson">Export Project (JSON)</button>
+          <button class="btn block" id="expZip">Export Full Project (ZIP)</button>
+          <button class="btn block" id="expSql">Export SQL Schema</button>
+          <button class="btn block" id="expOpenapi">Export OpenAPI JSON</button>
+          <button class="btn block" id="expData">Export Records (JSON)</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Import</div>
+        <div class="stack" style="margin-top:14px">
+          <button class="btn block" id="impJson">Import Project (JSON)</button>
+          <button class="btn block" id="impSql">Import SQL (parse CREATE TABLE)</button>
+          <input type="file" id="fileJson" accept=".json,.zip" style="display:none">
+          <input type="file" id="fileSql" accept=".sql,.txt" style="display:none">
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="card">
+      <div class="card-title">Danger Zone</div>
+      <div class="stack" style="margin-top:14px">
+        <button class="btn danger block" id="resetAll">Reset All Projects</button>
+      </div>
+    </div>
+  `;
+  $('#expJson').onclick = exportProjectJSON;
+  $('#expZip').onclick = exportProjectZIP;
+  $('#expSql').onclick = () => {
+    const pg = STATE.project.providerId !== 'local';
+    const sql = SQLGen.migrationSQL(STATE.project, pg);
+    downloadBlob(new Blob([sql], { type:'text/plain' }), (STATE.project.name||'schema').replace(/\s+/g,'-') + '.sql');
+  };
+  $('#expOpenapi').onclick = () => {
+    const api = generateAPISpec(STATE.project);
+    downloadJSON(api.openapi, 'openapi.json');
+  };
+  $('#expData').onclick = async () => {
+    const out = {};
+    for (const t of STATE.project.schema.tables){
+      const r = (await IDB.get('records', t.id)) || { data: [] };
+      out[t.name] = r.data;
+    }
+    downloadJSON(out, 'records.json');
+  };
+  $('#impJson').onclick = () => $('#fileJson').click();
+  $('#impSql').onclick = () => $('#fileSql').click();
+  $('#fileJson').onchange = async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const text = await f.text();
+    const data = safeJSON(text, null);
+    if (!data){ toast('Invalid JSON', 'err'); return; }
+    importProject(data);
+    e.target.value = '';
+  };
+  $('#fileSql').onchange = async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const text = await f.text();
+    importSQL(text);
+    e.target.value = '';
+  };
+  $('#resetAll').onclick = async () => {
+    if (!confirm('Delete ALL projects? This cannot be undone.')) return;
+    const all = await IDB.all('projects');
+    for (const p of all) await IDB.del('projects', p.id);
+    const recs = await IDB.all('records');
+    for (const r of recs) await IDB.del('records', r.tableId);
+    STATE.project = null;
+    toast('All projects cleared', 'ok');
+    renderAll();
+  };
+}
+
+function exportProjectJSON(){
+  if (!STATE.project){ toast('No project', 'warn'); return; }
+  const data = clone(STATE.project);
+  // Remove any sensitive data — never export secrets
+  delete data.providerConfig?.apiKey;
+  delete data.providerConfig?.serviceRoleKey;
+  downloadJSON(data, (STATE.project.name||'project').replace(/\s+/g,'-') + '.json');
+}
+
+async function exportProjectZIP(){
+  if (!STATE.project){ toast('No project', 'warn'); return; }
+  const files = [
+    { name:'project.json', data: JSON.stringify({ ...STATE.project, providerConfig:{} }, null, 2) },
+    { name:'schema.json', data: JSON.stringify(STATE.project.schema, null, 2) },
+    { name:'migrations.sql', data: SQLGen.migrationSQL(STATE.project, STATE.project.providerId !== 'local') },
+    { name:'openapi.json', data: JSON.stringify(generateAPISpec(STATE.project).openapi, null, 2) }
+  ];
+  // Records
+  let records = {};
+  for (const t of STATE.project.schema.tables){
+    const r = (await IDB.get('records', t.id)) || { data: [] };
+    records[t.name] = r.data;
+  }
+  files.push({ name:'data/records.json', data: JSON.stringify(records, null, 2) });
+
+  const zip = buildZIP(files.map(f => ({ path: f.name, data: new TextEncoder().encode(f.data) })));
+  downloadBlob(zip, (STATE.project.name||'project').replace(/\s+/g,'-') + '.zip');
+}
+
+function importProject(data){
+  if (!data || typeof data !== 'object'){ toast('Invalid project data', 'err'); return; }
+  STATE.project = Object.assign(DEFAULT_PROJECT(), data);
+  STATE.project.id = uid('prj');
+  STATE.project.updatedAt = nowISO();
+  IDB.put('projects', clone(STATE.project));
+  logActivity('Imported project');
+  toast('Project imported', 'ok');
+  renderAll();
+}
+
+function importSQL(sql){
+  // Simple parser: detect CREATE TABLE blocks
+  const tableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?"?(\w+)"?\s*\(([\s\S]*?)\);/gi;
+  const tables = [];
+  let m;
+  while ((m = tableRegex.exec(sql)) !== null){
+    const tname = m[1];
+    const body = m[2];
+    const cols = [];
+    const colRegex = /"?(\w+)"?\s+([A-Z]+(?:\s*\([^)]*\))?)(?:\s+(PRIMARY\s+KEY|NOT\s+NULL|UNIQUE|DEFAULT\s+[^,]+|REFERENCES\s+"?(\w+)"?\s*\("?(\w+)"?\)))*([^,]*)/gi;
+    body.split(',').forEach(raw => {
+      const line = raw.trim();
+      if (!line) return;
+      if (/^(PRIMARY|FOREIGN|UNIQUE|CONSTRAINT|CHECK|INDEX)/i.test(line)) return;
+      const parts = line.split(/\s+/);
+      if (parts.length < 2) return;
+      const cname = parts[0].replace(/"/g,'');
+      let ctype = parts[1].replace(/\([^)]*\)/,'').toUpperCase();
+      const lenMatch = line.match(/\(([^)]+)\)/);
+      const length = lenMatch ? lenMatch[1] : '';
+      const primaryKey = /PRIMARY\s+KEY/i.test(line);
+      const nullable = !/NOT\s+NULL/i.test(line) && !primaryKey;
+      const unique = /UNIQUE/i.test(line);
+      const defMatch = line.match(/DEFAULT\s+([^,\s]+)/i);
+      const def = defMatch ? defMatch[1].replace(/['"]/g,'') : null;
+      const fkMatch = line.match(/REFERENCES\s+"?(\w+)"?\s*\("?(\w+)"?\)/i);
+      const fk = fkMatch ? { table: fkMatch[1], column: fkMatch[2], onDelete: 'NO ACTION' } : null;
+      const typeMap = { INT:'INTEGER', INTEGER:'INTEGER', BIGINT:'BIGINT', BOOLEAN:'BOOLEAN', BOOL:'BOOLEAN', TEXT:'TEXT', VARCHAR:'VARCHAR', CHAR:'CHAR', UUID:'UUID', TIMESTAMP:'TIMESTAMP', DATETIME:'TIMESTAMP', DATE:'DATE', TIME:'TIME', JSON:'JSON', JSONB:'JSONB', DECIMAL:'DECIMAL', NUMERIC:'DECIMAL', FLOAT:'FLOAT', DOUBLE:'DOUBLE', BYTEA:'BLOB', BLOB:'BLOB' };
+      ctype = typeMap[ctype] || 'TEXT';
+      cols.push(mkCol(cname, ctype, { length, primaryKey, nullable, unique, default:def, foreignKey:fk }));
+    });
+    const t = mkTable(tname, cols);
+    tables.push(t);
+  }
+  if (!tables.length){ toast('No CREATE TABLE statements found', 'err'); return; }
+  if (!STATE.project) STATE.project = DEFAULT_PROJECT();
+  STATE.project.schema.tables = tables;
+  autoLayoutTables();
+  Migrations.generate(STATE.project);
+  persistProject();
+  logActivity('Imported SQL: ' + tables.length + ' tables');
+  toast('Imported ' + tables.length + ' table(s) from SQL', 'ok');
+  renderAll();
+  switchView('designer');
+}
+
+/* ============================================================
+   23. LOGS VIEW
+   ============================================================ */
+function renderLogs(){
+  const host = $('#logsContent');
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Audit</div>
+        <h1 class="page-title">Activity Log</h1>
+        <p class="page-sub">All operations performed in this session. Persisted in the current project.</p>
+      </div>
+      <button class="btn danger" id="logsClear">Clear Log</button>
+    </div>
+    <div class="card" id="logsList"></div>
+  `;
+  const list = $('#logsList');
+  if (!STATE.logs.length){ list.innerHTML = '<div class="empty"><p>No activity.</p></div>'; return; }
+  list.innerHTML = STATE.logs.slice().reverse().map(l => `
+    <div class="kv">
+      <span class="k">${esc(l.op)}</span>
+      <span class="v">${esc(fmtDate(l.ts))}</span>
+    </div>
+  `).join('');
+  $('#logsClear').onclick = () => { STATE.logs = []; renderLogs(); toast('Logs cleared', 'ok'); };
+}
+
+function logActivity(op){
+  STATE.logs.push({ op, ts: nowISO() });
+  if (STATE.logs.length > 500) STATE.logs.shift();
+}
+
+/* ============================================================
+   24. ABOUT VIEW
+   ============================================================ */
+function renderAbout(){
+  const host = $('#aboutContent');
+  host.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">About</div>
+        <h1 class="page-title">DATABASE OS</h1>
+        <p class="page-sub">Visual Database Builder & Backend Generator — v1.0.0</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">What this is</div>
+      <p class="page-sub" style="margin-top:8px">A browser-based tool for designing databases visually, generating SQL migrations, producing CRUD admin panels and API specs, and deploying to real cloud providers through a secure backend gateway.</p>
+    </div>
+    <div class="divider"></div>
+    <div class="card">
+      <div class="card-title">Security Model</div>
+      <ul style="margin-top:12px;padding-left:20px;color:var(--dim);font-size:13.5px;line-height:1.85;list-style:disc">
+        <li>Privileged credentials are NEVER stored in the browser.</li>
+        <li>Cloud providers require a backend gateway that holds secrets server-side.</li>
+        <li>Local mode uses IndexedDB — data stays on your device.</li>
+        <li>Exports strip any potentially sensitive configuration.</li>
+        <li>All database operations are validated before execution.</li>
+      </ul>
+    </div>
+    <div class="divider"></div>
+    <div class="card">
+      <div class="card-title">Gateway Contract</div>
+      <p class="page-sub" style="margin-top:8px">To enable real cloud provisioning, deploy a backend that implements:</p>
+      <div class="mig-sql" style="margin-top:12px">POST /connect              body: { provider, config }              → { ok, sessionToken, gatewayUrl }
+POST /createDatabase       body: { name }                       → { ok, databaseId }
+POST /createTable          body: { table }                      → { ok, tableId }
+POST /alterTable           body: { tableId, changes }           → { ok }
+POST /deleteTable          body: { tableId }                    → { ok }
+POST /runMigration         body: { sql }                        → { ok }
+POST /query                body: { tableId, filter }            → { ok, rows }
+
+Headers: X-Session-Token</div>
+      <p class="page-sub" style="margin-top:12px">The gateway holds your provider credentials in environment variables or a secure secrets manager. The frontend never sees them.</p>
+    </div>
+  `;
+}
+
+/* ============================================================
+   25. COMMAND PALETTE
+   ============================================================ */
+const COMMANDS = [
+  { id:'new-project',   label:'New Project',      cat:'Project',  run: () => startNewProject('local') },
+  { id:'new-table',     label:'Create Table',     cat:'Schema',   run: addTableDialog },
+  { id:'validate',      label:'Validate Schema',  cat:'Schema',   run: () => { const r = Validator.validate(STATE.project); showValidationModal(r); } },
+  { id:'auto-layout',   label:'Auto Layout',      cat:'Schema',   run: () => { autoLayoutTables(); renderDesigner(); persistProject(); } },
+  { id:'templates',     label:'Load Template',    cat:'Schema',   run: showTemplatesModal },
+  { id:'open-designer', label:'Open Designer',    cat:'View',     run: () => switchView('designer') },
+  { id:'open-tables',   label:'Open Tables',      cat:'View',     run: () => switchView('tables') },
+  { id:'open-records',  label:'Open Records',     cat:'View',     run: () => switchView('records') },
+  { id:'open-mig',      label:'Open Migrations',  cat:'View',     run: () => switchView('migrations') },
+  { id:'open-api',      label:'Open API',         cat:'View',     run: () => switchView('api') },
+  { id:'open-prov',     label:'Open Providers',   cat:'View',     run: () => switchView('providers') },
+  { id:'open-export',   label:'Import / Export',  cat:'View',     run: () => switchView('export') },
+  { id:'export-json',   label:'Export Project',   cat:'Action',   run: exportProjectJSON },
+  { id:'export-zip',    label:'Export ZIP',       cat:'Action',   run: exportProjectZIP },
+  { id:'gen-mig',       label:'Generate Migrations', cat:'Action', run: generateMigrations },
+  { id:'apply-mig',     label:'Apply Migrations', cat:'Action',   run: applyAllMigrations },
+  { id:'toggle-theme',  label:'Toggle Theme',     cat:'UI',       run: toggleTheme },
+  { id:'clear-logs',    label:'Clear Activity Log', cat:'Action', run: () => { STATE.logs = []; renderLogs(); toast('Logs cleared', 'ok'); } }
+];
+
+let cmdIndex = 0, cmdFiltered = COMMANDS.slice();
+function openCmdk(){
+  $('#cmdk').classList.add('on');
+  $('#cmdkInput').value = '';
+  cmdIndex = 0;
+  renderCmd('');
+  setTimeout(() => $('#cmdkInput').focus(), 40);
+}
+function closeCmdk(){ $('#cmdk').classList.remove('on'); }
+function renderCmd(q){
+  q = q.toLowerCase().trim();
+  cmdFiltered = COMMANDS.filter(c => !q || c.label.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q));
+  if (!cmdFiltered.length){ $('#cmdkList').innerHTML = '<div style="padding:24px;text-align:center;color:var(--dim-2);font-size:12.5px">No commands</div>'; return; }
+  if (cmdIndex >= cmdFiltered.length) cmdIndex = 0;
+  $('#cmdkList').innerHTML = cmdFiltered.map((c,i) => `
+    <button class="cmdk-item ${i===cmdIndex?'on':''}" data-cmd="${c.id}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      ${esc(c.label)}
+      <span class="cat">${esc(c.cat)}</span>
+    </button>
+  `).join('');
+}
+
+/* ============================================================
+   26. THEME
+   ============================================================ */
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  if (STATE.project){ STATE.project.settings.theme = next; persistProject(); }
+  try { localStorage.setItem('dbos_theme', next); } catch(e){}
+}
+function initTheme(){
+  let saved = 'dark';
+  try { saved = localStorage.getItem('dbos_theme') || 'dark'; } catch(e){}
+  document.documentElement.setAttribute('data-theme', saved);
+}
+
+/* ============================================================
+   27. VIEW ROUTER
+   ============================================================ */
+function switchView(name){
+  STATE.view = name;
+  $$('.view').forEach(v => v.classList.toggle('on', v.dataset.view === name));
+  $$('.nav-item').forEach(b => b.classList.toggle('on', b.dataset.view === name));
+  $$('.mobile-nav button').forEach(b => b.classList.toggle('on', b.dataset.view === name));
+  renderAll();
+}
+
+function renderAll(){
+  switch(STATE.view){
+    case 'home': renderHome(); break;
+    case 'designer': renderDesigner(); renderInspector(); break;
+    case 'tables': renderTables(); break;
+    case 'records': renderRecords(); break;
+    case 'migrations': renderMigrations(); break;
+    case 'api': renderApi(); break;
+    case 'providers': renderProviders(); break;
+    case 'export': renderExport(); break;
+    case 'logs': renderLogs(); break;
+    case 'about': renderAbout(); break;
+  }
+  const tableCount = STATE.project ? STATE.project.schema.tables.length : 0;
+  $('#navTablesCount').textContent = tableCount;
+  updateProjectPill();
+}
+
+function updateProjectPill(){
+  const pill = $('#projectPill');
+  const dot = $('#projectDot');
+  const name = $('#projectName');
+  if (!STATE.project){
+    name.innerHTML = 'No project<em> — click to create</em>';
+    dot.classList.add('off');
+    return;
+  }
+  dot.classList.toggle('off', !STATE.providers[STATE.project.providerId]);
+  name.innerHTML = esc(STATE.project.name) + ' <em>· ' + esc(STATE.project.providerId) + '</em>';
+}
+
+function generateMigrations(){
+  if (!STATE.project){ toast('No project', 'warn'); return; }
+  Migrations.generate(STATE.project);
+  persistProject();
+  logActivity('Generated migrations');
+  toast(STATE.project.migrations.length + ' migration(s) generated', 'ok');
+  switchView('migrations');
+}
+
+function showTemplatesModal(){
+  Modal.open({
+    title: 'Load Template',
+    sub: 'Replaces current schema',
+    body: `<div class="template-grid">${Object.entries(TEMPLATES).map(([k,t]) => `
+      <button class="template" data-tpl="${k}">
+        <div class="template-name">${esc(t.name)}</div>
+        <div class="template-desc">${esc(t.desc)}</div>
+      </button>
+    `).join('')}</div>`,
+    foot: `<button class="btn ghost" onclick="Modal.close()">Cancel</button>`,
+    onMount(){
+      $$('.template', $('#modalBody')).forEach(b => {
+        b.onclick = () => { Modal.close(); startProjectFromTemplate(b.dataset.tpl); };
+      });
+    }
+  });
+}
+
+/* ============================================================
+   28. FILE HELPERS
+   ============================================================ */
+function downloadBlob(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function downloadJSON(data, name){
+  downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type:'application/json' }), name);
+}
+
+/* ============================================================
+   29. ZIP BUILDER (STORE, no compression)
+   ============================================================ */
+const CRC32 = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return (buf) => { let c = 0xFFFFFFFF; for (let i = 0; i < buf.length; i++) c = t[(c ^ buf[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+})();
+
+function buildZIP(files){
+  const enc = new TextEncoder();
+  const chunks = [];
+  const central = [];
+  let offset = 0;
+  const now = new Date();
+  const dosTime = ((now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1)) & 0xFFFF;
+  const dosDate = (((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate()) & 0xFFFF;
+  for (const f of files){
+    const nameBytes = enc.encode(f.path);
+    const data = f.data;
+    const crc = CRC32(data);
+    const local = new Uint8Array(30 + nameBytes.length);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0x0800, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint16(10, dosTime, true);
+    lv.setUint16(12, dosDate, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, data.length, true);
+    lv.setUint32(22, data.length, true);
+    lv.setUint16(26, nameBytes.length, true);
+    lv.setUint16(28, 0, true);
+    local.set(nameBytes, 30);
+    chunks.push(local, data);
+    const cd = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(cd.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, dosTime, true);
+    cv.setUint16(14, dosDate, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true);
+    cv.setUint32(24, data.length, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint32(42, offset, true);
+    cd.set(nameBytes, 46);
+    central.push(cd);
+    offset += local.length + data.length;
+  }
+  const cdSize = central.reduce((s,c) => s + c.length, 0);
+  const end = new Uint8Array(22);
+  const ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, cdSize, true);
+  ev.setUint32(16, offset, true);
+  return new Blob([...chunks, ...central, end], { type:'application/zip' });
+}
+
+/* ============================================================
+   30. INIT + EVENT WIRING
+   ============================================================ */
+function initApp(){
+  initTheme();
+
+  // Sidebar nav
+  $('#sidenav').onclick = (e) => {
+    const b = e.target.closest('[data-view]');
+    if (!b) return;
+    switchView(b.dataset.view);
+    // Close inspector + drawer on mobile after nav
+    closeInspector();
+    $('#app').classList.remove('nav-open');
+  };
+
+  // Mobile nav
+  $('#mobileNav').onclick = (e) => {
+    const b = e.target.closest('button[data-view]');
+    if (!b) return;
+    if (b.dataset.view === '__cmd'){ openCmdk(); return; }
+    switchView(b.dataset.view);
+  };
+
+  // Toggle sidebar
+  const isMobileNav = () => window.matchMedia('(max-width:1023px)').matches;
+  const closeNavDrawer = () => $('#app').classList.remove('nav-open');
+  $('#btnToggleNav').onclick = () => {
+    if (isMobileNav()) $('#app').classList.toggle('nav-open');
+    else $('#app').classList.toggle('sidenav-collapsed');
+  };
+  $('#navScrim').onclick = closeNavDrawer;
+  window.addEventListener('resize', () => { if (!isMobileNav()) closeNavDrawer(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavDrawer(); });
+
+  // Theme
+  $('#btnTheme').onclick = toggleTheme;
+
+  // Command palette
+  $('#btnCmd').onclick = openCmdk;
+  $('#cmdk').onclick = (e) => { if (e.target.id === 'cmdk') closeCmdk(); };
+  $('#cmdkInput').oninput = (e) => { cmdIndex = 0; renderCmd(e.target.value); };
+  $('#cmdkInput').onkeydown = (e) => {
+    if (e.key === 'ArrowDown'){ e.preventDefault(); cmdIndex = Math.min(cmdIndex+1, cmdFiltered.length-1); renderCmd(e.target.value); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); cmdIndex = Math.max(cmdIndex-1, 0); renderCmd(e.target.value); }
+    else if (e.key === 'Enter'){ e.preventDefault(); const c = cmdFiltered[cmdIndex]; if (c) { closeCmdk(); setTimeout(c.run, 60); } }
+    else if (e.key === 'Escape') closeCmdk();
+  };
+  $('#cmdkList').onclick = (e) => {
+    const b = e.target.closest('[data-cmd]');
+    if (!b) return;
+    const c = COMMANDS.find(x => x.id === b.dataset.cmd);
+    if (c){ closeCmdk(); setTimeout(c.run, 60); }
+  };
+
+  // Project pill
+  $('#projectPill').onclick = () => {
+    if (!STATE.project){ startNewProject('local'); return; }
+    switchView('home');
+  };
+
+  // Modal
+  $('#modalClose').onclick = Modal.close;
+  $('#scrim').onclick = Modal.close;
+
+  // Inspector close
+  $('#btnInspectorClose').onclick = closeInspector;
+
+  // Designer toolbar
+  $('#btnAddTable').onclick = addTableDialog;
+  $('#btnTemplates').onclick = showTemplatesModal;
+  $('#btnAutoLayout').onclick = () => { autoLayoutTables(); renderDesigner(); persistProject(); toast('Auto-layout applied', 'ok'); };
+  $('#btnFit').onclick = fitCanvasToTables;
+  $('#btnZoomIn').onclick = () => setZoom(STATE.zoom * 1.15);
+  $('#btnZoomOut').onclick = () => setZoom(STATE.zoom * 0.85);
+
+  // Global keyboard
+  document.addEventListener('keydown', (e) => {
+    const isMod = e.metaKey || e.ctrlKey;
+    if (isMod && e.key.toLowerCase() === 'k'){ e.preventDefault(); openCmdk(); return; }
+    if (e.key === 'Escape'){
+      if ($('#cmdk').classList.contains('on')) return closeCmdk();
+      if ($('#modalWrap').classList.contains('on')) return Modal.close();
+      closeInspector();
+    }
+    if (e.key === 'Delete' || e.key === 'Backspace'){
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (STATE.selectedTableId && STATE.selectedColumnId){
+        e.preventDefault();
+        deleteSelectedColumn();
+      }
+    }
+  });
+
+  // Tablet/mobile: open inspector when a table is selected
+  window.matchMedia('(max-width: 1023px)').addEventListener('change', (e) => {
+    if (!e.matches) closeInspector();
+  });
+
+  // Load existing project
+  (async () => {
+    const loaded = await loadProjectFromIDB();
+    if (loaded) logActivity('Restored project: ' + STATE.project.name);
+    renderAll();
+    setupCanvasPanZoom();
+    if (STATE.project) renderDesigner();
+  })();
+}
+
+async function deleteSelectedColumn(){
+  const t = STATE.project.schema.tables.find(x => x.id === STATE.selectedTableId);
+  if (!t) return;
+  const col = t.columns.find(c => c.id === STATE.selectedColumnId);
+  if (!col) return;
+  if (!confirm('Delete column "' + col.name + '"?')) return;
+  t.columns = t.columns.filter(c => c.id !== col.id);
+  STATE.selectedColumnId = null;
+  Migrations.generate(STATE.project);
+  await persistProject();
+  renderDesigner();
+  renderInspector();
+  toast('Column deleted', 'ok');
+}
+
+function fitCanvasToTables(){
+  const tables = STATE.project.schema.tables;
+  if (!tables.length){ setZoom(1); STATE.panX = 0; STATE.panY = 0; return; }
+  const host = $('#canvas');
+  const rect = host.getBoundingClientRect();
+  const minX = Math.min(...tables.map(t => t.x));
+  const minY = Math.min(...tables.map(t => t.y));
+  const maxX = Math.max(...tables.map(t => t.x + 260));
+  const maxY = Math.max(...tables.map(t => t.y + 200));
+  const w = maxX - minX + 120;
+  const h = maxY - minY + 120;
+  const z = Math.min(rect.width / w, rect.height / h, 1.5);
+  STATE.zoom = clamp(z, 0.3, 1.5);
+  STATE.panX = -minX * STATE.zoom + 60;
+  STATE.panY = -minY * STATE.zoom + 60;
+  renderDesigner();
+}
+
+/* ============================================================
+   31. BOOT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', initApp);
+
+</script>
+
+</body>
+</html>

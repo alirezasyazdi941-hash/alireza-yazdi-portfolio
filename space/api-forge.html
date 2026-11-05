@@ -1,0 +1,3958 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#05070c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>NONONICK API FORGE</title>
+<style>
+:root{
+  --bg:#05070c;--bg2:#080b12;--bg3:#0c1018;
+  --panel:rgba(255,255,255,.045);--panel2:rgba(255,255,255,.075);--panel3:rgba(255,255,255,.11);
+  --border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.18);
+  --txt:#eaf0fa;--txt2:#98a4bb;--txt3:#5d6980;
+  --cyan:#22d3ee;--blue:#3b82f6;--violet:#a855f7;
+  --green:#34d399;--red:#fb7185;--amber:#fbbf24;--pink:#ec4899;
+  --grad:linear-gradient(135deg,#22d3ee,#3b82f6 48%,#a855f7);
+  --r:16px;--r-sm:12px;--r-xs:8px;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px);
+  --shadow:0 12px 32px -16px rgba(0,0,0,.9);
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Inter,Roboto,sans-serif;
+  background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;line-height:1.4;font-size:14px;
+  overscroll-behavior-y:none;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(700px 400px at 8% -8%, rgba(34,211,238,.13), transparent 60%),
+    radial-gradient(600px 400px at 102% 2%, rgba(168,85,247,.11), transparent 60%),
+    radial-gradient(700px 500px at 50% 108%, rgba(59,130,246,.10), transparent 60%);
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{border:none;background:none;cursor:pointer;padding:0}
+input,textarea,select{outline:none}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--panel3);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+::selection{background:rgba(34,211,238,.3)}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.02em}
+
+/* ---------- SHELL ---------- */
+#app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100dvh;height:100dvh;overflow:hidden}
+
+/* ---------- TOPBAR ---------- */
+.topbar{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:calc(var(--safe-t) + 8px) 12px 8px;
+  padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));
+  background:linear-gradient(180deg,rgba(5,7,12,.98),rgba(5,7,12,.85));
+  -webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);z-index:50;
+}
+.brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.brand-logo{
+  width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+  background:var(--grad);color:#04141c;flex:0 0 auto;
+  box-shadow:0 6px 18px -6px rgba(34,211,238,.6);
+}
+.brand-logo svg{width:20px;height:20px}
+.brand-text{min-width:0}
+.brand-name{font-size:14px;font-weight:800;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:10.5px;color:var(--txt3);font-weight:600;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.icon-btn{
+  width:38px;height:38px;flex:0 0 auto;border-radius:11px;display:grid;place-items:center;
+  color:var(--txt2);background:var(--panel);border:1px solid var(--border);
+  transition:transform .16s,background .2s,color .2s;
+}
+.icon-btn:active{transform:scale(.9);background:var(--panel2)}
+.icon-btn svg{width:19px;height:19px}
+.icon-btn.on{color:var(--cyan);background:var(--panel2);border-color:rgba(34,211,238,.4)}
+.mode-pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;padding:4px 9px;border-radius:20px;border:1px solid var(--border2);
+  background:var(--panel2);color:var(--txt2);white-space:nowrap;
+}
+.mode-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+
+/* ---------- MAIN NAV ---------- */
+.mainnav{
+  flex:0 0 auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;
+  padding:6px 8px;padding-left:calc(8px + var(--safe-l));padding-right:calc(8px + var(--safe-r));
+  background:rgba(5,7,12,.85);border-bottom:1px solid var(--border);z-index:40;
+}
+.mainnav::-webkit-scrollbar{display:none}
+.nav-tab{
+  padding:7px 12px;border-radius:9px;font-size:12.5px;font-weight:700;letter-spacing:-.01em;
+  color:var(--txt3);white-space:nowrap;transition:.18s;flex:0 0 auto;position:relative;
+}
+.nav-tab:active{transform:scale(.96)}
+.nav-tab.active{background:var(--panel2);color:var(--txt);box-shadow:inset 0 0 0 1px var(--border2)}
+.nav-tab.active::after{
+  content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;
+  background:var(--grad);
+}
+.nav-tab svg{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+
+/* ---------- WORKSPACE ---------- */
+.workspace{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:12px 12px 90px;
+  padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));
+  scroll-behavior:smooth;
+}
+.container{max-width:1200px;margin:0 auto}
+
+/* ---------- STATUSBAR ---------- */
+.statusbar{
+  flex:0 0 auto;display:flex;align-items:center;gap:8px;
+  padding:8px 12px calc(8px + var(--safe-b));
+  padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));
+  background:rgba(5,7,12,.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);font-size:11.5px;font-weight:650;color:var(--txt3);
+  white-space:nowrap;overflow-x:auto;scrollbar-width:none;z-index:45;
+}
+.statusbar::-webkit-scrollbar{display:none}
+.stat-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:7px;background:var(--panel);border:1px solid var(--border);flex:0 0 auto}
+.stat-chip.ok{color:#7ef0c2;border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.08)}
+.stat-chip.err{color:#ffb0bd;border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.08)}
+.stat-chip.warn{color:#ffd77a;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08)}
+.stat-chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ---------- PRIMITIVES ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;box-shadow:var(--shadow);position:relative;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+.card.tight{padding:10px}
+.card.glow{border-color:rgba(34,211,238,.24)}
+.card.glow::after{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(168,85,247,.12));opacity:.5;z-index:-1;
+}
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+@media(max-width:640px){.grid3,.grid4{grid-template-columns:repeat(2,1fr)}}
+.section{margin-top:14px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 3px 8px}
+.section-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--txt3)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 14px;border-radius:11px;font-size:13.5px;font-weight:700;letter-spacing:-.01em;
+  background:var(--panel2);border:1px solid var(--border);color:var(--txt);
+  transition:transform .14s,background .2s,opacity .2s;min-height:38px;white-space:nowrap;
+}
+.btn:active{transform:scale(.96)}
+.btn svg{width:16px;height:16px}
+.btn.primary{background:var(--grad);color:#04141c;border-color:transparent;box-shadow:0 6px 18px -8px rgba(34,211,238,.5)}
+.btn.ghost{background:transparent}
+.btn.danger{background:rgba(251,113,133,.14);border-color:rgba(251,113,133,.35);color:#ffb0bd}
+.btn.ok{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.35);color:#7ef0c2}
+.btn.full{width:100%}
+.btn.sm{padding:6px 10px;font-size:12px;min-height:32px;border-radius:9px}
+.btn.sm svg{width:14px;height:14px}
+.btn.xs{padding:4px 8px;font-size:11px;min-height:26px;border-radius:7px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+.input,.select,.textarea{
+  width:100%;padding:10px 12px;border-radius:11px;background:var(--panel);
+  border:1px solid var(--border);color:var(--txt);font-size:13.5px;transition:.2s;
+  font-family:inherit;
+}
+.input:focus,.select:focus,.textarea:focus{border-color:rgba(34,211,238,.5);background:var(--panel2)}
+.textarea{min-height:100px;resize:vertical;line-height:1.5;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+.input::placeholder,.textarea::placeholder{color:var(--txt3);opacity:.7}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.field label{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;
+  background:var(--panel);border:1px solid var(--border);font-size:12px;font-weight:650;color:var(--txt2);
+  white-space:nowrap;transition:.16s;
+}
+.chip:active{transform:scale(.95)}
+.chip.active{background:var(--grad);color:#04141c;border-color:transparent}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+
+.badge{
+  display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:6px;
+  font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--panel2);border:1px solid var(--border);color:var(--txt2);
+}
+.badge.green{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.32);color:#7ef0c2}
+.badge.red{background:rgba(251,113,133,.14);border-color:rgba(251,113,133,.32);color:#ffb0bd}
+.badge.amber{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.32);color:#ffd77a}
+.badge.cyan{background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.32);color:#8ee9fb}
+.badge.violet{background:rgba(168,85,247,.16);border-color:rgba(168,85,247,.34);color:#d8b4fe}
+.badge.grey{color:var(--txt3)}
+
+.notice{
+  padding:10px 12px;border-radius:11px;font-size:12.5px;line-height:1.5;
+  background:var(--panel);border:1px solid var(--border);color:var(--txt2);
+}
+.notice b{color:var(--txt)}
+.notice.ok{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.28);color:#a7f3d0}
+.notice.warn{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28);color:#fde68a}
+.notice.err{background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.28);color:#fecdd3}
+
+.method-pill{
+  padding:4px 9px;border-radius:7px;font-size:11px;font-weight:800;letter-spacing:.04em;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.m-GET{background:rgba(34,211,238,.15);color:#8ee9fb;border:1px solid rgba(34,211,238,.32)}
+.m-POST{background:rgba(52,211,153,.15);color:#7ef0c2;border:1px solid rgba(52,211,153,.32)}
+.m-PUT{background:rgba(251,191,36,.15);color:#ffd77a;border:1px solid rgba(251,191,36,.32)}
+.m-PATCH{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.32)}
+.m-DELETE{background:rgba(251,113,133,.15);color:#ffb0bd;border:1px solid rgba(251,113,133,.32)}
+.m-HEAD,.m-OPTIONS{background:var(--panel2);color:var(--txt2);border:1px solid var(--border)}
+
+.code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;line-height:1.55;
+  background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:11px;
+  padding:12px;overflow:auto;white-space:pre;color:#d8e2f0;
+  max-height:440px;
+}
+.code.wrap{white-space:pre-wrap;word-break:break-word}
+.code.small{font-size:11px;max-height:280px}
+[data-theme="dark"] .code{background:rgba(0,0,0,.4)}
+
+.tabs-inline{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:3px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none}
+.tabs-inline::-webkit-scrollbar{display:none}
+.tabs-inline button{
+  flex:1;min-width:max-content;padding:7px 12px;border-radius:9px;font-size:12.5px;font-weight:700;
+  color:var(--txt3);transition:.2s;white-space:nowrap;
+}
+.tabs-inline button.active{background:var(--panel3);color:var(--txt)}
+
+.kv{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:12.5px;border-bottom:1px solid var(--border)}
+.kv:last-child{border-bottom:none}
+.kv span{color:var(--txt3);font-weight:650}
+.kv b{font-weight:650;text-align:right;word-break:break-all;color:var(--txt)}
+
+.empty{text-align:center;padding:34px 16px;color:var(--txt3)}
+.empty .e-ic{
+  width:56px;height:56px;border-radius:18px;margin:0 auto 12px;display:grid;place-items:center;
+  background:var(--panel);border:1px solid var(--border);
+}
+.empty .e-ic svg{width:24px;height:24px}
+.empty b{display:block;color:var(--txt2);font-size:14px;margin-bottom:4px}
+.empty p{margin:0;font-size:12.5px}
+
+.divider{height:1px;background:var(--border);margin:10px 0}
+
+.switch{
+  width:42px;height:25px;border-radius:99px;background:var(--panel3);border:1px solid var(--border);
+  position:relative;flex:0 0 auto;transition:.25s;cursor:pointer;
+}
+.switch::after{
+  content:'';position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .25s cubic-bezier(.22,1,.3,1);
+}
+.switch.on{background:var(--grad);border-color:transparent}
+.switch.on::after{transform:translateX(17px)}
+
+.kbd{
+  font-family:ui-monospace,monospace;font-size:10.5px;padding:2px 6px;border-radius:5px;
+  background:var(--panel2);border:1px solid var(--border2);color:var(--txt2);
+}
+
+/* ---------- REQUEST BUILDER ---------- */
+.reqbar{
+  display:flex;gap:6px;align-items:stretch;
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px;
+  margin-bottom:10px;
+}
+.reqbar .method-select{
+  width:100px;padding:8px 6px;border-radius:9px;background:var(--panel2);border:1px solid var(--border);
+  font-size:12px;font-weight:800;font-family:ui-monospace,monospace;text-align:center;
+  -webkit-appearance:none;appearance:none;cursor:pointer;
+}
+.reqbar .url-input{
+  flex:1;min-width:0;padding:8px 10px;border-radius:9px;background:transparent;border:none;
+  font-size:13px;font-family:ui-monospace,monospace;
+}
+.reqbar .send-btn{
+  padding:0 16px;border-radius:9px;background:var(--grad);color:#04141c;font-weight:800;font-size:13px;
+  display:grid;place-items:center;min-width:70px;transition:.15s;
+}
+.reqbar .send-btn:active{transform:scale(.95)}
+.reqbar .send-btn.sending{opacity:.6;pointer-events:none}
+.reqbar .send-btn svg{width:16px;height:16px}
+
+/* ---------- RESPONSE ---------- */
+.resp-head{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:8px 10px;background:var(--panel);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;
+}
+.resp-meta{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;min-width:0}
+.resp-meta .status{
+  padding:3px 8px;border-radius:6px;font-family:ui-monospace,monospace;font-size:11.5px;font-weight:800;
+}
+.resp-meta .status.s2{background:rgba(52,211,153,.15);color:#7ef0c2;border:1px solid rgba(52,211,153,.3)}
+.resp-meta .status.s3{background:rgba(34,211,238,.15);color:#8ee9fb;border:1px solid rgba(34,211,238,.3)}
+.resp-meta .status.s4{background:rgba(251,191,36,.15);color:#ffd77a;border:1px solid rgba(251,191,36,.3)}
+.resp-meta .status.s5{background:rgba(251,113,133,.15);color:#ffb0bd;border:1px solid rgba(251,113,133,.3)}
+.resp-meta .status.s0{background:var(--panel3);color:var(--txt2);border:1px solid var(--border2)}
+
+/* ---------- JSON VIEWER ---------- */
+.json-view{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;
+  background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:11px;
+  padding:12px;overflow:auto;max-height:480px;white-space:pre;
+}
+[data-theme="dark"] .json-view{background:rgba(0,0,0,.4)}
+.json-view .k{color:#a5d8ff}
+.json-view .s{color:#a7f3d0}
+.json-view .n{color:#fde68a}
+.json-view .b{color:#d8b4fe}
+.json-view .nu{color:#fca5a5}
+.json-view .p{color:#7a8699}
+.json-view .t{color:#8ee9fb;cursor:pointer;user-select:none}
+.json-view .t:hover{color:#22d3ee}
+
+/* ---------- HISTORY ---------- */
+.hist-row{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+  background:var(--panel);border:1px solid var(--border);margin-bottom:6px;
+  transition:.15s;cursor:pointer;
+}
+.hist-row:active{transform:scale(.985);background:var(--panel2)}
+.hist-row .url{
+  flex:1;min-width:0;font-family:ui-monospace,monospace;font-size:12px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt2);
+}
+.hist-row .meta{display:flex;gap:6px;align-items:center;flex:0 0 auto;font-size:11px;color:var(--txt3)}
+
+/* ---------- DIFF ---------- */
+.diff-line{padding:2px 6px;font-family:ui-monospace,monospace;font-size:11.5px;white-space:pre-wrap;word-break:break-all}
+.diff-line.add{background:rgba(52,211,153,.14);color:#7ef0c2;border-left:2px solid var(--green);padding-left:8px}
+.diff-line.del{background:rgba(251,113,133,.14);color:#ffb0bd;border-left:2px solid var(--red);padding-left:8px;text-decoration:line-through;opacity:.85}
+.diff-line.same{color:var(--txt3);padding-left:10px}
+.diff-line.hdr{color:var(--cyan);font-weight:700}
+
+/* ---------- WORKFLOW NODE ---------- */
+.wf-node{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:10px 12px;margin-bottom:6px;position:relative;
+}
+.wf-node-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.wf-node-ic{
+  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;
+  background:var(--grad);color:#04141c;font-size:13px;font-weight:800;
+}
+.wf-node-ic.green{background:linear-gradient(135deg,#34d399,#22d3ee)}
+.wf-node-ic.amber{background:linear-gradient(135deg,#fbbf24,#fb7185)}
+.wf-node-ic.violet{background:linear-gradient(135deg,#a855f7,#6366f1)}
+.wf-node-ic.pink{background:linear-gradient(135deg,#ec4899,#a855f7)}
+.wf-node-title{font-size:12.5px;font-weight:750;flex:1}
+.wf-node-desc{font-size:11px;color:var(--txt3);font-family:ui-monospace,monospace;word-break:break-all}
+.wf-arrow{text-align:center;color:var(--txt3);padding:2px 0}
+.wf-arrow svg{width:14px;height:14px}
+
+/* ---------- SHEET ---------- */
+#sheet-root{position:fixed;inset:0;z-index:200;pointer-events:none}
+#sheet-root.open{pointer-events:auto}
+.sheet-scrim{position:absolute;inset:0;background:rgba(2,4,8,.7);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .28s}
+#sheet-root.open .sheet-scrim{opacity:1}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;max-height:88dvh;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(14,18,26,.99),rgba(8,11,18,.99));
+  border-top:1px solid var(--border2);border-radius:22px 22px 0 0;
+  padding:8px 14px calc(20px + var(--safe-b));
+  transform:translateY(102%);transition:transform .32s cubic-bezier(.22,1,.3,1);
+  box-shadow:0 -20px 60px -10px rgba(0,0,0,.9);
+}
+#sheet-root.open .sheet{transform:translateY(0)}
+.sheet-grab{width:34px;height:4px;border-radius:99px;background:var(--panel3);margin:4px auto 12px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.sheet-head h3{font-size:16px;font-weight:750;letter-spacing:-.02em}
+.sheet-body{display:flex;flex-direction:column;gap:10px}
+@media(min-width:720px){
+  .sheet{left:50%;right:auto;bottom:auto;top:50%;width:min(560px,92vw);
+    transform:translate(-50%,-46%) scale(.96);border-radius:20px;border:1px solid var(--border2);
+    max-height:86dvh;opacity:0;transition:transform .28s cubic-bezier(.22,1,.3,1),opacity .28s}
+  #sheet-root.open .sheet{transform:translate(-50%,-50%) scale(1);opacity:1}
+  .sheet-grab{display:none}
+}
+
+/* ---------- TOASTS ---------- */
+#toast-root{position:fixed;left:0;right:0;top:calc(var(--safe-t) + 8px);z-index:300;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;padding:0 12px}
+.toast{
+  max-width:440px;width:100%;display:flex;align-items:center;gap:9px;
+  padding:10px 13px;border-radius:12px;font-size:12.5px;font-weight:600;
+  background:rgba(16,20,30,.97);border:1px solid var(--border2);color:var(--txt);
+  box-shadow:0 14px 32px -12px rgba(0,0,0,.9);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  transform:translateY(-20px) scale(.96);opacity:0;transition:all .28s;
+}
+.toast.in{transform:none;opacity:1}
+.toast svg{width:15px;height:15px;flex:0 0 auto}
+.toast.ok{border-color:rgba(52,211,153,.4)} .toast.ok svg{color:var(--green)}
+.toast.warn{border-color:rgba(251,191,36,.4)} .toast.warn svg{color:var(--amber)}
+.toast.err{border-color:rgba(251,113,133,.4)} .toast.err svg{color:var(--red)}
+.toast.info svg{color:var(--cyan)}
+
+/* ---------- COMMAND PALETTE ---------- */
+#palette{
+  position:fixed;inset:0;z-index:400;display:none;
+  background:rgba(2,4,8,.75);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  padding-top:calc(var(--safe-t) + 40px);
+}
+#palette.open{display:block}
+.palette-box{
+  max-width:520px;margin:0 auto;background:rgba(14,18,26,.99);border:1px solid var(--border2);
+  border-radius:16px;overflow:hidden;box-shadow:0 20px 60px -20px rgba(0,0,0,.9);
+  animation:palIn .22s cubic-bezier(.22,1,.3,1);
+}
+@keyframes palIn{from{opacity:0;transform:translateY(-10px) scale(.98)}to{opacity:1;transform:none}}
+.palette-input{
+  width:100%;padding:14px 16px;background:transparent;border:none;border-bottom:1px solid var(--border);
+  font-size:15px;color:var(--txt);
+}
+.palette-input::placeholder{color:var(--txt3)}
+.palette-list{max-height:340px;overflow-y:auto;padding:6px}
+.palette-item{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;
+  cursor:pointer;transition:.15s;font-size:13px;
+}
+.palette-item:hover,.palette-item.active{background:var(--panel2)}
+.palette-item .pk{font-size:10.5px;color:var(--txt3);font-family:ui-monospace,monospace;margin-left:auto}
+
+/* ---------- MISC ---------- */
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.muted{color:var(--txt3)}
+.tiny{font-size:11px}
+.tiny2{font-size:10.5px}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.flex1{flex:1;min-width:0}
+.center{text-align:center}
+.hidden{display:none!important}
+
+.list-row{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;
+  background:var(--panel);border:1px solid var(--border);margin-bottom:6px;
+}
+.list-row .li-title{font-size:13px;font-weight:700}
+.list-row .li-sub{font-size:11.5px;color:var(--txt3);margin-top:1px}
+.list-row .li-act{display:flex;gap:4px;flex:0 0 auto}
+.li-ic{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;display:grid;place-items:center;
+  background:var(--grad);color:#04141c;font-size:12px;font-weight:800;
+}
+.li-ic.green{background:linear-gradient(135deg,#34d399,#22d3ee)}
+.li-ic.amber{background:linear-gradient(135deg,#fbbf24,#fb7185)}
+.li-ic.violet{background:linear-gradient(135deg,#a855f7,#6366f1)}
+.li-ic.pink{background:linear-gradient(135deg,#ec4899,#a855f7)}
+.li-ic.blue{background:linear-gradient(135deg,#3b82f6,#22d3ee)}
+
+.inline-edit{display:flex;gap:6px;align-items:center}
+.inline-edit .input{flex:1;min-width:0}
+
+.hint{
+  font-size:11px;color:var(--txt3);line-height:1.5;
+  padding:6px 0;
+}
+.hint code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-family:ui-monospace,monospace;font-size:10.5px;color:var(--cyan)}
+
+.pill-sep{width:1px;height:14px;background:var(--border);margin:0 4px}
+
+/* ---------- ANIMATION ---------- */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel{background:linear-gradient(90deg,var(--panel) 25%,var(--panel2) 50%,var(--panel) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px;height:12px;margin-bottom:6px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar" id="topbar"></header>
+  <nav class="mainnav" id="mainnav"></nav>
+  <main class="workspace" id="workspace">
+    <div class="container" id="container"></div>
+  </main>
+  <footer class="statusbar" id="statusbar"></footer>
+</div>
+
+<div id="sheet-root"></div>
+<div id="toast-root"></div>
+<div id="palette"><div class="palette-box">
+  <input class="palette-input" id="palette-input" placeholder="Type a command…">
+  <div class="palette-list" id="palette-list"></div>
+</div></div>
+
+<script>
+"use strict";
+/* ============================================================================
+   NONONICK API FORGE
+   Universal API • Fetch • Patch • Automation Engine
+   Single-file, dependency-free, real functionality.
+   ============================================================================ */
+
+const APP = {
+  name: 'NONONICK API FORGE',
+  tagline: 'Universal API • Fetch • Patch • Automation Engine',
+  version: '1.0.0'
+};
+
+/* ============================================================================
+   UTILS
+   ============================================================================ */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.prototype.slice.call(r.querySelectorAll(s));
+const uid = (p='id') => p + '_' + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3);
+
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+function bytes(n){
+  if(n==null) return '—';
+  if(n<1024) return n+' B';
+  if(n<1024*1024) return (n/1024).toFixed(1)+' KB';
+  return (n/1048576).toFixed(2)+' MB';
+}
+function ms(n){
+  if(n==null) return '—';
+  if(n<1000) return Math.round(n)+' ms';
+  return (n/1000).toFixed(2)+' s';
+}
+function debounce(fn, wait){
+  let t; return function(){ const a=arguments,c=this; clearTimeout(t); t=setTimeout(()=>fn.apply(c,a),wait); };
+}
+async function __copyFallback(text){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.setAttribute('readonly',''); ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.select();
+  let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+  ta.remove(); return ok;
+}
+async function copyText(text){
+  text=String(text==null?'':text);
+  let ok=false;
+  try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); ok=true; } }catch(e){}
+  if(!ok) ok=await __copyFallback(text);
+  toast(ok?'Copied':'Copy failed', ok?'ok':'err');
+  return ok;
+}
+function copy(text){ return copyText(text); }
+function downloadFile(name, content, type='text/plain'){
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+function safeJSON(text, fallback){
+  try{ return JSON.parse(text); }catch(e){ return fallback; }
+}
+function isPlainObject(v){ return v && typeof v === 'object' && !Array.isArray(v); }
+function isURL(s){
+  try{ const u = new URL(s); return u.protocol === 'http:' || u.protocol === 'https:'; }
+  catch(e){ return false; }
+}
+function nowISO(){ return new Date().toISOString(); }
+function relativeTime(ts){
+  const d = Date.now() - ts;
+  if(d < 60000) return Math.floor(d/1000)+'s ago';
+  if(d < 3600000) return Math.floor(d/60000)+'m ago';
+  if(d < 86400000) return Math.floor(d/3600000)+'h ago';
+  return Math.floor(d/86400000)+'d ago';
+}
+
+/* ============================================================================
+   STORAGE  (localStorage with namespacing)
+   ============================================================================ */
+const Store = {
+  ns: 'nngv.forge.',
+  get(k, dflt){
+    try{ const raw = localStorage.getItem(this.ns + k); return raw ? JSON.parse(raw) : dflt; }
+    catch(e){ return dflt; }
+  },
+  set(k, v){
+    try{ localStorage.setItem(this.ns + k, JSON.stringify(v)); }catch(e){ console.warn('storage full',e); }
+  },
+  del(k){ try{ localStorage.removeItem(this.ns + k); }catch(e){} },
+  all(){
+    const out = {};
+    for(let i=0;i<localStorage.length;i++){
+      const key = localStorage.key(i);
+      if(key && key.indexOf(this.ns)===0){
+        try{ out[key.slice(this.ns.length)] = JSON.parse(localStorage.getItem(key)); }catch(e){}
+      }
+    }
+    return out;
+  }
+};
+
+/* ============================================================================
+   TOAST / SHEET
+   ============================================================================ */
+function toast(msg, kind='info'){
+  const root = $('#toast-root');
+  const el = document.createElement('div');
+  el.className = 'toast ' + kind;
+  const ic = kind==='ok'?'M5 12.5l4.5 4.5L19 7':kind==='err'||kind==='warn'?'M12 7.6v5.2M12 16.4h0':kind==='info'?'M12 8v8M12 5v.01':'';
+  el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+ic+'"/></svg><span>'+esc(msg)+'</span>';
+  root.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('in'));
+  setTimeout(()=>{ el.classList.remove('in'); setTimeout(()=>el.remove(), 320); }, 2800);
+}
+
+let sheetOpen = false;
+function openSheet(html, opts={}){
+  const root = $('#sheet-root');
+  root.innerHTML =
+    '<div class="sheet-scrim" data-act="close-sheet"></div>'+
+    '<div class="sheet" role="dialog" aria-modal="true">'+
+      '<div class="sheet-grab"></div>'+
+      (opts.title?'<div class="sheet-head"><h3>'+esc(opts.title)+'</h3><button class="icon-btn" data-act="close-sheet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>':'')+
+      '<div class="sheet-body">'+html+'</div>'+
+    '</div>';
+  requestAnimationFrame(()=>root.classList.add('open'));
+  sheetOpen = true;
+}
+function closeSheet(){
+  const root = $('#sheet-root');
+  root.classList.remove('open');
+  sheetOpen = false;
+  setTimeout(()=>{ if(!sheetOpen) root.innerHTML=''; }, 320);
+}
+
+function confirmSheet(title, body, onOk, okLabel='Confirm', danger=false){
+  openSheet(
+    '<div class="notice">'+esc(body)+'</div>'+
+    '<div class="grid2" style="margin-top:6px">'+
+      '<button class="btn ghost" data-act="close-sheet">Cancel</button>'+
+      '<button class="btn '+(danger?'danger':'primary')+'" id="cfm-ok">'+esc(okLabel)+'</button>'+
+    '</div>',
+    {title}
+  );
+  const btn = $('#cfm-ok');
+  if(btn) btn.addEventListener('click', ()=>{ closeSheet(); setTimeout(onOk, 180); }, {once:true});
+}
+
+/* ============================================================================
+   HTTP ENGINE
+   ============================================================================ */
+const HTTP = {
+  /**
+   * Execute an HTTP request using fetch.
+   * @param {Object} req { method, url, headers, body, bodyType, timeoutMs, retries, retryDelayMs }
+   * @returns {Promise<Object>} { ok, status, statusText, headers, body, bodyText, sizeBytes, timeMs, contentType, error, aborted, attempts }
+   */
+  async request(req){
+    const method = (req.method || 'GET').toUpperCase();
+    const url = (req.url || '').trim();
+    const timeoutMs = Math.max(0, req.timeoutMs == null ? 30000 : req.timeoutMs);
+    const retries = Math.max(0, req.retries || 0);
+    const retryDelayMs = Math.max(0, req.retryDelayMs || 500);
+
+    if(!url) return { ok:false, error:'Missing URL', aborted:false };
+    if(!isURL(url)) return { ok:false, error:'Invalid URL (must be http/https): '+url, aborted:false };
+
+    let attempt = 0;
+    let lastErr = null;
+
+    while(attempt <= retries){
+      attempt++;
+      const start = performance.now();
+      const controller = new AbortController();
+      let timer = null;
+      if(timeoutMs > 0){
+        timer = setTimeout(()=>controller.abort(new Error('timeout')), timeoutMs);
+      }
+
+      try{
+        const fetchOpts = { method, headers: req.headers || {}, signal: controller.signal, redirect: 'follow' };
+        if(method !== 'GET' && method !== 'HEAD' && req.body != null){
+          if(req.bodyType === 'json'){
+            fetchOpts.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+            if(!fetchOpts.headers['Content-Type'] && !fetchOpts.headers['content-type']){
+              fetchOpts.headers = Object.assign({}, fetchOpts.headers, { 'Content-Type': 'application/json' });
+            }
+          } else if(req.bodyType === 'form'){
+            fetchOpts.body = req.body;
+            if(!fetchOpts.headers['Content-Type'] && !fetchOpts.headers['content-type']){
+              fetchOpts.headers = Object.assign({}, fetchOpts.headers, { 'Content-Type': 'application/x-www-form-urlencoded' });
+            }
+          } else if(req.bodyType === 'formdata'){
+            fetchOpts.body = req.body;
+          } else {
+            fetchOpts.body = req.body;
+          }
+        }
+
+        const res = await fetch(url, fetchOpts);
+        const timeMs = performance.now() - start;
+        const hdrs = {};
+        res.headers.forEach((v,k)=>{ hdrs[k] = v; });
+
+        const contentType = hdrs['content-type'] || '';
+        const text = await res.text();
+        const sizeBytes = new Blob([text]).size;
+
+        let body = text;
+        let parsed = null;
+        if(contentType.indexOf('json') !== -1 || /^\s*[\{\[]/.test(text)){
+          try{ parsed = JSON.parse(text); body = parsed; }catch(e){ /* keep as text */ }
+        }
+
+        if(timer) clearTimeout(timer);
+        return {
+          ok: res.ok,
+          status: res.status,
+          statusText: res.statusText,
+          headers: hdrs,
+          body,
+          bodyText: text,
+          sizeBytes,
+          timeMs,
+          contentType,
+          url: res.url || url,
+          attempts: attempt
+        };
+      }catch(err){
+        if(timer) clearTimeout(timer);
+        const timeMs = performance.now() - start;
+        const isAbort = err.name === 'AbortError' || /timeout/i.test(String(err.message||''));
+        lastErr = {
+          ok:false, status:0, statusText:'', headers:{}, body:null, bodyText:'',
+          sizeBytes:0, timeMs, contentType:'',
+          error: isAbort ? 'Request '+(timeoutMs>0?'timed out':'aborted') : (err.message || 'Network error'),
+          aborted: isAbort, attempts: attempt, url
+        };
+        if(isAbort || attempt > retries) return lastErr;
+        // Wait before retry
+        await new Promise(r=>setTimeout(r, retryDelayMs));
+      }
+    }
+    return lastErr || { ok:false, error:'Unknown error', aborted:false };
+  },
+
+  /** Build URL with query params. */
+  buildURL(base, params){
+    if(!params || !params.length) return base;
+    try{
+      const u = new URL(base);
+      params.forEach(p=>{
+        if(!p.key) return;
+        if(p.enabled === false) return;
+        u.searchParams.append(p.key, p.value || '');
+      });
+      return u.toString();
+    }catch(e){ return base; }
+  },
+
+  /** Parse query string from URL. */
+  parseURL(url){
+    try{
+      const u = new URL(url);
+      const params = [];
+      u.searchParams.forEach((v,k)=>params.push({ key:k, value:v, enabled:true }));
+      return { base: u.origin + u.pathname, params };
+    }catch(e){ return { base:url, params:[] }; }
+  }
+};
+
+/* ============================================================================
+   DETECT — content-type and pattern detection
+   ============================================================================ */
+const Detect = {
+  contentType(body, contentTypeHeader){
+    if(!body) return 'empty';
+    if(contentTypeHeader){
+      const ct = contentTypeHeader.toLowerCase();
+      if(ct.indexOf('json') !== -1) return 'json';
+      if(ct.indexOf('html') !== -1) return 'html';
+      if(ct.indexOf('xml') !== -1) return 'xml';
+      if(ct.indexOf('form-urlencoded') !== -1) return 'form';
+      if(ct.indexOf('text/') === 0) return 'text';
+    }
+    const t = String(body).trim().slice(0, 200);
+    if(/^[\{\[]/.test(t)) return 'json';
+    if(/^<!doctype html/i.test(t) || /^<html/i.test(t)) return 'html';
+    if(/^<\?xml/i.test(t) || /^<\w+.*xmlns/.test(t)) return 'xml';
+    if(/^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/.test(t.slice(0,200))) return 'jwt';
+    return 'text';
+  },
+
+  isJWT(s){
+    if(typeof s !== 'string') return false;
+    const parts = s.split('.');
+    if(parts.length !== 3) return false;
+    try{
+      const payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+      return isPlainObject(payload);
+    }catch(e){ return false; }
+  },
+
+  decodeJWT(token){
+    try{
+      const parts = token.split('.');
+      if(parts.length !== 3) return null;
+      const decode = p => JSON.parse(atob(p.replace(/-/g,'+').replace(/_/g,'/')));
+      return { header: decode(parts[0]), payload: decode(parts[1]), signature: parts[2] };
+    }catch(e){ return null; }
+  },
+
+  pagination(body){
+    if(!isPlainObject(body)) return null;
+    const keys = ['next','nextPage','next_cursor','nextCursor','hasMore','has_more','page','pageSize','total','totalPages','total_pages','offset','limit','cursor'];
+    const found = keys.filter(k=>body[k] !== undefined);
+    if(found.length >= 2) return { keys: found, confidence: 'HIGH' };
+    if(found.length === 1) return { keys: found, confidence: 'LOW' };
+    return null;
+  },
+
+  errorFormat(body){
+    if(!isPlainObject(body)) return null;
+    const keys = ['error','error_message','errors','message','detail','details','code','status','statusCode','success','ok'];
+    const found = keys.filter(k=>body[k] !== undefined);
+    if(found.length === 0) return null;
+    const hasError = ['error','errors','error_message'].some(k=>body[k] !== undefined);
+    const hasMessage = ['message','detail','details'].some(k=>body[k] !== undefined);
+    if(hasError && hasMessage) return { format:'standard', keys: found };
+    if(hasError) return { format:'error-only', keys: found };
+    return null;
+  }
+};
+
+/* ============================================================================
+   SCHEMA — JSON Schema inference
+   ============================================================================ */
+const Schema = {
+  fromJSON(value, opts={}){
+    const path = opts.path || '$';
+    const seen = opts.seen || new Set();
+    return this.infer(value, path, seen, opts);
+  },
+
+  infer(v, path, seen, opts){
+    if(v === null) return { type: 'null' };
+    if(typeof v === 'string'){
+      const s = { type: 'string' };
+      if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)) s.format = 'uuid';
+      else if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v)) s.format = 'date-time';
+      else if(/^\d{4}-\d{2}-\d{2}$/.test(v)) s.format = 'date';
+      else if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) s.format = 'email';
+      else if(/^https?:\/\//.test(v)) s.format = 'uri';
+      s.example = v;
+      return s;
+    }
+    if(typeof v === 'number'){
+      const s = { type: Number.isInteger(v) ? 'integer' : 'number' };
+      s.example = v;
+      return s;
+    }
+    if(typeof v === 'boolean') return { type: 'boolean', example: v };
+    if(Array.isArray(v)){
+      const s = { type: 'array' };
+      if(v.length === 0){ s.items = {}; return s; }
+      const itemSchemas = v.slice(0,20).map((x,i)=>this.infer(x, path+'['+i+']', seen, opts));
+      const merged = this.mergeSchemas(itemSchemas);
+      s.items = merged;
+      return s;
+    }
+    if(typeof v === 'object'){
+      const key = path;
+      if(seen.has(key)) return { type: 'object', $ref: 'circular' };
+      seen.add(key);
+      const props = {};
+      const required = [];
+      Object.keys(v).forEach(k=>{
+        const child = this.infer(v[k], path+'.'+k, seen, opts);
+        props[k] = child;
+        required.push(k);
+      });
+      return { type: 'object', properties: props, required };
+    }
+    return {};
+  },
+
+  mergeSchemas(schemas){
+    if(!schemas.length) return {};
+    const first = schemas[0];
+    const types = new Set(schemas.map(s=>s.type));
+    if(types.size === 1){
+      const t = first.type;
+      if(t === 'object'){
+        const props = {};
+        const requiredSets = schemas.map(s=>({required:(s.required||[]), props:s.properties||{}}));
+        const allKeys = new Set();
+        requiredSets.forEach(rs=>Object.keys(rs.props).forEach(k=>allKeys.add(k)));
+        allKeys.forEach(k=>{
+          const subs = requiredSets.map(rs=>rs.props[k]).filter(Boolean);
+          props[k] = this.mergeSchemas(subs);
+        });
+        const required = [...allKeys].filter(k=>requiredSets.every(rs=>(rs.required||[]).indexOf(k) !== -1));
+        return { type: 'object', properties: props, required };
+      }
+      if(t === 'array'){
+        const items = schemas.map(s=>s.items).filter(Boolean);
+        return { type: 'array', items: this.mergeSchemas(items) };
+      }
+      return first;
+    }
+    // Mixed types — take first and note
+    const out = Object.assign({}, first);
+    out.type = [...types];
+    return out;
+  },
+
+  toJSONSchema(schema, title='Generated Schema'){
+    return Object.assign({
+      $schema: 'https://json-schema.org/draft/2020-12/schema',
+      title: title
+    }, schema);
+  },
+
+  /** Validate a value against a schema. Returns {valid, errors} */
+  validate(value, schema, path='$'){
+    const errors = [];
+    if(!schema || typeof schema !== 'object') return { valid:true, errors:[] };
+    const t = schema.type;
+    if(Array.isArray(t)){
+      if(t.indexOf(typeof value) === -1 && !(value === null && t.indexOf('null') !== -1)){
+        errors.push(path+': expected one of '+t.join('|')+', got '+typeof value);
+      }
+      return { valid: errors.length === 0, errors };
+    }
+    if(t === 'object'){
+      if(!isPlainObject(value)){ errors.push(path+': expected object'); return { valid:false, errors }; }
+      (schema.required || []).forEach(k=>{
+        if(value[k] === undefined) errors.push(path+'.'+k+': required field missing');
+      });
+      if(schema.properties){
+        Object.keys(schema.properties).forEach(k=>{
+          if(value[k] !== undefined){
+            const sub = this.validate(value[k], schema.properties[k], path+'.'+k);
+            errors.push(...sub.errors);
+          }
+        });
+      }
+    } else if(t === 'array'){
+      if(!Array.isArray(value)){ errors.push(path+': expected array'); return { valid:false, errors }; }
+      if(schema.items){
+        value.forEach((v,i)=>{
+          const sub = this.validate(v, schema.items, path+'['+i+']');
+          errors.push(...sub.errors);
+        });
+      }
+    } else if(t === 'string'){
+      if(typeof value !== 'string') errors.push(path+': expected string, got '+typeof value);
+    } else if(t === 'integer'){
+      if(!Number.isInteger(value)) errors.push(path+': expected integer');
+    } else if(t === 'number'){
+      if(typeof value !== 'number') errors.push(path+': expected number');
+    } else if(t === 'boolean'){
+      if(typeof value !== 'boolean') errors.push(path+': expected boolean');
+    } else if(t === 'null'){
+      if(value !== null) errors.push(path+': expected null');
+    }
+    return { valid: errors.length === 0, errors };
+  }
+};
+
+/* ============================================================================
+   JSON PATCH (RFC 6902) + MERGE PATCH (RFC 7386) + DIFF
+   ============================================================================ */
+const Patch = {
+  /** Compute RFC 6902 JSON Patch operations. */
+  diff(a, b, path=''){
+    const ops = [];
+    if(a === b) return ops;
+
+    // Handle type mismatch / delete + add
+    if(typeof a !== typeof b || Array.isArray(a) !== Array.isArray(b) || a === null || b === null){
+      if(JSON.stringify(a) !== JSON.stringify(b)){
+        ops.push({ op: 'replace', path: path || '/', value: b });
+      }
+      return ops;
+    }
+
+    if(Array.isArray(a) && Array.isArray(b)){
+      const max = Math.max(a.length, b.length);
+      for(let i=0;i<max;i++){
+        const p = path + '/' + i;
+        if(i >= a.length) ops.push({ op:'add', path:p, value:b[i] });
+        else if(i >= b.length) ops.push({ op:'remove', path: path + '/' + (a.length - 1 - (i - b.length)) });
+        else ops.push(...this.diff(a[i], b[i], p));
+      }
+      return ops;
+    }
+
+    if(isPlainObject(a) && isPlainObject(b)){
+      const aKeys = Object.keys(a), bKeys = Object.keys(b);
+      bKeys.forEach(k=>{
+        const p = path + '/' + this.escapePtr(k);
+        if(!(k in a)) ops.push({ op:'add', path:p, value:b[k] });
+        else ops.push(...this.diff(a[k], b[k], p));
+      });
+      aKeys.forEach(k=>{
+        if(!(k in b)) ops.push({ op:'remove', path: path + '/' + this.escapePtr(k) });
+      });
+      return ops;
+    }
+
+    if(a !== b){
+      ops.push({ op:'replace', path: path || '/', value: b });
+    }
+    return ops;
+  },
+
+  escapePtr(s){ return String(s).replace(/~/g,'~0').replace(/\//g,'~1'); },
+
+  /** Apply RFC 6902 ops to an object. */
+  applyJSONPatch(target, ops){
+    const out = JSON.parse(JSON.stringify(target));
+    ops.forEach(op=>{
+      const path = op.path.split('/').slice(1).map(p=>p.replace(/~1/g,'/').replace(/~0/g,'~'));
+      let obj = out;
+      for(let i=0;i<path.length - 1;i++){
+        const k = path[i];
+        if(obj[k] === undefined) obj[k] = {};
+        obj = obj[k];
+      }
+      const last = path[path.length - 1];
+      if(op.op === 'add' || op.op === 'replace'){
+        if(Array.isArray(obj)) obj.splice(parseInt(last,10), op.op==='replace'?1:0, op.value);
+        else obj[last] = op.value;
+      } else if(op.op === 'remove'){
+        if(Array.isArray(obj)) obj.splice(parseInt(last,10), 1);
+        else delete obj[last];
+      } else if(op.op === 'move'){
+        const fromPath = op.from.split('/').slice(1).map(p=>p.replace(/~1/g,'/').replace(/~0/g,'~'));
+        let src = out;
+        for(let i=0;i<fromPath.length - 1;i++) src = src[fromPath[i]];
+        const v = src[fromPath[fromPath.length-1]];
+        delete src[fromPath[fromPath.length-1]];
+        if(Array.isArray(obj)) obj.splice(parseInt(last,10), 0, v);
+        else obj[last] = v;
+      } else if(op.op === 'copy'){
+        const fromPath = op.from.split('/').slice(1).map(p=>p.replace(/~1/g,'/').replace(/~0/g,'~'));
+        let src = out;
+        for(let i=0;i<fromPath.length - 1;i++) src = src[fromPath[i]];
+        obj[last] = JSON.parse(JSON.stringify(src[fromPath[fromPath.length-1]]));
+      } else if(op.op === 'test'){
+        if(JSON.stringify(obj[last]) !== JSON.stringify(op.value)){
+          throw new Error('Test failed at ' + op.path);
+        }
+      }
+    });
+    return out;
+  },
+
+  /** RFC 7386 merge patch. */
+  applyMergePatch(target, patch){
+    if(!isPlainObject(patch)) return patch;
+    const out = isPlainObject(target) ? Object.assign({}, target) : {};
+    Object.keys(patch).forEach(k=>{
+      if(patch[k] === null) delete out[k];
+      else if(isPlainObject(patch[k]) && isPlainObject(out[k])) out[k] = this.applyMergePatch(out[k], patch[k]);
+      else out[k] = patch[k];
+    });
+    return out;
+  },
+
+  /** Render diff as unified-text-like display. */
+  renderDiff(ops){
+    if(!ops.length) return '<div class="diff-line same">No changes detected.</div>';
+    return ops.map(op=>{
+      const cls = op.op === 'add' ? 'add' : op.op === 'remove' ? 'del' : 'add';
+      const sign = op.op === 'add' ? '+' : op.op === 'remove' ? '-' : '~';
+      const body = op.op === 'remove' ? '' : ' = ' + JSON.stringify(op.value);
+      return '<div class="diff-line '+cls+'">'+sign+' '+esc(op.op)+' '+esc(op.path)+body+'</div>';
+    }).join('');
+  }
+};
+
+/* ============================================================================
+   CODE GENERATORS
+   ============================================================================ */
+const CodeGen = {
+  normalize(req){
+    return {
+      method: (req.method || 'GET').toUpperCase(),
+      url: req.url || '',
+      headers: req.headers || {},
+      body: req.body,
+      bodyType: req.bodyType || 'json'
+    };
+  },
+
+  curl(req){
+    const r = this.normalize(req);
+    const parts = ["curl -X "+r.method];
+    parts.push("'"+r.url+"'");
+    Object.keys(r.headers).forEach(k=>{
+      parts.push("-H '"+k+": "+String(r.headers[k]).replace(/'/g, "'\\''")+"'");
+    });
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body);
+      parts.push("--data-raw '"+b.replace(/'/g, "'\\''")+"'");
+    }
+    return parts.join(' \\\n  ');
+  },
+
+  javascript(req){
+    const r = this.normalize(req);
+    const headersJSON = JSON.stringify(r.headers, null, 2).split('\n').map((l,i)=>i===0?l:'  '+l).join('\n');
+    let body = '';
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body, null, 2);
+      body = ',\n  body: '+ (r.bodyType === 'json' ? 'JSON.stringify('+b+')' : JSON.stringify(b));
+    }
+    return `const res = await fetch(${JSON.stringify(r.url)}, {
+  method: ${JSON.stringify(r.method)},
+  headers: ${headersJSON}${body}
+});
+const data = await res.json();
+console.log(res.status, data);`;
+  },
+
+  typescript(req){
+    const r = this.normalize(req);
+    const headersJSON = JSON.stringify(r.headers, null, 2);
+    let body = '';
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body, null, 2);
+      body = ',\n  body: '+(r.bodyType === 'json' ? 'JSON.stringify('+b+')' : JSON.stringify(b));
+    }
+    return `async function call(): Promise<unknown> {
+  const res = await fetch(${JSON.stringify(r.url)}, {
+    method: ${JSON.stringify(r.method)},
+    headers: ${headersJSON.replace(/\n/g,'\n    ')}${body.replace(/\n/g,'\n    ')}
+  });
+  if(!res.ok) throw new Error("HTTP "+res.status);
+  return res.json();
+}`;
+  },
+
+  node(req){
+    const r = this.normalize(req);
+    const headersJSON = JSON.stringify(r.headers, null, 2);
+    let body = '';
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body);
+      body = ',\n  body: '+JSON.stringify(b);
+    }
+    return `const res = await fetch(${JSON.stringify(r.url)}, {
+  method: ${JSON.stringify(r.method)},
+  headers: ${headersJSON}${body}
+});
+const data = await res.json();
+console.log(res.status, data);`;
+  },
+
+  phpCurl(req){
+    const r = this.normalize(req);
+    const lines = [];
+    lines.push('$ch = curl_init();');
+    lines.push('curl_setopt($ch, CURLOPT_URL, '+JSON.stringify(r.url)+');');
+    lines.push('curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);');
+    lines.push('curl_setopt($ch, CURLOPT_CUSTOMREQUEST, '+JSON.stringify(r.method)+');');
+    if(Object.keys(r.headers).length){
+      const hdrs = Object.keys(r.headers).map(k=>k+': '+r.headers[k]);
+      lines.push('curl_setopt($ch, CURLOPT_HTTPHEADER, '+JSON.stringify(hdrs)+');');
+    }
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body);
+      lines.push('curl_setopt($ch, CURLOPT_POSTFIELDS, '+JSON.stringify(b)+');');
+    }
+    lines.push('$response = curl_exec($ch);');
+    lines.push('$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);');
+    lines.push('curl_close($ch);');
+    lines.push('echo $status . "\\n" . $response;');
+    return lines.join('\n');
+  },
+
+  phpNative(req){
+    const r = this.normalize(req);
+    const headers = Object.keys(r.headers).map(k=>k+': '+r.headers[k]).join('\r\n');
+    const b = r.body != null && r.method !== 'GET' && r.method !== 'HEAD'
+      ? (typeof r.body === 'string' ? r.body : JSON.stringify(r.body))
+      : '';
+    return `$opts = [
+  "http" => [
+    "method" => ${JSON.stringify(r.method)},
+    "header" => ${JSON.stringify(headers)},
+    "content" => ${JSON.stringify(b)},
+    "ignore_errors" => true,
+    "timeout" => 30
+  ]
+];
+$ctx = stream_context_create($opts);
+$response = file_get_contents(${JSON.stringify(r.url)}, false, $ctx);
+echo $response;`;
+  },
+
+  python(req){
+    const r = this.normalize(req);
+    const lines = [];
+    lines.push('import requests');
+    lines.push('');
+    lines.push('url = '+JSON.stringify(r.url));
+    if(Object.keys(r.headers).length){
+      lines.push('headers = '+JSON.stringify(r.headers, null, 4).replace(/\n/g,'\n'));
+    } else {
+      lines.push('headers = {}');
+    }
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body, null, 4);
+      lines.push('payload = '+b);
+    }
+    lines.push('');
+    const hasBody = r.body != null && r.method !== 'GET' && r.method !== 'HEAD';
+    const kwargs = ['url', 'headers=headers'];
+    if(hasBody) kwargs.push('json=payload');
+    lines.push('response = requests.'+r.method.toLowerCase()+'('+kwargs.join(', ')+')');
+    lines.push('print(response.status_code)');
+    lines.push('print(response.text)');
+    return lines.join('\n');
+  },
+
+  swift(req){
+    const r = this.normalize(req);
+    const headerLines = Object.keys(r.headers).map(k=>'    request.setValue('+JSON.stringify(String(r.headers[k]))+', forHTTPHeaderField: '+JSON.stringify(k)+')').join('\n');
+    let bodyCode = '';
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body);
+      bodyCode = '    request.httpBody = '+JSON.stringify(b)+'.data(using: .utf8)';
+    }
+    return `var request = URLRequest(url: URL(string: ${JSON.stringify(r.url)})!)
+request.httpMethod = ${JSON.stringify(r.method)}
+${headerLines}${bodyCode ? '\n'+bodyCode : ''}
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in
+    guard let data = data else { return }
+    print(String(data: data, encoding: .utf8) ?? "")
+}
+task.resume()`;
+  },
+
+  kotlin(req){
+    const r = this.normalize(req);
+    const headerLines = Object.keys(r.headers).map(k=>'        .header('+JSON.stringify(k)+', '+JSON.stringify(String(r.headers[k]))+')').join('\n');
+    let bodyLine = '';
+    if(r.body != null && r.method !== 'GET' && r.method !== 'HEAD'){
+      const b = typeof r.body === 'string' ? r.body : JSON.stringify(r.body);
+      bodyLine = '\n        .method('+JSON.stringify(r.method)+', '+JSON.stringify(b)+'.toRequestBody("application/json".toMediaType()))';
+    }
+    return `val client = OkHttpClient()
+val request = Request.Builder()
+        .url(${JSON.stringify(r.url)})
+        .method(${JSON.stringify(r.method)}, null)${bodyLine}${headerLines ? '\n'+headerLines : ''}
+        .build()
+
+client.newCall(request).execute().use { response ->
+    println(response.code)
+    println(response.body?.string())
+}`;
+  },
+
+  all(req){
+    return {
+      'cURL': this.curl(req),
+      'JavaScript': this.javascript(req),
+      'TypeScript': this.typescript(req),
+      'Node.js': this.node(req),
+      'PHP cURL': this.phpCurl(req),
+      'PHP Native': this.phpNative(req),
+      'Python': this.python(req),
+      'Swift': this.swift(req),
+      'Kotlin': this.kotlin(req)
+    };
+  }
+};
+
+/* ============================================================================
+   OPENAPI GENERATOR
+   ============================================================================ */
+const OpenAPI = {
+  generate(endpoints, opts={}){
+    const spec = {
+      openapi: '3.0.3',
+      info: {
+        title: opts.title || 'NONONICK Generated API',
+        version: opts.version || '1.0.0',
+        description: opts.description || 'Generated by NONONICK API FORGE'
+      },
+      servers: opts.servers || [{ url: opts.baseUrl || 'https://api.example.com' }],
+      paths: {},
+      components: {
+        schemas: {},
+        securitySchemes: {
+          bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
+        }
+      }
+    };
+
+    (endpoints || []).forEach(ep=>{
+      const path = ep.path || '/';
+      const method = (ep.method || 'GET').toLowerCase();
+      if(!spec.paths[path]) spec.paths[path] = {};
+      const op = {
+        summary: ep.summary || (ep.method + ' ' + path),
+        responses: {
+          '200': { description: 'Successful response' }
+        }
+      };
+      if(ep.parameters && ep.parameters.length){
+        op.parameters = ep.parameters.map(p=>({
+          name: p.name || p.key,
+          in: p.in || 'query',
+          required: !!p.required,
+          schema: { type: p.type || 'string' }
+        }));
+      }
+      if(['post','put','patch'].indexOf(method) !== -1){
+        op.requestBody = {
+          content: {
+            'application/json': {
+              schema: ep.requestSchema || { type: 'object' }
+            }
+          }
+        };
+      }
+      spec.paths[path][method] = op;
+    });
+    return spec;
+  },
+
+  toYAML(obj, indent=0){
+    const pad = '  '.repeat(indent);
+    if(obj === null) return 'null';
+    if(typeof obj === 'string'){
+      if(obj.indexOf('\n') !== -1 || /[:#\[\]{}&*!|>'"%@`]/.test(obj)){
+        return JSON.stringify(obj);
+      }
+      return obj;
+    }
+    if(typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+    if(Array.isArray(obj)){
+      if(!obj.length) return '[]';
+      return obj.map(v=>{
+        const sub = this.toYAML(v, indent+1);
+        if(sub.indexOf('\n') === -1){
+          return pad + '- ' + sub.trim();
+        }
+        return pad + '-' + sub.replace(/^\s+/, ' ');
+      }).join('\n');
+    }
+    if(typeof obj === 'object'){
+      const keys = Object.keys(obj);
+      if(!keys.length) return '{}';
+      return keys.map(k=>{
+        const v = obj[k];
+        const sub = this.toYAML(v, indent+1);
+        const keyStr = /[:#\s]/.test(k) ? JSON.stringify(k) : k;
+        if(sub.indexOf('\n') === -1){
+          return pad + keyStr + ': ' + sub.trim();
+        }
+        return pad + keyStr + ':\n' + sub;
+      }).join('\n');
+    }
+    return String(obj);
+  },
+
+  parseEndpointFromRequest(method, url){
+    try{
+      const u = new URL(url);
+      const parts = u.pathname.split('/').filter(Boolean);
+      const path = '/' + parts.map(p=>/^\d+$/.test(p) ? '{id}' : p).join('/');
+      const params = [];
+      parts.forEach((p,i)=>{
+        if(/^\d+$/.test(p)) params.push({ name: 'id', in: 'path', required: true, type: 'integer' });
+      });
+      u.searchParams.forEach((v,k)=>{
+        params.push({ name: k, in: 'query', required: false, type: 'string' });
+      });
+      return { path, method, parameters: params };
+    }catch(e){ return null; }
+  }
+};
+
+/* ============================================================================
+   IMPORT — cURL, HAR, Postman, OpenAPI
+   ============================================================================ */
+const Import = {
+  cURL(text){
+    // Parse a curl command line
+    const t = text.replace(/\\\n/g, ' ').replace(/\\\r?\n/g, ' ');
+    const urlMatch = t.match(/curl\s+(?:-X\s+(\w+)\s+)?(?:'([^']+)'|"([^"]+)"|(\S+))/i);
+    if(!urlMatch) return null;
+    const method = (urlMatch[1] || 'GET').toUpperCase();
+    let url = urlMatch[2] || urlMatch[3] || urlMatch[4];
+
+    const headers = {};
+    const headerRe = /-H\s+(?:'([^']+)'|"([^"]+)")/g;
+    let m;
+    while((m = headerRe.exec(t))){
+      const h = m[1] || m[2];
+      const idx = h.indexOf(':');
+      if(idx !== -1) headers[h.slice(0,idx).trim()] = h.slice(idx+1).trim();
+    }
+
+    let body = null;
+    const dataRe = /(?:--data-raw|--data|-d)\s+(?:'([^']*)'|"([^"]*)")/;
+    const dm = t.match(dataRe);
+    if(dm) body = dm[1] != null ? dm[1] : dm[2];
+
+    return { method, url, headers, body, bodyType: body ? 'json' : null };
+  },
+
+  HAR(json){
+    try{
+      const entries = json.log && json.log.entries;
+      if(!Array.isArray(entries)) return null;
+      return entries.map(e=>{
+        const req = e.request || {};
+        const headers = {};
+        (req.headers || []).forEach(h=>{ headers[h.name] = h.value; });
+        const body = req.postData && req.postData.text ? req.postData.text : null;
+        return { method: req.method || 'GET', url: req.url || '', headers, body, bodyType: body ? 'json' : null };
+      });
+    }catch(e){ return null; }
+  },
+
+  postman(json){
+    try{
+      const items = [];
+      const walk = (arr) => {
+        (arr || []).forEach(it=>{
+          if(it.request){
+            const req = it.request;
+            const url = typeof req.url === 'string' ? req.url : (req.url && req.url.raw) || '';
+            const headers = {};
+            (req.header || []).forEach(h=>{ headers[h.key] = h.value; });
+            const body = req.body && req.body.raw ? req.body.raw : null;
+            items.push({ method: (req.method || 'GET').toUpperCase(), url, headers, body, bodyType: body ? 'json' : null });
+          }
+          if(it.item) walk(it.item);
+        });
+      };
+      walk(json.item);
+      return items;
+    }catch(e){ return null; }
+  },
+
+  openAPI(json){
+    try{
+      const endpoints = [];
+      const base = (json.servers && json.servers[0] && json.servers[0].url) || '';
+      Object.keys(json.paths || {}).forEach(path=>{
+        Object.keys(json.paths[path]).forEach(method=>{
+          const op = json.paths[path][method];
+          endpoints.push({
+            path,
+            method: method.toUpperCase(),
+            summary: op.summary || '',
+            parameters: op.parameters || [],
+            baseUrl: base
+          });
+        });
+      });
+      return endpoints;
+    }catch(e){ return null; }
+  },
+
+  auto(text){
+    const t = text.trim();
+    if(!t) return null;
+    // Try JSON
+    if(/^[\{\[]/.test(t)){
+      const j = safeJSON(t, null);
+      if(j){
+        if(j.openapi || j.swagger) return { type:'openapi', data: this.openAPI(j) };
+        if(j.log && j.log.entries) return { type:'har', data: this.HAR(j) };
+        if(j.info && j.item) return { type:'postman', data: this.postman(j) };
+        return { type:'json', data: j };
+      }
+    }
+    if(/^curl\s/i.test(t)){
+      const r = this.cURL(t);
+      if(r) return { type:'curl', data: r };
+    }
+    return { type:'text', data: t };
+  }
+};
+
+/* ============================================================================
+   SECURITY INSPECTOR
+   ============================================================================ */
+const Security = {
+  inspectRequest(req){
+    const issues = [];
+    const url = req.url || '';
+    try{
+      const u = new URL(url);
+      if(u.protocol === 'http:'){
+        issues.push({ level:'warn', title:'Insecure HTTP', detail:'Request uses HTTP instead of HTTPS. Traffic can be intercepted.', fix:'Switch to https://' });
+      }
+      if(u.hostname === 'localhost' || u.hostname === '127.0.0.1' || u.hostname === '0.0.0.0'){
+        issues.push({ level:'info', title:'Localhost target', detail:'Request targets localhost. CORS and mixed-content may apply if page is served over HTTPS.', fix:'Use a proxy or serve page over HTTP' });
+      }
+      if(/^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\./.test(u.hostname)){
+        issues.push({ level:'info', title:'Private network target', detail:'Request targets a private network address.', fix:'Ensure this is intentional' });
+      }
+    }catch(e){}
+
+    const headers = req.headers || {};
+    Object.keys(headers).forEach(h=>{
+      const val = String(headers[h]);
+      if(/^(authorization|api[-_]?key|x-api-key)$/i.test(h)){
+        if(!/^bearer\s/i.test(val) && h.toLowerCase() === 'authorization'){
+          issues.push({ level:'warn', title:'Non-Bearer Authorization', detail:'Authorization header does not use "Bearer " prefix. Only correct for Basic/other schemes.', fix:'Use "Bearer <token>" for JWT/OAuth' });
+        }
+        if(/^(sk_live_|pk_live_)/.test(val)){
+          issues.push({ level:'warn', title:'Production secret detected', detail:'Header '+h+' appears to contain a production API key.', fix:'Never commit secrets; use environment variables' });
+        }
+      }
+    });
+
+    if(req.body && typeof req.body === 'string'){
+      const sensitiveRe = /(password|secret|token|api[_-]?key)\s*[:=]\s*["']?([^"'\s,}]+)/gi;
+      let m;
+      while((m = sensitiveRe.exec(req.body))){
+        if(m[2] && m[2].length > 6){
+          issues.push({ level:'warn', title:'Potential secret in body', detail:'Field "'+m[1]+'" contains what looks like a credential.', fix:'Remove secrets from saved requests or use environment profiles' });
+          break;
+        }
+      }
+    }
+
+    return issues;
+  },
+
+  inspectResponse(res){
+    const issues = [];
+    if(!res || res.status === 0) return issues;
+
+    const headers = res.headers || {};
+    if(!headers['strict-transport-security'] && res.url && res.url.indexOf('https://') === 0){
+      issues.push({ level:'info', title:'Missing HSTS header', detail:'Response does not set Strict-Transport-Security.', fix:'Server should add: Strict-Transport-Security: max-age=31536000' });
+    }
+    if(!headers['x-content-type-options']){
+      issues.push({ level:'info', title:'Missing X-Content-Type-Options', detail:'MIME sniffing may be possible.', fix:'Add header: X-Content-Type-Options: nosniff' });
+    }
+    if(headers['access-control-allow-origin'] === '*' && /token|auth|secret/i.test(res.url || '')){
+      issues.push({ level:'warn', title:'Wildcard CORS on auth endpoint', detail:'CORS allows any origin for a sensitive endpoint.', fix:'Restrict Access-Control-Allow-Origin to known origins' });
+    }
+    if(res.body && typeof res.body === 'string' && /BEGIN\s+(RSA|EC|PRIVATE)/.test(res.body)){
+      issues.push({ level:'err', title:'Private key in response', detail:'Response appears to contain a PEM private key.', fix:'Investigate server-side leak' });
+    }
+    return issues;
+  }
+};
+
+/* ============================================================================
+   WORKFLOW ENGINE
+   ============================================================================ */
+const Workflow = {
+  /**
+   * Run a workflow: array of nodes.
+   * Node types: fetch | condition | log | set | delay | verify
+   */
+  async run(nodes, ctx={}, onProgress){
+    const context = Object.assign({ response: null, status: 0, data: null, log: [] }, ctx);
+    const results = [];
+    for(let i=0;i<nodes.length;i++){
+      const node = nodes[i];
+      if(node.disabled){ results.push({ node, status:'SKIPPED' }); continue; }
+      if(onProgress) onProgress(i, node);
+      const start = performance.now();
+      let result;
+      try{
+        if(node.type === 'fetch'){
+          const req = {
+            method: node.method || 'GET',
+            url: this.interpolate(node.url, context),
+            headers: this.interpolateHeaders(node.headers || {}, context),
+            body: node.body ? this.interpolate(node.body, context) : null,
+            bodyType: node.bodyType || 'json',
+            timeoutMs: node.timeoutMs || 30000
+          };
+          result = await HTTP.request(req);
+          if(result.ok){
+            context.response = result;
+            context.status = result.status;
+            context.data = result.body;
+          } else {
+            context.response = result;
+            context.status = result.status;
+            context.data = result.body;
+          }
+        } else if(node.type === 'condition'){
+          const val = this.evalExpression(node.expression, context);
+          result = { ok: true, value: val, pass: !!val };
+          if(!val && node.stopOnFalse !== false){
+            results.push({ node, result, status:'FAILED', timeMs: performance.now()-start });
+            break;
+          }
+        } else if(node.type === 'log'){
+          const msg = this.interpolate(node.message || '', context);
+          context.log.push(msg);
+          result = { ok:true, message: msg };
+        } else if(node.type === 'set'){
+          const v = this.interpolate(node.value, context);
+          this.setPath(context, node.path, v);
+          result = { ok:true };
+        } else if(node.type === 'delay'){
+          await new Promise(r=>setTimeout(r, node.ms || 1000));
+          result = { ok:true };
+        } else if(node.type === 'verify'){
+          const ok = this.evalExpression(node.expression, context);
+          result = { ok: !!ok };
+          if(!ok){
+            results.push({ node, result, status:'FAILED', timeMs: performance.now()-start });
+            break;
+          }
+        } else {
+          result = { ok:false, error:'Unknown node type: '+node.type };
+        }
+        const status = result.ok ? 'PASS' : 'FAIL';
+        results.push({ node, result, status, timeMs: performance.now()-start });
+        if(!result.ok) break;
+      }catch(err){
+        results.push({ node, result:{ ok:false, error: err.message }, status:'ERROR', timeMs: performance.now()-start });
+        break;
+      }
+    }
+    return { context, results };
+  },
+
+  interpolate(template, ctx){
+    if(typeof template !== 'string') return template;
+    return template.replace(/\{\{([^}]+)\}\}/g, (_, expr)=>{
+      try{
+        const v = this.evalExpression(expr.trim(), ctx);
+        return v == null ? '' : String(typeof v === 'object' ? JSON.stringify(v) : v);
+      }catch(e){ return ''; }
+    });
+  },
+
+  interpolateHeaders(headers, ctx){
+    const out = {};
+    Object.keys(headers).forEach(k=>{ out[k] = this.interpolate(headers[k], ctx); });
+    return out;
+  },
+
+  evalExpression(expr, ctx){
+    if(!expr) return undefined;
+    // Support "context.data.foo.bar === 'x'" style
+    const fn = new Function('ctx', 'with(ctx){ try { return ('+expr+'); } catch(e){ return undefined; } }');
+    return fn.call(null, ctx);
+  },
+
+  setPath(obj, path, value){
+    if(!path) return;
+    const parts = path.split('.');
+    let cur = obj;
+    for(let i=0;i<parts.length - 1;i++){
+      if(!isPlainObject(cur[parts[i]])) cur[parts[i]] = {};
+      cur = cur[parts[i]];
+    }
+    cur[parts[parts.length-1]] = value;
+  }
+};
+
+/* ============================================================================
+   CRON / SCHEDULER GENERATOR
+   ============================================================================ */
+const Cron = {
+  linux(spec){
+    // spec: { intervalMin, url, method }
+    const lines = [];
+    lines.push('# Linux crontab entry');
+    lines.push('# Runs every ' + spec.intervalMin + ' minutes');
+    lines.push('*/' + spec.intervalMin + ' * * * * /usr/bin/curl -s -X ' + (spec.method || 'GET') + ' ' + (spec.url || 'https://your-api.example.com') + ' > /var/log/api-forge.log 2>&1');
+    return lines.join('\n');
+  },
+
+  cpanel(spec){
+    const lines = [];
+    lines.push('# cPanel Cron Jobs — add via cPanel → Cron Jobs');
+    lines.push('Minute: */' + spec.intervalMin);
+    lines.push('Hour: *');
+    lines.push('Day: *');
+    lines.push('Month: *');
+    lines.push('Weekday: *');
+    lines.push('Command: /usr/bin/curl -s -X ' + (spec.method || 'GET') + ' ' + (spec.url || ''));
+    return lines.join('\n');
+  },
+
+  php(spec){
+    return `<?php
+// cron.php — place on server, run via crontab every ${spec.intervalMin} min
+// */${spec.intervalMin} * * * * /usr/bin/php /path/to/cron.php
+
+$url = '${spec.url || 'https://your-api.example.com'}';
+$ch = curl_init($url);
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT        => 60,
+    CURLOPT_CUSTOMREQUEST  => '${(spec.method || 'GET')}',
+]);
+$response = curl_exec($ch);
+$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+file_put_contents(__DIR__.'/cron.log', date('c')." $status ".substr($response, 0, 200)."\\n", FILE_APPEND);
+echo "$status OK\\n";
+`;
+  },
+
+  browser(spec, ctx){
+    const ms = spec.intervalMin * 60 * 1000;
+    return {
+      intervalMs: ms,
+      note: 'Browser scheduler runs ONLY while this tab is open. It cannot run in the background when closed.'
+    };
+  }
+};
+
+/* ============================================================================
+   HISTORY
+   ============================================================================ */
+const History = {
+  KEY: 'history',
+  list(){ return Store.get(this.KEY, []); },
+  add(entry){
+    const list = this.list();
+    list.unshift(Object.assign({ id: uid('h'), ts: Date.now() }, entry));
+    if(list.length > 300) list.length = 300;
+    Store.set(this.KEY, list);
+    return list[0];
+  },
+  remove(id){
+    const list = this.list().filter(e=>e.id !== id);
+    Store.set(this.KEY, list);
+  },
+  clear(){ Store.set(this.KEY, []); },
+  find(id){ return this.list().find(e=>e.id === id); }
+};
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  screen: 'api',
+  request: {
+    method: 'GET',
+    url: 'https://jsonplaceholder.typicode.com/posts/1',
+    params: [],
+    headers: {},
+    body: '',
+    bodyType: 'json',
+    timeoutMs: 30000,
+    retries: 0,
+    retryDelayMs: 500,
+    auth: { type:'none', token:'', username:'', password:'', key:'', value:'' }
+  },
+  response: null,
+  profile: 'DEV',
+  profiles: Store.get('profiles', {
+    DEV: { baseUrl: 'https://jsonplaceholder.typicode.com', headers: {} },
+    STAGING: { baseUrl: '', headers: {} },
+    PRODUCTION: { baseUrl: '', headers: {} }
+  }),
+  lastJSONSchema: null,
+  patchBase: null,
+  patchTarget: null,
+  workflow: Store.get('workflow', { nodes: [] }),
+  endpoints: Store.get('endpoints', []),
+  history: History.list(),
+  tests: [],
+  healthHistory: Store.get('health', []),
+  settings: Store.get('settings', { theme:'dark', timeout:30000, showSecrets:false })
+};
+
+/* ============================================================================
+   UI HELPERS
+   ============================================================================ */
+function jsonViewHTML(value){
+  if(value === null || value === undefined){
+    return '<div class="json-view"><span class="nu">null</span></div>';
+  }
+  const html = jsonStringify(value, 0);
+  return '<div class="json-view">'+html+'</div>';
+}
+
+function jsonStringify(v, indent, key){
+  const pad = '  '.repeat(indent);
+  const padN = '  '.repeat(indent+1);
+  if(v === null) return '<span class="nu">null</span>';
+  if(typeof v === 'string') return '<span class="s">"'+esc(v)+'"</span>';
+  if(typeof v === 'number') return '<span class="n">'+v+'</span>';
+  if(typeof v === 'boolean') return '<span class="b">'+v+'</span>';
+  if(Array.isArray(v)){
+    if(!v.length) return '<span class="p">[]</span>';
+    const items = v.map(x => padN + jsonStringify(x, indent+1));
+    return '<span class="p">[</span>\n' + items.join('<span class="p">,</span>\n') + '\n' + pad + '<span class="p">]</span>';
+  }
+  if(typeof v === 'object'){
+    const keys = Object.keys(v);
+    if(!keys.length) return '<span class="p">{}</span>';
+    const items = keys.map(k => padN + '<span class="k">"'+esc(k)+'"</span><span class="p">:</span> ' + jsonStringify(v[k], indent+1, k));
+    return '<span class="p">{</span>\n' + items.join('<span class="p">,</span>\n') + '\n' + pad + '<span class="p">}</span>';
+  }
+  return esc(String(v));
+}
+
+function prettyJSON(v){
+  try{ return JSON.stringify(v, null, 2); }catch(e){ return String(v); }
+}
+
+/* ============================================================================
+   SCREEN RENDERERS
+   ============================================================================ */
+
+/* ---------- API SCREEN ---------- */
+function screenAPI(){
+  const r = State.request;
+  const resp = State.response;
+  const t = r.url;
+
+  const html = `
+    <div class="reqbar">
+      <select class="method-select" id="req-method">
+        ${['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS'].map(m=>`<option value="${m}"${m===r.method?' selected':''}>${m}</option>`).join('')}
+      </select>
+      <input class="url-input" id="req-url" placeholder="https://api.example.com/endpoint" value="${esc(t)}" autocomplete="off" spellcheck="false">
+      <button class="send-btn" id="send-btn" title="Send (⌘↵)">Send</button>
+    </div>
+
+    <div class="tabs-inline" id="req-tabs">
+      <button data-tab="params" class="active">Params <span class="badge grey" style="margin-left:4px">${r.params.length}</span></button>
+      <button data-tab="headers">Headers <span class="badge grey" style="margin-left:4px">${Object.keys(r.headers).length}</span></button>
+      <button data-tab="body">Body</button>
+      <button data-tab="auth">Auth</button>
+      <button data-tab="options">Options</button>
+    </div>
+
+    <div id="req-panel"></div>
+
+    <div class="section" id="resp-section">
+      ${resp ? respBlockHTML(resp) : '<div class="empty"><div class="e-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 12h16M12 4v16"/></svg></div><b>No response yet</b><p>Enter a URL and press Send.</p></div>'}
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Quick actions</div></div>
+      <div class="chips">
+        <button class="chip" data-act="load-curl">Import cURL</button>
+        <button class="chip" data-act="export-curl">Export cURL</button>
+        <button class="chip" data-act="save-history">Save to History</button>
+        <button class="chip" data-act="open-code">Generate Code</button>
+        <button class="chip" data-act="open-schema">Schema</button>
+        <button class="chip" data-act="open-openapi">Add to OpenAPI</button>
+      </div>
+    </div>
+  `;
+  return html;
+}
+
+function respBlockHTML(resp){
+  const status = resp.status || 0;
+  const statusClass = status >= 500 ? 's5' : status >= 400 ? 's4' : status >= 300 ? 's3' : status >= 200 ? 's2' : 's0';
+  const statusText = resp.error ? resp.error : (status + ' ' + (resp.statusText || ''));
+  return `
+    <div class="resp-head">
+      <div class="resp-meta">
+        <span class="status ${statusClass}">${esc(statusText)}</span>
+        <span class="badge grey">${ms(resp.timeMs)}</span>
+        <span class="badge grey">${bytes(resp.sizeBytes)}</span>
+        ${resp.contentType ? '<span class="badge cyan">'+esc((resp.contentType.split(';')[0]||'').slice(0,40))+'</span>' : ''}
+      </div>
+      <div class="row" style="gap:4px">
+        <button class="btn xs" data-act="resp-copy">Copy</button>
+        <button class="btn xs" data-act="resp-download">Download</button>
+      </div>
+    </div>
+    <div class="tabs-inline" id="resp-tabs">
+      <button data-rtab="body" class="active">Body</button>
+      <button data-rtab="headers">Headers</button>
+      <button data-rtab="raw">Raw</button>
+      <button data-rtab="security">Security</button>
+    </div>
+    <div id="resp-panel">
+      ${respBodyHTML(resp)}
+    </div>
+  `;
+}
+
+function respBodyHTML(resp){
+  if(!resp) return '';
+  if(resp.error){
+    return '<div class="notice err"><b>Request failed.</b><br>'+esc(resp.error)+'</div>';
+  }
+  const ct = Detect.contentType(resp.bodyText, resp.contentType);
+  if(ct === 'json' && resp.body && typeof resp.body === 'object'){
+    return jsonViewHTML(resp.body) +
+      '<div class="hint">Tip: use <b>Schema</b> tab to generate a JSON Schema from this response.</div>';
+  }
+  if(ct === 'html'){
+    return '<div class="notice warn">HTML response detected. Rendering disabled for safety. Use Raw tab to view source.</div>';
+  }
+  return '<div class="code wrap">'+esc(resp.bodyText || '')+'</div>';
+}
+
+function respHeadersHTML(resp){
+  if(!resp || !resp.headers) return '<div class="empty">No headers</div>';
+  return '<div class="card tight">' + Object.keys(resp.headers).map(k=>
+    '<div class="kv"><span>'+esc(k)+'</span><b>'+esc(resp.headers[k])+'</b></div>'
+  ).join('') + '</div>';
+}
+
+function respRawHTML(resp){
+  if(!resp) return '';
+  return '<div class="code wrap">'+esc(resp.bodyText || '')+'</div>';
+}
+
+function respSecurityHTML(resp){
+  const issues = Security.inspectResponse(resp);
+  if(!issues.length) return '<div class="notice ok">No obvious security issues detected.</div>';
+  return issues.map(i=>{
+    const cls = i.level === 'err' ? 'err' : i.level === 'warn' ? 'warn' : '';
+    return '<div class="notice '+cls+'"><b>'+esc(i.title)+'</b><br>'+esc(i.detail)+'<br><span class="muted tiny">Fix: '+esc(i.fix)+'</span></div>';
+  }).join('');
+}
+
+function renderReqPanel(tab){
+  const r = State.request;
+  const p = $('#req-panel');
+  if(!p) return;
+  if(tab === 'params'){
+    p.innerHTML = `
+      <div class="card">
+        <div class="row between" style="margin-bottom:8px">
+          <div class="section-title" style="margin:0">Query parameters</div>
+          <button class="btn xs primary" data-act="add-param">+ Add</button>
+        </div>
+        <div id="params-list">
+          ${r.params.length ? r.params.map((x,i)=>paramRowHTML(x,i)).join('') : '<div class="muted tiny">No query parameters.</div>'}
+        </div>
+      </div>`;
+  } else if(tab === 'headers'){
+    p.innerHTML = `
+      <div class="card">
+        <div class="row between" style="margin-bottom:8px">
+          <div class="section-title" style="margin:0">Headers</div>
+          <button class="btn xs primary" data-act="add-header">+ Add</button>
+        </div>
+        <div id="headers-list">
+          ${Object.keys(r.headers).length ? Object.keys(r.headers).map(k=>headerRowHTML(k, r.headers[k])).join('') : '<div class="muted tiny">No custom headers.</div>'}
+        </div>
+      </div>`;
+  } else if(tab === 'body'){
+    p.innerHTML = `
+      <div class="card">
+        <div class="row between" style="margin-bottom:8px">
+          <div class="section-title" style="margin:0">Request body</div>
+          <select class="select" id="body-type" style="width:auto;padding:5px 8px;font-size:11.5px">
+            <option value="json"${r.bodyType==='json'?' selected':''}>JSON</option>
+            <option value="text"${r.bodyType==='text'?' selected':''}>Text</option>
+            <option value="form"${r.bodyType==='form'?' selected':''}>Form URL-encoded</option>
+            <option value="raw"${r.bodyType==='raw'?' selected':''}>Raw</option>
+          </select>
+        </div>
+        <textarea class="textarea" id="body-input" placeholder='{"key":"value"}' rows="8">${esc(typeof r.body === 'string' ? r.body : (r.body ? prettyJSON(r.body) : ''))}</textarea>
+        <div class="row" style="gap:6px;margin-top:6px">
+          <button class="btn xs" data-act="body-format">Format</button>
+          <button class="btn xs" data-act="body-clear">Clear</button>
+        </div>
+      </div>`;
+  } else if(tab === 'auth'){
+    p.innerHTML = `
+      <div class="card">
+        <div class="field">
+          <label>Authentication</label>
+          <select class="select" id="auth-type">
+            <option value="none"${r.auth.type==='none'?' selected':''}>None</option>
+            <option value="bearer"${r.auth.type==='bearer'?' selected':''}>Bearer Token</option>
+            <option value="basic"${r.auth.type==='basic'?' selected':''}>Basic Auth</option>
+            <option value="apikey"${r.auth.type==='apikey'?' selected':''}>API Key (Header)</option>
+            <option value="custom"${r.auth.type==='custom'?' selected':''}>Custom Header</option>
+          </select>
+        </div>
+        <div id="auth-fields"></div>
+      </div>`;
+    renderAuthFields();
+  } else if(tab === 'options'){
+    p.innerHTML = `
+      <div class="card">
+        <div class="grid2">
+          <div class="field">
+            <label>Timeout (ms)</label>
+            <input class="input" type="number" id="opt-timeout" value="${r.timeoutMs}">
+          </div>
+          <div class="field">
+            <label>Retries on failure</label>
+            <input class="input" type="number" id="opt-retries" value="${r.retries}">
+          </div>
+        </div>
+        <div class="field">
+          <label>Retry delay (ms)</label>
+          <input class="input" type="number" id="opt-delay" value="${r.retryDelayMs}">
+        </div>
+        <div class="hint">Profile: <b>${esc(State.profile)}</b> → base URL <code>${esc((State.profiles[State.profile]||{}).baseUrl||'—')}</code></div>
+      </div>`;
+  }
+}
+
+function paramRowHTML(p, i){
+  return `<div class="list-row" data-i="${i}" style="padding:6px 8px">
+    <button class="switch ${p.enabled!==false?'on':''}" data-act="toggle-param" data-i="${i}" style="width:32px;height:20px"></button>
+    <input class="input" style="flex:1;min-width:0;padding:6px 8px;font-size:12px" placeholder="key" value="${esc(p.key||'')}" data-pk="${i}">
+    <input class="input" style="flex:1;min-width:0;padding:6px 8px;font-size:12px" placeholder="value" value="${esc(p.value||'')}" data-pv="${i}">
+    <button class="btn xs danger" data-act="del-param" data-i="${i}">×</button>
+  </div>`;
+}
+
+function headerRowHTML(k, v){
+  return `<div class="list-row" style="padding:6px 8px" data-hk="${esc(k)}">
+    <input class="input" style="flex:1;min-width:0;padding:6px 8px;font-size:12px" placeholder="Header" value="${esc(k)}" data-hdr-key>
+    <input class="input" style="flex:1;min-width:0;padding:6px 8px;font-size:12px" placeholder="value" value="${esc(v)}" data-hdr-val>
+    <button class="btn xs danger" data-act="del-header" data-key="${esc(k)}">×</button>
+  </div>`;
+}
+
+function renderAuthFields(){
+  const box = $('#auth-fields');
+  if(!box) return;
+  const a = State.request.auth;
+  if(a.type === 'none'){ box.innerHTML = '<div class="hint">No authentication will be sent.</div>'; return; }
+  if(a.type === 'bearer'){
+    box.innerHTML = `
+      <div class="field"><label>Bearer token</label>
+        <input class="input" id="auth-token" type="text" value="${esc(a.token)}" placeholder="eyJhbGc...">
+        <div class="hint">Sent as: <code>Authorization: Bearer &lt;token&gt;</code></div>
+      </div>`;
+  } else if(a.type === 'basic'){
+    box.innerHTML = `
+      <div class="field"><label>Username</label><input class="input" id="auth-user" value="${esc(a.username)}"></div>
+      <div class="field"><label>Password</label><input class="input" id="auth-pass" type="password" value="${esc(a.password)}"></div>
+      <div class="hint">Encoded with base64 as Basic auth header.</div>`;
+  } else if(a.type === 'apikey'){
+    box.innerHTML = `
+      <div class="field"><label>Header name</label><input class="input" id="auth-key" value="${esc(a.key||'X-API-Key')}"></div>
+      <div class="field"><label>Key value</label><input class="input" id="auth-value" value="${esc(a.value)}"></div>`;
+  } else if(a.type === 'custom'){
+    box.innerHTML = `
+      <div class="field"><label>Header name</label><input class="input" id="auth-key" value="${esc(a.key)}"></div>
+      <div class="field"><label>Header value</label><input class="input" id="auth-value" value="${esc(a.value)}"></div>`;
+  }
+}
+
+/* ---------- FETCH SCREEN (same as API but focused) ---------- */
+function screenFetch(){ return screenAPI(); }
+
+/* ---------- PATCH SCREEN ---------- */
+function screenPatch(){
+  return `
+    <div class="card">
+      <div class="section-title" style="margin-bottom:8px">PATCH Workflow</div>
+      <div class="hint">PREVIEW → CONFIRM → EXECUTE → VERIFY. Never overwrites silently.</div>
+    </div>
+
+    <div class="field" style="margin-top:12px">
+      <label>Target URL (resource to fetch and patch)</label>
+      <input class="input" id="patch-url" placeholder="https://api.example.com/items/1" value="${esc(State.request.url)}">
+    </div>
+
+    <div class="grid2">
+      <button class="btn" data-act="patch-fetch">1. Fetch current</button>
+      <button class="btn" data-act="patch-preview">2. Preview diff</button>
+    </div>
+
+    <div class="section" id="patch-body-section">
+      <div class="section-head"><div class="section-title">Current (fetched)</div></div>
+      <textarea class="textarea" id="patch-current" rows="8" placeholder="Original resource JSON will appear here after fetch"></textarea>
+      <div class="section-head" style="margin-top:10px"><div class="section-title">Target (edited)</div></div>
+      <textarea class="textarea" id="patch-target" rows="8" placeholder="Edit the JSON here to define the target state"></textarea>
+      <div class="row" style="gap:6px;margin-top:6px">
+        <button class="btn xs" data-act="patch-copy-from-current">Copy current → target</button>
+        <button class="btn xs" data-act="patch-format">Format both</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Diff preview</div></div>
+      <div id="patch-diff" class="card"><div class="muted tiny">No diff yet.</div></div>
+    </div>
+
+    <div class="grid3 section">
+      <button class="btn" data-act="patch-json6902">As RFC 6902</button>
+      <button class="btn" data-act="patch-merge7386">As Merge Patch</button>
+      <button class="btn primary" data-act="patch-send">Send PATCH</button>
+    </div>
+
+    <div id="patch-result" class="section"></div>
+  `;
+}
+
+/* ---------- DISCOVER SCREEN ---------- */
+function screenDiscover(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">API Discovery</div>
+      <div class="hint">Paste OpenAPI JSON, Swagger, Postman collection, HAR, cURL, or a JSON response. The engine will attempt to extract endpoints and schema.</div>
+    </div>
+
+    <div class="section">
+      <textarea class="textarea" id="discover-input" rows="10" placeholder="Paste cURL, OpenAPI JSON, Postman collection, HAR, or raw JSON…"></textarea>
+      <div class="row" style="gap:6px;margin-top:8px">
+        <button class="btn primary" data-act="discover-analyze">Analyze</button>
+        <button class="btn" data-act="discover-sample">Load sample cURL</button>
+        <button class="btn" data-act="discover-clear">Clear</button>
+      </div>
+    </div>
+
+    <div class="section" id="discover-result"></div>
+  `;
+}
+
+/* ---------- TEST SCREEN ---------- */
+function screenTest(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">API Test Engine</div>
+      <div class="hint">Automatically generates test cases for the current request URL. Runs real HTTP requests.</div>
+    </div>
+
+    <div class="grid2 section">
+      <button class="btn primary" data-act="test-run">Run Tests</button>
+      <button class="btn" data-act="test-sample">Load Sample Suite</button>
+    </div>
+
+    <div id="test-result" class="section"></div>
+  `;
+}
+
+/* ---------- SCHEMA SCREEN ---------- */
+function screenSchema(){
+  const schema = State.lastJSONSchema;
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Schema Engine</div>
+      <div class="hint">Generate JSON Schema from any JSON. Validate responses against a schema.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Input JSON</div>
+        <button class="btn xs" data-act="schema-from-response" ${!State.response?'disabled':''}>From last response</button>
+      </div>
+      <textarea class="textarea" id="schema-input" rows="8" placeholder='{"id":1,"name":"Jane","active":true}'></textarea>
+      <div class="row" style="gap:6px;margin-top:8px">
+        <button class="btn primary" data-act="schema-generate">Generate Schema</button>
+        <button class="btn" data-act="schema-copy">Copy</button>
+        <button class="btn" data-act="schema-download">Download</button>
+      </div>
+    </div>
+
+    <div class="section" id="schema-result">
+      ${schema ? '<div class="code">'+esc(prettyJSON(schema))+'</div>' : '<div class="muted tiny">No schema yet.</div>'}
+    </div>
+  `;
+}
+
+/* ---------- WORKFLOW SCREEN ---------- */
+function screenWorkflow(){
+  const wf = State.workflow;
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Workflow Builder</div>
+      <div class="hint">Compose real executable nodes: fetch, condition, set, delay, verify, log. Node URLs support <code>{{context.data.field}}</code> interpolation.</div>
+    </div>
+
+    <div class="row between section" style="margin-bottom:8px">
+      <div class="section-title" style="margin:0">Nodes (${wf.nodes.length})</div>
+      <div class="row" style="gap:6px">
+        <button class="btn xs" data-act="wf-add-fetch">+ Fetch</button>
+        <button class="btn xs" data-act="wf-add-condition">+ If</button>
+        <button class="btn xs" data-act="wf-add-set">+ Set</button>
+        <button class="btn xs" data-act="wf-add-delay">+ Delay</button>
+        <button class="btn xs" data-act="wf-add-log">+ Log</button>
+        <button class="btn xs" data-act="wf-add-verify">+ Verify</button>
+      </div>
+    </div>
+
+    <div id="wf-nodes">
+      ${wf.nodes.length ? wf.nodes.map((n,i)=>workflowNodeHTML(n,i)).join('') : '<div class="empty">No nodes yet. Add one to begin.</div>'}
+    </div>
+
+    <div class="grid3 section">
+      <button class="btn primary" data-act="wf-run">Run</button>
+      <button class="btn" data-act="wf-export">Export</button>
+      <button class="btn" data-act="wf-import">Import</button>
+    </div>
+
+    <div id="wf-result" class="section"></div>
+  `;
+}
+
+function workflowNodeHTML(n, i){
+  const cls = n.type === 'fetch' ? '' : n.type === 'condition' ? 'amber' : n.type === 'set' ? 'green' : n.type === 'delay' ? 'violet' : 'pink';
+  const title = {
+    fetch: 'Fetch',
+    condition: 'If',
+    set: 'Set',
+    delay: 'Delay',
+    log: 'Log',
+    verify: 'Verify'
+  }[n.type] || n.type;
+
+  let desc = '';
+  if(n.type === 'fetch') desc = (n.method||'GET') + ' ' + (n.url || '(no url)');
+  else if(n.type === 'condition') desc = 'if (' + (n.expression || '…') + ')';
+  else if(n.type === 'set') desc = (n.path || '') + ' = ' + (n.value || '');
+  else if(n.type === 'delay') desc = (n.ms || 1000) + ' ms';
+  else if(n.type === 'log') desc = n.message || '';
+  else if(n.type === 'verify') desc = 'verify: ' + (n.expression || '');
+
+  return `<div class="wf-node" data-i="${i}">
+    <div class="wf-node-head">
+      <div class="wf-node-ic ${cls}">${i+1}</div>
+      <div class="wf-node-title">${esc(title)}</div>
+      <div class="row" style="gap:4px">
+        <button class="btn xs" data-act="wf-edit" data-i="${i}">Edit</button>
+        <button class="btn xs danger" data-act="wf-del" data-i="${i}">×</button>
+      </div>
+    </div>
+    <div class="wf-node-desc">${esc(desc)}</div>
+  </div>
+  ${i < State.workflow.nodes.length - 1 ? '<div class="wf-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>' : ''}`;
+}
+
+/* ---------- WEBHOOKS SCREEN ---------- */
+function screenWebhooks(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Webhook Tester</div>
+      <div class="hint">Configure a webhook payload template, test it locally, and view history. A real public receiver requires a backend endpoint — generate the adapter spec below.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Test payload</div></div>
+      <textarea class="textarea" id="webhook-payload" rows="6">{
+  "event": "user.created",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "data": { "id": 123, "email": "jane@example.com" }
+}</textarea>
+      <div class="row" style="gap:6px;margin-top:6px">
+        <button class="btn primary" data-act="webhook-validate">Validate payload</button>
+        <button class="btn" data-act="webhook-post">POST to URL…</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Backend receiver spec</div></div>
+      <div class="notice warn">A browser-only HTML cannot host a public webhook receiver. Deploy the PHP adapter below on a server to receive real webhooks.</div>
+      <button class="btn section" style="margin-top:8px" data-act="webhook-gen-php">Generate PHP receiver</button>
+      <div id="webhook-php" class="section"></div>
+    </div>
+  `;
+}
+
+/* ---------- AUTOMATION SCREEN ---------- */
+function screenAutomation(){
+  const sched = State.browserSchedule;
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Automation Engine</div>
+      <div class="hint">Browser scheduling runs ONLY while this tab is open. For reliable background jobs, use the server cron generators below.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Browser scheduler</div></div>
+      <div class="grid3">
+        <div class="field">
+          <label>Interval (minutes)</label>
+          <input class="input" type="number" id="auto-interval" value="${sched ? sched.intervalMin : 5}" min="1">
+        </div>
+        <div class="field">
+          <label>URL</label>
+          <input class="input" id="auto-url" value="${esc(State.request.url)}">
+        </div>
+        <div class="field">
+          <label>Method</label>
+          <select class="select" id="auto-method">
+            ${['GET','POST','PUT','PATCH'].map(m=>`<option>${m}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="grid2">
+        <button class="btn ${sched ? 'danger' : 'primary'}" data-act="auto-toggle">${sched ? 'Stop scheduler' : 'Start scheduler'}</button>
+        <button class="btn" data-act="auto-run-now">Run once now</button>
+      </div>
+      ${sched ? '<div class="notice ok" style="margin-top:8px">Scheduler running every '+sched.intervalMin+' min. Last run: '+(sched.lastRun || 'never')+'</div>' : ''}
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Server scheduler generators</div></div>
+      <div class="grid3">
+        <button class="btn" data-act="cron-linux">Linux cron</button>
+        <button class="btn" data-act="cron-cpanel">cPanel cron</button>
+        <button class="btn" data-act="cron-php">PHP cron</button>
+      </div>
+      <div id="cron-output" class="section"></div>
+    </div>
+  `;
+}
+
+/* ---------- SECURITY SCREEN ---------- */
+function screenSecurity(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Security Inspector</div>
+      <div class="hint">Passive inspection of the current request/response. Never executes destructive tests.</div>
+    </div>
+
+    <div class="section" id="sec-issues"></div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">JWT Decoder</div></div>
+      <textarea class="textarea" id="jwt-input" rows="4" placeholder="Paste a JWT..."></textarea>
+      <button class="btn section" style="margin-top:6px" data-act="jwt-decode">Decode</button>
+      <div id="jwt-output" class="section"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Secret scanner</div></div>
+      <textarea class="textarea" id="sec-input" rows="5" placeholder="Paste code or text to scan for exposed secrets..."></textarea>
+      <button class="btn section" style="margin-top:6px" data-act="sec-scan">Scan</button>
+      <div id="sec-output" class="section"></div>
+    </div>
+  `;
+}
+
+/* ---------- CODE SCREEN ---------- */
+function screenCode(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Code Generator</div>
+      <div class="hint">Generates runnable code from the current request in 9 languages.</div>
+    </div>
+
+    <div class="section">
+      <div class="chips" id="code-langs">
+        ${['cURL','JavaScript','TypeScript','Node.js','PHP cURL','PHP Native','Python','Swift','Kotlin'].map((l,i)=>`<button class="chip ${i===0?'active':''}" data-lang="${l}">${l}</button>`).join('')}
+      </div>
+      <div id="code-output" class="section"></div>
+      <div class="row" style="gap:6px;margin-top:6px">
+        <button class="btn" data-act="code-copy">Copy</button>
+        <button class="btn" data-act="code-download">Download</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- OPENAPI SCREEN ---------- */
+function screenOpenAPI(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">OpenAPI Generator</div>
+      <div class="hint">Build an OpenAPI 3.0 spec from discovered endpoints. Export as JSON or YAML.</div>
+    </div>
+
+    <div class="grid3 section">
+      <div class="field"><label>API Title</label><input class="input" id="oa-title" value="My API"></div>
+      <div class="field"><label>Version</label><input class="input" id="oa-version" value="1.0.0"></div>
+      <div class="field"><label>Base URL</label><input class="input" id="oa-baseurl" value="https://api.example.com"></div>
+    </div>
+
+    <div class="row" style="gap:6px;margin-bottom:12px">
+      <button class="btn primary" data-act="oa-generate">Generate Spec</button>
+      <button class="btn" data-act="oa-add-current">Add current request</button>
+      <button class="btn" data-act="oa-clear">Clear endpoints (${State.endpoints.length})</button>
+    </div>
+
+    <div id="oa-output" class="section"></div>
+  `;
+}
+
+/* ---------- HISTORY SCREEN ---------- */
+function screenHistory(){
+  const h = History.list();
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Request History (${h.length})</div>
+      <div class="hint">Local history. Replay, duplicate, or delete entries. Export anytime.</div>
+    </div>
+
+    <div class="row" style="gap:6px;margin:10px 0">
+      <button class="btn primary" data-act="hist-export">Export all</button>
+      <button class="btn danger" data-act="hist-clear">Clear history</button>
+    </div>
+
+    <div id="hist-list">
+      ${h.length ? h.map(historyRowHTML).join('') : '<div class="empty">No history yet.</div>'}
+    </div>
+  `;
+}
+
+function historyRowHTML(e){
+  const m = e.method || 'GET';
+  const status = e.status || 0;
+  return `<div class="hist-row" data-id="${e.id}">
+    <span class="method-pill m-${m}" style="min-width:56px;text-align:center">${m}</span>
+    <div class="url truncate">${esc(e.url || '')}</div>
+    <div class="meta">
+      ${status ? '<span class="badge '+(status<400?'green':'red')+'">'+status+'</span>' : ''}
+      <span>${relativeTime(e.ts)}</span>
+    </div>
+    <button class="btn xs" data-act="hist-replay" data-id="${e.id}">↻</button>
+    <button class="btn xs danger" data-act="hist-del" data-id="${e.id}">×</button>
+  </div>`;
+}
+
+/* ---------- SETTINGS SCREEN ---------- */
+function screenSettings(){
+  return `
+    <div class="card glow">
+      <div class="section-title" style="margin-bottom:8px">Settings</div>
+      <div class="hint">Preferences are stored locally in your browser.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Profiles</div></div>
+      <div class="grid3">
+        ${Object.keys(State.profiles).map(p=>`
+          <button class="chip ${State.profile===p?'active':''}" data-act="set-profile" data-p="${p}">${p}</button>
+        `).join('')}
+      </div>
+      <div class="field section">
+        <label>Base URL for ${esc(State.profile)}</label>
+        <input class="input" id="prof-baseurl" value="${esc((State.profiles[State.profile]||{}).baseUrl||'')}">
+        <button class="btn section" style="margin-top:6px" data-act="save-profile">Save profile</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Data</div></div>
+      <div class="grid2">
+        <button class="btn" data-act="settings-export">Export all data</button>
+        <button class="btn danger" data-act="settings-reset">Reset all data</button>
+      </div>
+      <div class="hint section">Export includes history, workflow, endpoints, profiles, schema. Never includes secrets beyond what you already entered locally.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Adapters</div></div>
+      <div class="grid2">
+        <button class="btn" data-act="gen-php-bridge">Generate PHP API bridge</button>
+        <button class="btn" data-act="gen-ssrf-notes">SSRF safety notes</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">About</div></div>
+      <div class="card tight">
+        <div class="kv"><span>Application</span><b>${APP.name}</b></div>
+        <div class="kv"><span>Version</span><b>${APP.version}</b></div>
+        <div class="kv"><span>Storage</span><b>localStorage (namespace: nngv.forge.*)</b></div>
+        <div class="kv"><span>Network engine</span><b>Native fetch + AbortController</b></div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================================
+   RENDER
+   ============================================================================ */
+const SCREENS = {
+  api: screenAPI,
+  fetch: screenFetch,
+  patch: screenPatch,
+  discover: screenDiscover,
+  test: screenTest,
+  schema: screenSchema,
+  workflow: screenWorkflow,
+  webhooks: screenWebhooks,
+  automation: screenAutomation,
+  security: screenSecurity,
+  code: screenCode,
+  openapi: screenOpenAPI,
+  history: screenHistory,
+  settings: screenSettings
+};
+
+const NAV_ITEMS = [
+  ['api', 'API'],
+  ['fetch', 'Fetch'],
+  ['patch', 'Patch'],
+  ['discover', 'Discover'],
+  ['test', 'Test'],
+  ['schema', 'Schema'],
+  ['workflow', 'Workflow'],
+  ['webhooks', 'Webhooks'],
+  ['automation', 'Automation'],
+  ['security', 'Security'],
+  ['code', 'Code'],
+  ['openapi', 'OpenAPI'],
+  ['history', 'History'],
+  ['settings', 'Settings']
+];
+
+function renderTopbar(){
+  $('#topbar').innerHTML = `
+    <div class="brand">
+      <div class="brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L4 14h7l-1 7 9-11h-7z"/></svg></div>
+      <div class="brand-text">
+        <div class="brand-name">NONONICK API FORGE</div>
+        <div class="brand-sub">Universal API • Fetch • Patch • Automation</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="mode-pill"><span class="dot"></span>${esc(State.profile)}</span>
+      <button class="icon-btn" data-act="open-palette" title="Command palette (⌘K)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20.2 20.2-3.6-3.6"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderNav(){
+  $('#mainnav').innerHTML = NAV_ITEMS.map(([k,label])=>
+    `<button class="nav-tab ${State.screen===k?'active':''}" data-act="nav" data-screen="${k}">${esc(label)}</button>`
+  ).join('');
+}
+
+function renderStatusbar(){
+  const r = State.response;
+  const status = r ? (r.status || 0) : null;
+  const statusCls = !r ? '' : r.error ? 'err' : status >= 400 ? 'err' : status >= 300 ? 'warn' : 'ok';
+  $('#statusbar').innerHTML = `
+    ${r ? `<span class="stat-chip ${statusCls}"><span class="dot"></span>${r.error ? 'ERROR' : (r.status + ' ' + (r.statusText||''))}</span>` : '<span class="stat-chip"><span class="dot"></span>Idle</span>'}
+    ${r ? `<span class="stat-chip">${ms(r.timeMs)}</span>` : ''}
+    ${r ? `<span class="stat-chip">${bytes(r.sizeBytes)}</span>` : ''}
+    ${r && r.contentType ? `<span class="stat-chip">${esc((r.contentType.split(';')[0]||'').slice(0,32))}</span>` : ''}
+    <span class="stat-chip"><span class="dot"></span>${esc(State.screen.toUpperCase())}</span>
+  `;
+}
+
+function renderWorkspace(){
+  const fn = SCREENS[State.screen] || screenAPI;
+  const c = $('#container');
+  const scrollTop = $('#workspace').scrollTop;
+  c.innerHTML = fn();
+  $('#workspace').scrollTop = scrollTop;
+
+  // Per-screen mount logic
+  if(State.screen === 'api' || State.screen === 'fetch'){
+    renderReqPanel('params');
+    attachReqHandlers();
+  } else if(State.screen === 'code'){
+    renderCodeOutput('cURL');
+  } else if(State.screen === 'security'){
+    renderSecurityIssues();
+  } else if(State.screen === 'openapi'){
+    renderOpenAPIOutput();
+  } else if(State.screen === 'automation'){
+    // already rendered
+  }
+}
+
+function renderAll(){
+  renderTopbar();
+  renderNav();
+  renderWorkspace();
+  renderStatusbar();
+}
+
+/* ============================================================================
+   REQUEST PANEL HANDLERS
+   ============================================================================ */
+function attachReqHandlers(){
+  const methodSel = $('#req-method');
+  if(methodSel) methodSel.addEventListener('change', function(){
+    State.request.method = this.value;
+  });
+  const urlInput = $('#req-url');
+  if(urlInput) urlInput.addEventListener('input', function(){
+    State.request.url = this.value;
+  });
+  const sendBtn = $('#send-btn');
+  if(sendBtn) sendBtn.addEventListener('click', doSend);
+
+  // Request tabs
+  $$('#req-tabs button').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      $$('#req-tabs button').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      renderReqPanel(this.dataset.tab);
+    });
+  });
+
+  // Response tabs
+  $$('#resp-tabs button').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      $$('#resp-tabs button').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      const r = State.response;
+      const panel = $('#resp-panel');
+      if(!panel || !r) return;
+      if(this.dataset.rtab === 'body') panel.innerHTML = respBodyHTML(r);
+      else if(this.dataset.rtab === 'headers') panel.innerHTML = respHeadersHTML(r);
+      else if(this.dataset.rtab === 'raw') panel.innerHTML = respRawHTML(r);
+      else if(this.dataset.rtab === 'security') panel.innerHTML = respSecurityHTML(r);
+    });
+  });
+}
+
+/* ============================================================================
+   ACTIONS — event delegation
+   ============================================================================ */
+document.addEventListener('click', function(e){
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const act = el.dataset.act;
+  handleAction(act, el, e);
+});
+
+function handleAction(act, el, e){
+  const d = el.dataset;
+
+  switch(act){
+    case 'nav':
+      State.screen = d.screen;
+      renderAll();
+      break;
+    case 'close-sheet': closeSheet(); break;
+    case 'open-palette': openPalette(); break;
+
+    /* API screen */
+    case 'add-param':
+      State.request.params.push({ key:'', value:'', enabled:true });
+      renderReqPanel('params');
+      break;
+    case 'del-param': {
+      const i = parseInt(d.i,10);
+      State.request.params.splice(i,1);
+      renderReqPanel('params');
+      break;
+    }
+    case 'toggle-param': {
+      const i = parseInt(d.i,10);
+      State.request.params[i].enabled = !State.request.params[i].enabled;
+      renderReqPanel('params');
+      break;
+    }
+    case 'add-header': {
+      const name = prompt('Header name?');
+      if(!name) break;
+      State.request.headers[name] = '';
+      renderReqPanel('headers');
+      break;
+    }
+    case 'del-header':
+      delete State.request.headers[d.key];
+      renderReqPanel('headers');
+      break;
+    case 'body-format': {
+      const ta = $('#body-input');
+      if(!ta) break;
+      const parsed = safeJSON(ta.value, null);
+      if(parsed === null){ toast('Invalid JSON','err'); break; }
+      ta.value = prettyJSON(parsed);
+      State.request.body = ta.value;
+      break;
+    }
+    case 'body-clear': {
+      const ta = $('#body-input');
+      if(ta){ ta.value=''; State.request.body=''; }
+      break;
+    }
+    case 'load-curl': {
+      openSheet(
+        '<textarea class="textarea" id="curl-input" rows="6" placeholder="curl -X POST https://api.example.com -H \'Content-Type: application/json\' -d \'{}\'"></textarea>'+
+        '<button class="btn primary full" data-act="load-curl-go" style="margin-top:8px">Import</button>',
+        {title:'Import cURL'}
+      );
+      break;
+    }
+    case 'load-curl-go': {
+      const v = ($('#curl-input')||{}).value || '';
+      const r = Import.cURL(v);
+      if(!r){ toast('Could not parse cURL','err'); break; }
+      State.request.method = r.method;
+      State.request.url = r.url;
+      State.request.headers = r.headers || {};
+      if(r.body){ State.request.body = r.body; State.request.bodyType = 'json'; }
+      closeSheet();
+      toast('cURL imported','ok');
+      renderAll();
+      break;
+    }
+    case 'export-curl':
+      copy(CodeGen.curl(State.request));
+      break;
+    case 'save-history':
+      History.add({
+        method: State.request.method,
+        url: State.request.url,
+        status: State.response ? State.response.status : 0
+      });
+      toast('Saved to history','ok');
+      break;
+    case 'open-code':
+      State.screen = 'code';
+      renderAll();
+      break;
+    case 'open-schema':
+      State.screen = 'schema';
+      renderAll();
+      break;
+    case 'open-openapi':
+      State.screen = 'openapi';
+      renderAll();
+      break;
+    case 'resp-copy': {
+      const r = State.response;
+      if(!r) break;
+      copy(r.bodyText || '');
+      break;
+    }
+    case 'resp-download': {
+      const r = State.response;
+      if(!r) break;
+      downloadFile('response.txt', r.bodyText || '');
+      break;
+    }
+
+    /* Patch screen */
+    case 'patch-fetch': patchFetch(); break;
+    case 'patch-preview': patchPreview(); break;
+    case 'patch-copy-from-current': {
+      const c = $('#patch-current');
+      const t = $('#patch-target');
+      if(c && t){ t.value = c.value; patchPreview(); }
+      break;
+    }
+    case 'patch-format': {
+      ['patch-current','patch-target'].forEach(id=>{
+        const ta = $('#'+id);
+        if(!ta) return;
+        const parsed = safeJSON(ta.value, null);
+        if(parsed !== null) ta.value = prettyJSON(parsed);
+      });
+      patchPreview();
+      break;
+    }
+    case 'patch-json6902': {
+      const a = safeJSON(($('#patch-current')||{}).value, null);
+      const b = safeJSON(($('#patch-target')||{}).value, null);
+      if(a === null || b === null){ toast('Need valid JSON in both fields','err'); break; }
+      const ops = Patch.diff(a, b);
+      openSheet(
+        '<div class="code wrap">'+esc(prettyJSON(ops))+'</div>'+
+        '<button class="btn primary full" style="margin-top:8px" data-act="patch-close-and-send-6902">Send as PATCH body</button>',
+        {title:'RFC 6902 JSON Patch'}
+      );
+      break;
+    }
+    case 'patch-close-and-send-6902': {
+      closeSheet();
+      const a = safeJSON(($('#patch-current')||{}).value, null);
+      const b = safeJSON(($('#patch-target')||{}).value, null);
+      if(a === null || b === null) break;
+      const ops = Patch.diff(a, b);
+      State.request.method = 'PATCH';
+      State.request.url = ($('#patch-url')||{}).value || State.request.url;
+      State.request.body = prettyJSON(ops);
+      State.request.bodyType = 'json';
+      State.request.headers['Content-Type'] = 'application/json-patch+json';
+      State.screen = 'api';
+      renderAll();
+      toast('PATCH request prepared — press Send','info');
+      break;
+    }
+    case 'patch-merge7386': {
+      const a = safeJSON(($('#patch-current')||{}).value, null);
+      const b = safeJSON(($('#patch-target')||{}).value, null);
+      if(a === null || b === null){ toast('Need valid JSON in both fields','err'); break; }
+      const merged = Patch.applyMergePatch(a, b);
+      const ops = Patch.diff(a, merged);
+      openSheet(
+        '<div class="code wrap">'+esc(prettyJSON(b))+'</div>'+
+        '<div class="hint">Merge patch of original → target. This will be sent as the PATCH body with content-type <code>application/merge-patch+json</code>.</div>'+
+        '<button class="btn primary full" data-act="patch-close-and-send-7386">Send as PATCH body</button>',
+        {title:'Merge Patch (RFC 7386)'}
+      );
+      break;
+    }
+    case 'patch-close-and-send-7386': {
+      closeSheet();
+      const b = safeJSON(($('#patch-target')||{}).value, null);
+      if(b === null) break;
+      State.request.method = 'PATCH';
+      State.request.url = ($('#patch-url')||{}).value || State.request.url;
+      State.request.body = prettyJSON(b);
+      State.request.bodyType = 'json';
+      State.request.headers['Content-Type'] = 'application/merge-patch+json';
+      State.screen = 'api';
+      renderAll();
+      toast('Merge-PATCH prepared — press Send','info');
+      break;
+    }
+    case 'patch-send':
+      patchSend();
+      break;
+
+    /* Discover */
+    case 'discover-analyze': {
+      const text = ($('#discover-input')||{}).value || '';
+      const res = Import.auto(text);
+      renderDiscoverResult(res);
+      break;
+    }
+    case 'discover-sample': {
+      $('#discover-input').value = `curl -X POST 'https://api.example.com/v1/users' \\\n  -H 'Content-Type: application/json' \\\n  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.xyz' \\\n  -d '{"name":"Jane","email":"jane@example.com"}'`;
+      break;
+    }
+    case 'discover-clear':
+      $('#discover-input').value = '';
+      $('#discover-result').innerHTML = '';
+      break;
+
+    /* Test */
+    case 'test-run': runTests(); break;
+    case 'test-sample': loadSampleTests(); break;
+
+    /* Schema */
+    case 'schema-generate': {
+      const text = ($('#schema-input')||{}).value || '';
+      const parsed = safeJSON(text, null);
+      if(parsed === null){ toast('Invalid JSON','err'); break; }
+      const sch = Schema.fromJSON(parsed);
+      const wrapped = Schema.toJSONSchema(sch, 'Generated');
+      State.lastJSONSchema = wrapped;
+      $('#schema-result').innerHTML = '<div class="code">'+esc(prettyJSON(wrapped))+'</div>';
+      break;
+    }
+    case 'schema-from-response': {
+      const r = State.response;
+      if(!r || !r.body) { toast('No response body','err'); break; }
+      const sch = Schema.fromJSON(r.body);
+      const wrapped = Schema.toJSONSchema(sch, 'From last response');
+      State.lastJSONSchema = wrapped;
+      $('#schema-input').value = prettyJSON(r.body);
+      $('#schema-result').innerHTML = '<div class="code">'+esc(prettyJSON(wrapped))+'</div>';
+      break;
+    }
+    case 'schema-copy': {
+      if(!State.lastJSONSchema){ toast('No schema','warn'); break; }
+      copy(prettyJSON(State.lastJSONSchema));
+      break;
+    }
+    case 'schema-download': {
+      if(!State.lastJSONSchema){ toast('No schema','warn'); break; }
+      downloadFile('schema.json', prettyJSON(State.lastJSONSchema), 'application/json');
+      break;
+    }
+
+    /* Workflow */
+    case 'wf-add-fetch':
+      State.workflow.nodes.push({ type:'fetch', method:'GET', url:'https://jsonplaceholder.typicode.com/posts/1', headers:{}, bodyType:'json' });
+      saveWorkflow(); renderAll();
+      break;
+    case 'wf-add-condition':
+      State.workflow.nodes.push({ type:'condition', expression:'context.status === 200' });
+      saveWorkflow(); renderAll();
+      break;
+    case 'wf-add-set':
+      State.workflow.nodes.push({ type:'set', path:'customValue', value:'hello' });
+      saveWorkflow(); renderAll();
+      break;
+    case 'wf-add-delay':
+      State.workflow.nodes.push({ type:'delay', ms: 500 });
+      saveWorkflow(); renderAll();
+      break;
+    case 'wf-add-log':
+      State.workflow.nodes.push({ type:'log', message:'Workflow step reached' });
+      saveWorkflow(); renderAll();
+      break;
+    case 'wf-add-verify':
+      State.workflow.nodes.push({ type:'verify', expression:'context.data && context.data.id' });
+      saveWorkflow(); renderAll();
+      break;
+    case 'wf-del': {
+      const i = parseInt(d.i,10);
+      State.workflow.nodes.splice(i,1);
+      saveWorkflow(); renderAll();
+      break;
+    }
+    case 'wf-edit': {
+      const i = parseInt(d.i,10);
+      editWorkflowNode(i);
+      break;
+    }
+    case 'wf-run': runWorkflow(); break;
+    case 'wf-export':
+      downloadFile('workflow.json', prettyJSON(State.workflow), 'application/json');
+      break;
+    case 'wf-import': importWorkflow(); break;
+
+    /* Webhooks */
+    case 'webhook-validate': {
+      const text = ($('#webhook-payload')||{}).value || '';
+      const parsed = safeJSON(text, null);
+      if(parsed === null){ toast('Invalid JSON payload','err'); break; }
+      toast('Valid JSON payload','ok');
+      break;
+    }
+    case 'webhook-post': {
+      openSheet(
+        '<div class="field"><label>Target URL</label><input class="input" id="wh-url" placeholder="https://your-server.com/webhook"></div>'+
+        '<button class="btn primary full" data-act="webhook-post-go">POST</button>',
+        {title:'POST webhook payload'}
+      );
+      break;
+    }
+    case 'webhook-post-go': {
+      const url = ($('#wh-url')||{}).value || '';
+      const payload = ($('#webhook-payload')||{}).value || '{}';
+      if(!isURL(url)){ toast('Invalid URL','err'); break; }
+      closeSheet();
+      HTTP.request({ method:'POST', url, headers:{'Content-Type':'application/json'}, body: payload, bodyType:'json', timeoutMs:15000 }).then(r=>{
+        if(r.ok) toast('Webhook delivered: ' + r.status,'ok');
+        else toast('Webhook failed: ' + (r.error || r.status),'err');
+      });
+      break;
+    }
+    case 'webhook-gen-php': {
+      const php = `<?php
+// webhook-receiver.php — deploy to a public HTTPS endpoint
+// Protect with a shared secret in an HTTP header.
+header('Content-Type: application/json');
+$sharedSecret = getenv('WEBHOOK_SECRET') ?: 'change-me';
+
+$headers = getallheaders();
+$sig = $headers['X-Webhook-Secret'] ?? '';
+if(!hash_equals($sharedSecret, $sig)){
+    http_response_code(401);
+    echo json_encode(['error' => 'unauthorized']);
+    exit;
+}
+
+$raw = file_get_contents('php://input');
+$payload = json_decode($raw, true);
+if(!is_array($payload)){
+    http_response_code(400);
+    echo json_encode(['error' => 'invalid JSON']);
+    exit;
+}
+
+// Persist safely — append to log file with size cap.
+$logFile = __DIR__ . '/webhooks.log';
+if(filesize($logFile) > 5 * 1024 * 1024){ file_put_contents($logFile, ''); }
+$entry = ['ts' => date('c'), 'payload' => $payload];
+file_put_contents($logFile, json_encode($entry) . "\\n", FILE_APPEND | LOCK_EX);
+
+echo json_encode(['ok' => true]);
+`;
+      $('#webhook-php').innerHTML = '<div class="code wrap">'+esc(php)+'</div><button class="btn section" style="margin-top:6px" data-act="copy-generic" data-text="'+esc(php)+'">Copy PHP</button>';
+      break;
+    }
+    case 'copy-generic': copy(d.text || ''); break;
+
+    /* Automation */
+    case 'auto-toggle': {
+      if(State.browserSchedule){
+        clearInterval(State.browserSchedule.timer);
+        State.browserSchedule = null;
+        toast('Scheduler stopped','info');
+      } else {
+        const intervalMin = parseInt(($('#auto-interval')||{}).value,10) || 5;
+        const url = ($('#auto-url')||{}).value || State.request.url;
+        const method = ($('#auto-method')||{}).value || 'GET';
+        const intervalMs = intervalMin * 60 * 1000;
+        const timer = setInterval(()=>{
+          HTTP.request({ method, url, timeoutMs: 30000 }).then(r=>{
+            if(State.browserSchedule) State.browserSchedule.lastRun = new Date().toLocaleTimeString();
+          });
+        }, intervalMs);
+        State.browserSchedule = { intervalMin, url, method, timer, lastRun: null };
+        toast('Scheduler started','ok');
+      }
+      renderAll();
+      break;
+    }
+    case 'auto-run-now': {
+      const url = ($('#auto-url')||{}).value || State.request.url;
+      const method = ($('#auto-method')||{}).value || 'GET';
+      HTTP.request({ method, url, timeoutMs: 30000 }).then(r=>{
+        toast('Run complete: ' + (r.ok ? r.status : (r.error || 'error')), r.ok ? 'ok' : 'err');
+      });
+      break;
+    }
+    case 'cron-linux': {
+      const intervalMin = parseInt(($('#auto-interval')||{}).value,10) || 5;
+      const url = ($('#auto-url')||{}).value || State.request.url;
+      const method = ($('#auto-method')||{}).value || 'GET';
+      $('#cron-output').innerHTML = '<div class="code wrap">'+esc(Cron.linux({intervalMin, url, method}))+'</div>';
+      break;
+    }
+    case 'cron-cpanel': {
+      const intervalMin = parseInt(($('#auto-interval')||{}).value,10) || 5;
+      const url = ($('#auto-url')||{}).value || State.request.url;
+      const method = ($('#auto-method')||{}).value || 'GET';
+      $('#cron-output').innerHTML = '<div class="code wrap">'+esc(Cron.cpanel({intervalMin, url, method}))+'</div>';
+      break;
+    }
+    case 'cron-php': {
+      const intervalMin = parseInt(($('#auto-interval')||{}).value,10) || 5;
+      const url = ($('#auto-url')||{}).value || State.request.url;
+      const method = ($('#auto-method')||{}).value || 'GET';
+      $('#cron-output').innerHTML = '<div class="code wrap">'+esc(Cron.php({intervalMin, url, method}))+'</div>';
+      break;
+    }
+
+    /* Security */
+    case 'jwt-decode': {
+      const v = ($('#jwt-input')||{}).value || '';
+      const dec = Detect.decodeJWT(v.trim());
+      if(!dec){ $('#jwt-output').innerHTML = '<div class="notice err">Not a valid JWT.</div>'; break; }
+      $('#jwt-output').innerHTML = '<div class="code">'+esc(prettyJSON(dec))+'</div>';
+      break;
+    }
+    case 'sec-scan': {
+      const v = ($('#sec-input')||{}).value || '';
+      const found = scanSecrets(v);
+      if(!found.length){ $('#sec-output').innerHTML = '<div class="notice ok">No obvious secrets found.</div>'; break; }
+      $('#sec-output').innerHTML = found.map(f=>'<div class="notice warn"><b>'+esc(f.type)+'</b><br>'+esc(f.match.slice(0,80))+'</div>').join('');
+      break;
+    }
+
+    /* Code */
+    case 'code-copy': {
+      const lang = $('.chip.active[data-lang]');
+      if(!lang) break;
+      const c = CodeGen.all(State.request);
+      copy(c[lang.dataset.lang] || '');
+      break;
+    }
+    case 'code-download': {
+      const lang = $('.chip.active[data-lang]');
+      if(!lang) break;
+      const c = CodeGen.all(State.request);
+      const ext = { 'cURL':'sh','JavaScript':'js','TypeScript':'ts','Node.js':'js','PHP cURL':'php','PHP Native':'php','Python':'py','Swift':'swift','Kotlin':'kt' }[lang.dataset.lang] || 'txt';
+      downloadFile('request.'+ext, c[lang.dataset.lang] || '');
+      break;
+    }
+
+    /* OpenAPI */
+    case 'oa-generate': {
+      const endpoints = State.endpoints.length ? State.endpoints : [OpenAPI.parseEndpointFromRequest(State.request.method, State.request.url)].filter(Boolean);
+      const spec = OpenAPI.generate(endpoints, {
+        title: ($('#oa-title')||{}).value || 'API',
+        version: ($('#oa-version')||{}).value || '1.0.0',
+        baseUrl: ($('#oa-baseurl')||{}).value || 'https://api.example.com'
+      });
+      $('#oa-output').innerHTML =
+        '<div class="section-head"><div class="section-title">OpenAPI 3.0.3 (JSON)</div>'+
+        '<button class="btn xs" data-act="oa-copy-json">Copy</button></div>'+
+        '<div class="code">'+esc(prettyJSON(spec))+'</div>'+
+        '<div class="section-head" style="margin-top:12px"><div class="section-title">OpenAPI 3.0.3 (YAML)</div>'+
+        '<button class="btn xs" data-act="oa-copy-yaml">Copy</button></div>'+
+        '<div class="code">'+esc(OpenAPI.toYAML(spec))+'</div>'+
+        '<button class="btn primary full" style="margin-top:10px" data-act="oa-download">Download openapi.json</button>';
+      break;
+    }
+    case 'oa-add-current': {
+      const ep = OpenAPI.parseEndpointFromRequest(State.request.method, State.request.url);
+      if(!ep){ toast('Invalid URL','err'); break; }
+      State.endpoints.push(ep);
+      Store.set('endpoints', State.endpoints);
+      toast('Endpoint added','ok');
+      renderAll();
+      break;
+    }
+    case 'oa-clear':
+      State.endpoints = [];
+      Store.set('endpoints', []);
+      renderAll();
+      break;
+    case 'oa-copy-json': {
+      const pre = $('.code');
+      if(pre) copy(pre.textContent);
+      break;
+    }
+    case 'oa-copy-yaml': {
+      const codes = $$('.code');
+      if(codes[1]) copy(codes[1].textContent);
+      break;
+    }
+    case 'oa-download': {
+      const endpoints = State.endpoints.length ? State.endpoints : [OpenAPI.parseEndpointFromRequest(State.request.method, State.request.url)].filter(Boolean);
+      const spec = OpenAPI.generate(endpoints, {
+        title: ($('#oa-title')||{}).value || 'API',
+        version: ($('#oa-version')||{}).value || '1.0.0',
+        baseUrl: ($('#oa-baseurl')||{}).value || 'https://api.example.com'
+      });
+      downloadFile('openapi.json', prettyJSON(spec), 'application/json');
+      break;
+    }
+
+    /* History */
+    case 'hist-replay': {
+      const h = History.find(d.id);
+      if(!h) break;
+      State.request.method = h.method || 'GET';
+      State.request.url = h.url || '';
+      State.screen = 'api';
+      renderAll();
+      toast('Loaded from history','ok');
+      break;
+    }
+    case 'hist-del':
+      History.remove(d.id);
+      renderAll();
+      break;
+    case 'hist-clear':
+      confirmSheet('Clear history','Delete all saved requests?', ()=>{
+        History.clear();
+        renderAll();
+        toast('History cleared','ok');
+      }, 'Clear', true);
+      break;
+    case 'hist-export':
+      downloadFile('history.json', prettyJSON(History.list()), 'application/json');
+      break;
+
+    /* Settings */
+    case 'set-profile':
+      State.profile = d.p;
+      renderAll();
+      break;
+    case 'save-profile': {
+      const v = ($('#prof-baseurl')||{}).value || '';
+      State.profiles[State.profile] = State.profiles[State.profile] || { headers:{} };
+      State.profiles[State.profile].baseUrl = v;
+      Store.set('profiles', State.profiles);
+      toast('Profile saved','ok');
+      break;
+    }
+    case 'settings-export': {
+      const data = {
+        request: State.request,
+        profiles: State.profiles,
+        workflow: State.workflow,
+        endpoints: State.endpoints,
+        history: History.list()
+      };
+      downloadFile('nononick-api-forge-backup.json', prettyJSON(data), 'application/json');
+      break;
+    }
+    case 'settings-reset':
+      confirmSheet('Reset all data','This will delete history, workflows, profiles, and endpoints. Continue?', ()=>{
+        Object.keys(Store.all()).forEach(k=>Store.del(k));
+        State.request = { method:'GET', url:'https://jsonplaceholder.typicode.com/posts/1', params:[], headers:{}, body:'', bodyType:'json', timeoutMs:30000, retries:0, retryDelayMs:500, auth:{type:'none',token:'',username:'',password:'',key:'',value:''} };
+        State.workflow = { nodes: [] };
+        State.endpoints = [];
+        State.profiles = { DEV:{baseUrl:'',headers:{}}, STAGING:{baseUrl:'',headers:{}}, PRODUCTION:{baseUrl:'',headers:{}} };
+        renderAll();
+        toast('Data reset','ok');
+      }, 'Reset', true);
+      break;
+    case 'gen-php-bridge': generatePHPBridge(); break;
+    case 'gen-ssrf-notes': showSSRFNotes(); break;
+
+    default: break;
+  }
+}
+
+/* ============================================================================
+   SPECIFIC FEATURE IMPLEMENTATIONS
+   ============================================================================ */
+
+/* --- Send request --- */
+async function doSend(){
+  const btn = $('#send-btn');
+  if(btn){ btn.classList.add('sending'); btn.textContent = '…'; }
+
+  // Build URL with params
+  const base = State.request.url;
+  const url = HTTP.buildURL(base, State.request.params);
+
+  // Merge auth
+  const headers = Object.assign({}, State.request.headers);
+  const auth = State.request.auth;
+  if(auth.type === 'bearer' && auth.token) headers['Authorization'] = 'Bearer ' + auth.token;
+  else if(auth.type === 'basic' && (auth.username || auth.password)) headers['Authorization'] = 'Basic ' + btoa(auth.username + ':' + auth.password);
+  else if((auth.type === 'apikey' || auth.type === 'custom') && auth.key) headers[auth.key] = auth.value;
+
+  const req = {
+    method: State.request.method,
+    url: url,
+    headers: headers,
+    body: State.request.body,
+    bodyType: State.request.bodyType,
+    timeoutMs: State.request.timeoutMs,
+    retries: State.request.retries,
+    retryDelayMs: State.request.retryDelayMs
+  };
+
+  const resp = await HTTP.request(req);
+  State.response = resp;
+
+  History.add({
+    method: req.method,
+    url: req.url,
+    status: resp.status || 0,
+    timeMs: resp.timeMs
+  });
+
+  if(btn){ btn.classList.remove('sending'); btn.textContent = 'Send'; }
+  renderAll();
+  if(resp.ok) toast(resp.status + ' ' + resp.statusText + ' · ' + ms(resp.timeMs), 'ok');
+  else if(resp.error) toast(resp.error, 'err');
+  else toast('HTTP ' + resp.status, 'warn');
+}
+
+/* --- Patch --- */
+async function patchFetch(){
+  const url = ($('#patch-url')||{}).value;
+  if(!isURL(url)){ toast('Invalid URL','err'); return; }
+  const r = await HTTP.request({ method:'GET', url, timeoutMs: 20000 });
+  if(!r.ok){ toast('Fetch failed: ' + (r.error || r.status),'err'); return; }
+  const pretty = prettyJSON(r.body);
+  $('#patch-current').value = pretty;
+  $('#patch-target').value = pretty;
+  toast('Resource fetched','ok');
+}
+
+function patchPreview(){
+  const a = safeJSON(($('#patch-current')||{}).value, null);
+  const b = safeJSON(($('#patch-target')||{}).value, null);
+  const box = $('#patch-diff');
+  if(a === null || b === null){ box.innerHTML = '<div class="notice err">Both sides must be valid JSON.</div>'; return; }
+  const ops = Patch.diff(a, b);
+  box.innerHTML = Patch.renderDiff(ops) || '<div class="muted tiny">No changes.</div>';
+}
+
+async function patchSend(){
+  const a = safeJSON(($('#patch-current')||{}).value, null);
+  const b = safeJSON(($('#patch-target')||{}).value, null);
+  if(a === null || b === null){ toast('Need valid JSON','err'); return; }
+  const url = ($('#patch-url')||{}).value || State.request.url;
+  const ops = Patch.diff(a, b);
+  if(!ops.length){ toast('No changes to send','warn'); return; }
+
+  confirmSheet('Send PATCH?',
+    'About to send ' + ops.length + ' patch operation(s) to ' + url + '. This will modify the remote resource.',
+    async ()=>{
+      const r = await HTTP.request({
+        method:'PATCH',
+        url,
+        headers: Object.assign({ 'Content-Type': 'application/json-patch+json' }, State.request.headers),
+        body: prettyJSON(ops),
+        bodyType: 'json',
+        timeoutMs: 20000
+      });
+      const box = $('#patch-result');
+      if(r.ok){
+        // Verify
+        const verify = await HTTP.request({ method:'GET', url, timeoutMs: 15000 });
+        const verifyOps = (verify.ok && verify.body) ? Patch.diff(b, verify.body) : null;
+        const verified = verifyOps && verifyOps.length === 0;
+        box.innerHTML =
+          '<div class="notice '+(verified?'ok':'warn')+'">'+
+          '<b>PATCH '+(r.ok?'succeeded':'response')+'</b><br>'+
+          'Status: '+r.status+' · '+ms(r.timeMs)+'<br>'+
+          (verified ? 'Verified: remote state now matches target.' : 'Verification: remote state differs from target. Manual review recommended.')+
+          '</div>'+
+          '<div class="section-head" style="margin-top:10px"><div class="section-title">Verification diff</div></div>'+
+          (verifyOps ? Patch.renderDiff(verifyOps) : '<div class="muted tiny">No verification data.</div>');
+      } else {
+        box.innerHTML = '<div class="notice err"><b>PATCH failed</b><br>'+esc(r.error || 'HTTP '+r.status)+'</div>';
+      }
+    },
+    'Send PATCH',
+    false
+  );
+}
+
+/* --- Discover --- */
+function renderDiscoverResult(res){
+  const box = $('#discover-result');
+  if(!res){ box.innerHTML = '<div class="notice err">Could not parse input.</div>'; return; }
+  if(res.type === 'curl'){
+    box.innerHTML = `
+      <div class="card">
+        <div class="section-title" style="margin-bottom:8px">Detected: cURL request</div>
+        <div class="kv"><span>Method</span><b>${esc(res.data.method)}</b></div>
+        <div class="kv"><span>URL</span><b>${esc(res.data.url)}</b></div>
+        <div class="kv"><span>Headers</span><b>${Object.keys(res.data.headers).length}</b></div>
+        <button class="btn primary full section" data-act="discover-apply-curl">Load into request builder</button>
+      </div>`;
+    // Bind apply
+    const btn = $('[data-act="discover-apply-curl"]');
+    if(btn) btn.addEventListener('click', ()=>{
+      State.request.method = res.data.method;
+      State.request.url = res.data.url;
+      State.request.headers = res.data.headers;
+      if(res.data.body) State.request.body = res.data.body;
+      State.screen = 'api';
+      renderAll();
+      toast('Loaded into request builder','ok');
+    });
+  } else if(res.type === 'openapi'){
+    const eps = res.data || [];
+    box.innerHTML = `
+      <div class="card">
+        <div class="section-title" style="margin-bottom:8px">Detected: OpenAPI / Swagger (${eps.length} endpoints)</div>
+        ${eps.slice(0,40).map(ep=>`
+          <div class="list-row">
+            <span class="method-pill m-${ep.method}">${ep.method}</span>
+            <div class="flex1"><div class="li-title mono truncate">${esc(ep.path)}</div>
+              ${ep.summary?'<div class="li-sub truncate">'+esc(ep.summary)+'</div>':''}</div>
+          </div>`).join('')}
+        <button class="btn primary full section" data-act="discover-apply-openapi">Load into OpenAPI endpoints</button>
+      </div>`;
+    const btn = $('[data-act="discover-apply-openapi"]');
+    if(btn) btn.addEventListener('click', ()=>{
+      State.endpoints = State.endpoints.concat(eps);
+      Store.set('endpoints', State.endpoints);
+      State.screen = 'openapi';
+      renderAll();
+      toast(eps.length+' endpoints added','ok');
+    });
+  } else if(res.type === 'har'){
+    box.innerHTML = `<div class="card">
+      <div class="section-title" style="margin-bottom:8px">Detected: HAR (${res.data.length} requests)</div>
+      ${res.data.slice(0,25).map(r=>`
+        <div class="list-row">
+          <span class="method-pill m-${r.method}">${r.method}</span>
+          <div class="flex1 mono tiny truncate">${esc(r.url)}</div>
+        </div>`).join('')}
+    </div>`;
+  } else if(res.type === 'postman'){
+    box.innerHTML = `<div class="card">
+      <div class="section-title" style="margin-bottom:8px">Detected: Postman collection (${res.data.length} requests)</div>
+      ${res.data.slice(0,25).map(r=>`
+        <div class="list-row">
+          <span class="method-pill m-${r.method}">${r.method}</span>
+          <div class="flex1 mono tiny truncate">${esc(r.url)}</div>
+        </div>`).join('')}
+    </div>`;
+  } else if(res.type === 'json'){
+    // Try to infer endpoint
+    const ep = OpenAPI.parseEndpointFromRequest('GET', State.request.url);
+    const schema = Schema.fromJSON(res.data);
+    box.innerHTML = `
+      <div class="card">
+        <div class="section-title" style="margin-bottom:8px">Detected: JSON response sample</div>
+        <div class="hint">Schema inferred from the sample below.</div>
+        <div class="code small">${esc(prettyJSON(Schema.toJSONSchema(schema, 'Inferred')))}</div>
+      </div>`;
+  } else {
+    box.innerHTML = '<div class="notice warn">Could not classify input. Try pasting a cURL command, OpenAPI JSON, Postman collection, or HAR file.</div>';
+  }
+}
+
+/* --- Tests --- */
+function loadSampleTests(){
+  const url = State.request.url;
+  State.tests = [
+    { name:'Successful request', req:{ method:'GET', url, timeoutMs:15000 }, expect:{ status:[200] } },
+    { name:'Invalid path (expect 404)', req:{ method:'GET', url: url.replace(/\/[^/]*$/, '/nonexistent-xyz-9999999'), timeoutMs:15000 }, expect:{ status:[404] } },
+    { name:'Malformed JSON POST', req:{ method:'POST', url, headers:{'Content-Type':'application/json'}, body:'{invalid', bodyType:'json', timeoutMs:15000 }, expect:{ status:[400,422,405] } },
+    { name:'Server error path', req:{ method:'GET', url: url + '/trigger-500-nonrealistic-xyz', timeoutMs:15000 }, expect:{ status:[500,502,503,404,403,401] } },
+    { name:'HEAD request', req:{ method:'HEAD', url, timeoutMs:15000 }, expect:{ status:[200,204,301,302] } }
+  ];
+  renderTestResults([]);
+  toast('Loaded '+State.tests.length+' test cases','ok');
+}
+
+async function runTests(){
+  if(!State.tests.length){ loadSampleTests(); }
+  const results = [];
+  const box = $('#test-result');
+  if(box) box.innerHTML = '<div class="card"><div class="skel"></div><div class="skel" style="width:60%"></div></div>';
+  for(let i=0;i<State.tests.length;i++){
+    const t = State.tests[i];
+    const r = await HTTP.request(t.req);
+    const expected = (t.expect && t.expect.status) || [];
+    let status = 'FAIL';
+    if(r.error && expected.indexOf(0) === -1) status = 'FAIL';
+    else if(expected.indexOf(r.status) !== -1) status = 'PASS';
+    else if(expected.length === 0) status = r.ok ? 'PASS' : 'FAIL';
+    results.push({ name: t.name, result: r, expect: expected, status });
+  }
+  renderTestResults(results);
+}
+
+function renderTestResults(results){
+  const box = $('#test-result');
+  if(!box) return;
+  if(!results.length){
+    box.innerHTML = '<div class="empty">No results yet. Click "Run Tests".</div>';
+    return;
+  }
+  const pass = results.filter(r=>r.status==='PASS').length;
+  const fail = results.filter(r=>r.status==='FAIL').length;
+  box.innerHTML = `
+    <div class="grid3">
+      <div class="card tight center"><div style="font-size:22px;font-weight:800;color:#7ef0c2">${pass}</div><div class="tiny muted">PASS</div></div>
+      <div class="card tight center"><div style="font-size:22px;font-weight:800;color:#ffb0bd">${fail}</div><div class="tiny muted">FAIL</div></div>
+      <div class="card tight center"><div style="font-size:22px;font-weight:800">${results.length}</div><div class="tiny muted">TOTAL</div></div>
+    </div>
+    <div class="section">${results.map(r=>`
+      <div class="list-row">
+        <span class="badge ${r.status==='PASS'?'green':'red'}">${r.status}</span>
+        <div class="flex1">
+          <div class="li-title">${esc(r.name)}</div>
+          <div class="li-sub">HTTP ${r.result.status||'—'} · expected ${r.expect.join('/')||'any'} · ${ms(r.result.timeMs)}</div>
+        </div>
+      </div>`).join('')}</div>
+  `;
+}
+
+/* --- Workflow --- */
+function saveWorkflow(){ Store.set('workflow', State.workflow); }
+
+function editWorkflowNode(i){
+  const n = State.workflow.nodes[i];
+  let fields = '';
+  if(n.type === 'fetch'){
+    fields = `
+      <div class="field"><label>Method</label><select class="select" id="wf-method">${['GET','POST','PUT','PATCH','DELETE'].map(m=>`<option${m===n.method?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div class="field"><label>URL (supports {{context.data.field}})</label><input class="input" id="wf-url" value="${esc(n.url||'')}"></div>
+      <div class="field"><label>Body (JSON or template)</label><textarea class="textarea" id="wf-body" rows="4">${esc(n.body||'')}</textarea></div>
+    `;
+  } else if(n.type === 'condition' || n.type === 'verify'){
+    fields = '<div class="field"><label>Expression</label><input class="input" id="wf-expr" value="'+esc(n.expression||'')+'"><div class="hint">Available: context.status, context.data, context.response, context.log</div></div>';
+  } else if(n.type === 'set'){
+    fields = `
+      <div class="field"><label>Path</label><input class="input" id="wf-path" value="${esc(n.path||'')}"></div>
+      <div class="field"><label>Value (template allowed)</label><input class="input" id="wf-value" value="${esc(n.value||'')}"></div>
+    `;
+  } else if(n.type === 'delay'){
+    fields = '<div class="field"><label>Delay (ms)</label><input class="input" type="number" id="wf-ms" value="'+(n.ms||1000)+'"></div>';
+  } else if(n.type === 'log'){
+    fields = '<div class="field"><label>Message (template allowed)</label><input class="input" id="wf-msg" value="'+esc(n.message||'')+'"></div>';
+  }
+  openSheet(
+    fields+'<button class="btn primary full" data-act="wf-save" data-i="'+i+'">Save</button>',
+    { title:'Edit '+n.type+' node' }
+  );
+}
+
+// Intercept "wf-save"
+document.addEventListener('click', function(e){
+  const el = e.target.closest('[data-act="wf-save"]');
+  if(!el) return;
+  const i = parseInt(el.dataset.i,10);
+  const n = State.workflow.nodes[i];
+  if(!n) return;
+  if(n.type === 'fetch'){
+    n.method = ($('#wf-method')||{}).value || 'GET';
+    n.url = ($('#wf-url')||{}).value || '';
+    n.body = ($('#wf-body')||{}).value || '';
+  } else if(n.type === 'condition' || n.type === 'verify'){
+    n.expression = ($('#wf-expr')||{}).value || '';
+  } else if(n.type === 'set'){
+    n.path = ($('#wf-path')||{}).value || '';
+    n.value = ($('#wf-value')||{}).value || '';
+  } else if(n.type === 'delay'){
+    n.ms = parseInt(($('#wf-ms')||{}).value,10) || 1000;
+  } else if(n.type === 'log'){
+    n.message = ($('#wf-msg')||{}).value || '';
+  }
+  saveWorkflow();
+  closeSheet();
+  renderAll();
+});
+
+async function runWorkflow(){
+  const box = $('#wf-result');
+  if(box) box.innerHTML = '<div class="card"><div class="skel"></div><div class="skel" style="width:60%"></div></div>';
+  const run = await Workflow.run(State.workflow.nodes, {}, (i,node)=>{
+    // progress log
+  });
+  if(!box) return;
+  box.innerHTML = `
+    <div class="section-head"><div class="section-title">Run results</div></div>
+    ${run.results.map((r,i)=>`
+      <div class="list-row">
+        <span class="badge ${r.status==='PASS'?'green':r.status==='SKIPPED'?'grey':'red'}">${r.status}</span>
+        <div class="flex1">
+          <div class="li-title">Step ${i+1} · ${esc(r.node.type)}</div>
+          <div class="li-sub mono">${r.result && r.result.error ? esc(r.result.error) : (ms(r.timeMs||0))}</div>
+        </div>
+      </div>`).join('')}
+    <div class="section-head" style="margin-top:12px"><div class="section-title">Context snapshot</div></div>
+    <div class="code small">${esc(prettyJSON({ status: run.context.status, log: run.context.log, dataPreview: run.context.data ? '(see request response)' : null }))}</div>
+  `;
+}
+
+function importWorkflow(){
+  openSheet(
+    '<textarea class="textarea" id="wf-import-text" rows="8" placeholder="Paste workflow JSON"></textarea>'+
+    '<button class="btn primary full" style="margin-top:8px" data-act="wf-import-go">Import</button>',
+    {title:'Import workflow'}
+  );
+}
+document.addEventListener('click', function(e){
+  if(e.target.closest('[data-act="wf-import-go"]')){
+    const v = ($('#wf-import-text')||{}).value || '';
+    const parsed = safeJSON(v, null);
+    if(!parsed || !Array.isArray(parsed.nodes)){ toast('Invalid workflow JSON','err'); return; }
+    State.workflow = parsed;
+    saveWorkflow();
+    closeSheet();
+    renderAll();
+    toast('Workflow imported','ok');
+  }
+});
+
+/* --- Security --- */
+function renderSecurityIssues(){
+  const box = $('#sec-issues');
+  if(!box) return;
+  const reqIssues = Security.inspectRequest(State.request);
+  const respIssues = State.response ? Security.inspectResponse(State.response) : [];
+  const all = reqIssues.concat(respIssues);
+  if(!all.length){
+    box.innerHTML = '<div class="notice ok">No issues detected in current request/response.</div>';
+    return;
+  }
+  box.innerHTML = all.map(i=>{
+    const cls = i.level === 'err' ? 'err' : i.level === 'warn' ? 'warn' : '';
+    return '<div class="notice '+cls+'"><b>'+esc(i.title)+'</b><br>'+esc(i.detail)+'<br><span class="muted tiny">Fix: '+esc(i.fix)+'</span></div>';
+  }).join('');
+}
+
+function scanSecrets(text){
+  const found = [];
+  const patterns = [
+    { type:'AWS Access Key', re: /AKIA[0-9A-Z]{16}/g },
+    { type:'GitHub Token', re: /gh[pousr]_[A-Za-z0-9]{36}/g },
+    { type:'Stripe Live Key', re: /sk_live_[0-9a-zA-Z]{24,}/g },
+    { type:'Slack Token', re: /xox[baprs]-[0-9a-zA-Z-]+/g },
+    { type:'JWT', re: /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g },
+    { type:'Private Key', re: /-----BEGIN (RSA |EC |)PRIVATE KEY-----/g },
+    { type:'Google API Key', re: /AIza[0-9A-Za-z_-]{35}/g }
+  ];
+  patterns.forEach(p=>{
+    let m;
+    const re = new RegExp(p.re.source, 'g');
+    while((m = re.exec(text))){
+      found.push({ type: p.type, match: m[0] });
+      if(found.length > 20) break;
+    }
+  });
+  return found;
+}
+
+/* --- Code --- */
+function renderCodeOutput(lang){
+  const box = $('#code-output');
+  if(!box) return;
+  const all = CodeGen.all(State.request);
+  const code = all[lang] || '';
+  box.innerHTML =
+    '<div class="code">'+esc(code)+'</div>';
+}
+
+document.addEventListener('click', function(e){
+  const chip = e.target.closest('.chip[data-lang]');
+  if(!chip) return;
+  $$('.chip[data-lang]').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  renderCodeOutput(chip.dataset.lang);
+});
+
+/* --- OpenAPI --- */
+function renderOpenAPIOutput(){
+  const box = $('#oa-output');
+  if(!box) return;
+  box.innerHTML = '<div class="muted tiny">Press Generate Spec to produce output.</div>';
+}
+
+/* --- PHP Bridge --- */
+function generatePHPBridge(){
+  const php = `<?php
+// api-bridge.php — optional PHP adapter for NONONICK API FORGE
+// Provides safe server-side fetch with SSRF protection.
+// Deploy as a single file, set FORGE_TOKEN env or edit below.
+
+declare(strict_types=1);
+header('Content-Type: application/json');
+
+// --- CONFIG ---
+$SHARED_TOKEN = getenv('FORGE_TOKEN') ?: 'change-this-token';
+$ALLOWED_HOSTS = ['api.example.com', 'jsonplaceholder.typicode.com'];
+$ALLOW_PRIVATE = false;
+$TIMEOUT = 20;
+
+// --- AUTH ---
+$hdr = getallheaders();
+$token = $hdr['X-Forge-Token'] ?? '';
+if(!hash_equals($SHARED_TOKEN, $token)){
+    http_response_code(401);
+    echo json_encode(['error' => 'unauthorized']);
+    exit;
+}
+
+// --- INPUT ---
+$raw = file_get_contents('php://input');
+$req = json_decode($raw, true);
+if(!is_array($req) || empty($req['url'])){
+    http_response_code(400);
+    echo json_encode(['error' => 'invalid request']);
+    exit;
+}
+
+// --- SSRF PROTECTION ---
+$url = $req['url'];
+$parts = parse_url($url);
+if(!$parts || !in_array($parts['scheme'] ?? '', ['http','https'], true)){
+    http_response_code(400);
+    echo json_encode(['error' => 'scheme not allowed']);
+    exit;
+}
+$host = $parts['host'] ?? '';
+if(!$host){
+    http_response_code(400);
+    echo json_encode(['error' => 'missing host']);
+    exit;
+}
+// Block private networks unless explicitly allowed
+$ips = gethostbynamel($host) ?: [];
+foreach($ips as $ip){
+    if(!$ALLOW_PRIVATE && (
+        filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
+    )){
+        http_response_code(403);
+        echo json_encode(['error' => 'destination blocked (private range)']);
+        exit;
+    }
+}
+// Destination allowlist (optional — uncomment to enforce)
+if(!empty($ALLOWED_HOSTS) && !in_array($host, $ALLOWED_HOSTS, true)){
+    http_response_code(403);
+    echo json_encode(['error' => 'destination not in allowlist', 'host' => $host]);
+    exit;
+}
+
+// --- EXECUTE ---
+$method = strtoupper($req['method'] ?? 'GET');
+$allowed = ['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+if(!in_array($method, $allowed, true)){
+    http_response_code(400);
+    echo json_encode(['error' => 'method not allowed']);
+    exit;
+}
+
+$ch = curl_init($url);
+$headers = [];
+foreach(($req['headers'] ?? []) as $k => $v){
+    if(is_string($k) && is_string($v)) $headers[] = $k . ': ' . $v;
+}
+
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => false, // do not auto-follow; prevents redirect SSRF
+    CURLOPT_TIMEOUT        => $TIMEOUT,
+    CURLOPT_CUSTOMREQUEST  => $method,
+    CURLOPT_HTTPHEADER     => $headers,
+    CURLOPT_SSL_VERIFYPEER => true,
+    CURLOPT_SSL_VERIFYHOST => 2
+]);
+
+if(!empty($req['body']) && in_array($method, ['POST','PUT','PATCH','DELETE'], true)){
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $req['body']);
+}
+
+$body = curl_exec($ch);
+$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$err = curl_error($ch);
+curl_close($ch);
+
+if($body === false){
+    http_response_code(502);
+    echo json_encode(['error' => 'upstream failed', 'detail' => $err]);
+    exit;
+}
+
+http_response_code($status ?: 502);
+echo $body;
+`;
+  openSheet(
+    '<div class="notice warn">Deploy to your server. Protect with a shared token. The adapter enforces SSRF protection.</div>'+
+    '<div class="code wrap small" style="margin-top:8px">'+esc(php)+'</div>'+
+    '<button class="btn primary full" style="margin-top:8px" data-act="copy-generic" data-text="'+esc(php)+'">Copy PHP</button>',
+    {title:'PHP API Bridge'}
+  );
+}
+
+function showSSRFNotes(){
+  const notes = `SSRF Protection Checklist
+========================
+
+Server-side fetch adapters must protect against Server-Side Request Forgery:
+
+1. Scheme allowlist
+   ✓ Only allow http:// and https://
+
+2. Host/IP validation
+   ✗ Block RFC1918 (10/8, 172.16/12, 192.168/16)
+   ✗ Block loopback (127.0.0.0/8, ::1)
+   ✗ Block link-local (169.254.0.0/16, fe80::/10)
+   ✗ Block cloud metadata (169.254.169.254)
+   ✗ Block IPv6 ULA (fc00::/7)
+
+3. Resolve then validate
+   Resolve hostname to IP first, THEN check the IP.
+   This prevents DNS rebinding.
+
+4. Redirect handling
+   Disable auto-redirects. Validate each hop.
+   Or set a maximum of 1–2 hops with re-validation.
+
+5. Destination allowlist
+   For internal APIs, only permit known hosts.
+
+6. Timeouts
+   Set aggressive connect + read timeouts (e.g., 5s + 20s).
+
+7. Response size cap
+   Limit body size to prevent memory exhaustion.
+
+8. Logging
+   Log every outbound request: timestamp, source, target, status.
+
+9. Secrets
+   Store tokens in environment variables.
+   Never in source code.
+
+10. Rate limiting
+    Limit per-token request rate to prevent abuse.
+`;
+  openSheet('<div class="code wrap">'+esc(notes)+'</div>', {title:'SSRF Safety'});
+}
+
+/* ============================================================================
+   COMMAND PALETTE
+   ============================================================================ */
+const COMMANDS = [
+  { name:'Fetch URL', action: ()=>{ State.screen = 'api'; renderAll(); setTimeout(()=>{ const i = $('#req-url'); if(i) i.focus(); }, 50); } },
+  { name:'Send request', action: doSend },
+  { name:'Create PATCH', action: ()=>{ State.screen = 'patch'; renderAll(); } },
+  { name:'Discover API', action: ()=>{ State.screen = 'discover'; renderAll(); } },
+  { name:'Generate Schema', action: ()=>{ State.screen = 'schema'; renderAll(); } },
+  { name:'Generate OpenAPI', action: ()=>{ State.screen = 'openapi'; renderAll(); } },
+  { name:'Generate code', action: ()=>{ State.screen = 'code'; renderAll(); } },
+  { name:'Run tests', action: ()=>{ State.screen = 'test'; renderAll(); setTimeout(runTests, 100); } },
+  { name:'Create Workflow', action: ()=>{ State.screen = 'workflow'; renderAll(); } },
+  { name:'Export project', action: ()=>{
+    const data = {
+      request: State.request,
+      profiles: State.profiles,
+      workflow: State.workflow,
+      endpoints: State.endpoints,
+      history: History.list()
+    };
+    downloadFile('nononick-api-forge-project.json', prettyJSON(data), 'application/json');
+  }},
+  { name:'Clear history', action: ()=>{ History.clear(); renderAll(); toast('History cleared','ok'); } },
+  { name:'Go to History', action: ()=>{ State.screen = 'history'; renderAll(); } },
+  { name:'Go to Settings', action: ()=>{ State.screen = 'settings'; renderAll(); } },
+  { name:'Go to Security', action: ()=>{ State.screen = 'security'; renderAll(); } },
+  { name:'Go to Webhooks', action: ()=>{ State.screen = 'webhooks'; renderAll(); } },
+  { name:'Go to Automation', action: ()=>{ State.screen = 'automation'; renderAll(); } }
+];
+
+let paletteActiveIdx = 0;
+function openPalette(){
+  $('#palette').classList.add('open');
+  setTimeout(()=>{ $('#palette-input').focus(); }, 50);
+  renderPaletteList('');
+}
+function closePalette(){
+  $('#palette').classList.remove('open');
+  $('#palette-input').value = '';
+}
+
+function renderPaletteList(query){
+  const list = $('#palette-list');
+  const q = query.toLowerCase();
+  const filtered = COMMANDS.filter(c=>c.name.toLowerCase().indexOf(q) !== -1);
+  paletteActiveIdx = 0;
+  if(!filtered.length){
+    list.innerHTML = '<div class="palette-item muted">No commands match.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map((c,i)=>
+    '<div class="palette-item '+(i===0?'active':'')+'" data-i="'+i+'">'+
+      '<span>'+esc(c.name)+'</span>'+
+    '</div>'
+  ).join('');
+  list.querySelectorAll('.palette-item').forEach((el,i)=>{
+    el.addEventListener('click', ()=>{ closePalette(); filtered[i].action(); });
+  });
+}
+
+document.addEventListener('keydown', function(e){
+  // Cmd/Ctrl+K
+  if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+    e.preventDefault();
+    if($('#palette').classList.contains('open')) closePalette();
+    else openPalette();
+    return;
+  }
+  // Cmd/Ctrl+Enter to send
+  if((e.metaKey || e.ctrlKey) && e.key === 'Enter'){
+    if(State.screen === 'api' || State.screen === 'fetch'){
+      e.preventDefault();
+      doSend();
+    }
+  }
+  // Escape closes palette
+  if(e.key === 'Escape'){
+    if($('#palette').classList.contains('open')) closePalette();
+    else if(sheetOpen) closeSheet();
+  }
+  // Palette navigation
+  if($('#palette').classList.contains('open')){
+    const items = $$('.palette-item');
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      paletteActiveIdx = Math.min(items.length - 1, paletteActiveIdx + 1);
+      updatePaletteActive(items);
+    } else if(e.key === 'ArrowUp'){
+      e.preventDefault();
+      paletteActiveIdx = Math.max(0, paletteActiveIdx - 1);
+      updatePaletteActive(items);
+    } else if(e.key === 'Enter'){
+      e.preventDefault();
+      const active = items[paletteActiveIdx];
+      if(active) active.click();
+    }
+  }
+});
+
+function updatePaletteActive(items){
+  items.forEach((el,i)=>el.classList.toggle('active', i === paletteActiveIdx));
+  const act = items[paletteActiveIdx];
+  if(act) act.scrollIntoView({block:'nearest'});
+}
+
+document.addEventListener('input', function(e){
+  if(e.target.id === 'palette-input'){
+    renderPaletteList(e.target.value);
+  }
+});
+
+// Click outside palette-box to close
+document.addEventListener('click', function(e){
+  if($('#palette').classList.contains('open')){
+    if(!e.target.closest('.palette-box')) closePalette();
+  }
+});
+
+/* Extra input handler for request panel */
+document.addEventListener('input', function(e){
+  const t = e.target;
+  if(t.dataset.pk !== undefined){
+    const i = parseInt(t.dataset.pk,10);
+    if(State.request.params[i]) State.request.params[i].key = t.value;
+  }
+  if(t.dataset.pv !== undefined){
+    const i = parseInt(t.dataset.pv,10);
+    if(State.request.params[i]) State.request.params[i].value = t.value;
+  }
+  if(t.hasAttribute('data-hdr-key')){
+    const row = t.closest('[data-hk]');
+    if(!row) return;
+    const oldKey = row.dataset.hk;
+    const val = row.querySelector('[data-hdr-val]').value;
+    if(oldKey !== t.value && t.value){
+      delete State.request.headers[oldKey];
+      State.request.headers[t.value] = val;
+      row.dataset.hk = t.value;
+    } else if(oldKey === t.value){
+      // no-op
+    }
+  }
+  if(t.hasAttribute('data-hdr-val')){
+    const row = t.closest('[data-hk]');
+    if(!row) return;
+    const key = row.dataset.hk;
+    if(key) State.request.headers[key] = t.value;
+  }
+  if(t.id === 'body-input'){
+    State.request.body = t.value;
+  }
+  if(t.id === 'req-url'){
+    State.request.url = t.value;
+  }
+  if(t.id === 'auth-token'){ State.request.auth.token = t.value; }
+  if(t.id === 'auth-user'){ State.request.auth.username = t.value; }
+  if(t.id === 'auth-pass'){ State.request.auth.password = t.value; }
+  if(t.id === 'auth-key'){ State.request.auth.key = t.value; }
+  if(t.id === 'auth-value'){ State.request.auth.value = t.value; }
+  if(t.id === 'opt-timeout'){ State.request.timeoutMs = parseInt(t.value,10) || 30000; }
+  if(t.id === 'opt-retries'){ State.request.retries = parseInt(t.value,10) || 0; }
+  if(t.id === 'opt-delay'){ State.request.retryDelayMs = parseInt(t.value,10) || 500; }
+});
+
+document.addEventListener('change', function(e){
+  const t = e.target;
+  if(t.id === 'auth-type'){
+    State.request.auth.type = t.value;
+    renderAuthFields();
+  }
+  if(t.id === 'body-type'){
+    State.request.bodyType = t.value;
+  }
+});
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(function boot(){
+  // Restore persisted state
+  const persistedReq = Store.get('lastRequest', null);
+  if(persistedReq && persistedReq.url){
+    State.request = Object.assign(State.request, persistedReq);
+  }
+  State.workflow = Store.get('workflow', { nodes: [] });
+  State.endpoints = Store.get('endpoints', []);
+
+  renderAll();
+
+  // Persist request on unload
+  window.addEventListener('beforeunload', ()=>{
+    Store.set('lastRequest', State.request);
+  });
+
+  // Save request periodically
+  setInterval(()=>Store.set('lastRequest', State.request), 30000);
+
+  console.log('%c'+APP.name+' v'+APP.version, 'background:linear-gradient(90deg,#22d3ee,#a855f7);color:#04141c;padding:4px 10px;border-radius:6px;font-weight:800');
+  console.log('Tip: press ⌘K / Ctrl+K for the command palette.');
+  console.log('Tip: ⌘↵ / Ctrl+↵ sends the current request.');
+})();
+</script>
+</body>
+</html>
