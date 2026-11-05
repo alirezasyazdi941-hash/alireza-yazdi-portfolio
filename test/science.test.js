@@ -1,0 +1,18 @@
+const {chromium}=require('playwright');const http=require('http'),fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..');
+const mt={html:'text/html',js:'application/javascript',css:'text/css',woff2:'font/woff2',svg:'image/svg+xml'};
+const srv=http.createServer((q,r)=>{let f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(f.endsWith('/'))f+='index.html';fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':mt[f.split('.').pop()]||'application/octet-stream'});r.end(d)})}).listen(8780);
+(async()=>{const b=await chromium.launch();let bad=0;const ok=(c,m)=>{console.log(c?'  ✔':'  ✘',m);if(!c)bad=1};
+const p=await (await b.newContext({viewport:{width:390,height:800}})).newPage();const errs=[],ext=[];
+p.on('pageerror',e=>errs.push(e.message));p.on('request',r=>{if(!r.url().startsWith('http://localhost:8780')&&!r.url().startsWith('data:'))ext.push(r.url())});
+await p.goto('http://localhost:8780/science/');
+ok(await p.locator('#legend div').count()===4,'4 categories');
+ok(await p.locator('#proj a').count()>=1,'research projects linked');
+await p.locator('#log .add button').first().click();await p.locator('#log .add button').nth(1).click();
+ok((await p.locator('#total').innerText()).includes('45')||(await p.locator('#total').innerText()).includes('۴۵'),'total updates (45 min)');
+await p.reload();ok((await p.locator('#total').innerText()).match(/45|۴۵/)!==null,'persists after reload');
+await p.click('#bD');ok(await p.locator('#chart rect[fill="#0a84ff"]').count()===1,'day chart shows bar');
+await p.click('#lang');ok((await p.locator('html').getAttribute('dir'))==='ltr','language toggle');
+ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no overflow');
+ok(ext.length===0,'no external requests '+ext);ok(errs.length===0,'no errors '+errs);
+await p.screenshot({path:process.env.SHOT||'/tmp/sci.png'});await b.close();srv.close();process.exit(bad)})();
