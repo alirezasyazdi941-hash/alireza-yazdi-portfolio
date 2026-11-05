@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Alireza Yazdi — AI, Research Tools & Web Platforms</title>
-<meta name="description" content="Portfolio of Alireza Yazdi: research tools, intelligent systems and interactive web platforms, presented as apps on an interactive phone.">
+<meta name="description" content="Portfolio of Alireza Yazdi: research tools, intelligent systems and interactive web platforms, presented as modules in an interactive holographic console.">
 <meta name="author" content="Alireza Yazdi">
 <meta name="theme-color" content="#05060f">
 <meta property="og:title" content="Alireza Yazdi — AI, Research Tools & Web Platforms">
-<meta property="og:description" content="Interactive portfolio: open each project as an app on a phone floating in a galaxy.">
+<meta property="og:description" content="Interactive portfolio: open each project as a module in a holographic console floating in a galaxy.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
@@ -38,15 +38,31 @@
     </div>
   </section>
 
-  <section class="phone-wrap" id="phone" aria-label="Interactive phone">
-    <div class="phone" id="device">
-      <div class="island" aria-hidden="true"></div>
-      <div class="screen" id="screen">
-        <div class="status" aria-hidden="true"><span id="clock">9:41</span><span class="sys"><i class="sig"></i><i class="bat"></i></span></div>
-        <div class="home" id="home">
+  <section class="holo-wrap" id="phone" aria-label="Interactive holographic console">
+    <div class="holo" id="device">
+      <div class="holo-frame" id="frame">
+        <aside class="side" aria-label="Modules">
+          <div class="logo" aria-hidden="true">AY</div>
+          <nav class="cats" id="cats" aria-label="Categories"></nav>
+          <div class="side-foot">
+            <nav class="dock" id="dock" aria-label="Links"></nav>
+            <button class="indicator" id="indicator" type="button" aria-label="Home">⌂</button>
+          </div>
+        </aside>
+        <div class="main home" id="home">
+          <canvas class="bg" id="cvChart" aria-hidden="true"></canvas>
+          <div class="readout"><div class="widget" id="widget"></div></div>
           <div class="grid" id="grid"></div>
           <p class="hint" data-u="hint"></p>
-          <nav class="dock" id="dock" aria-label="Dock"></nav>
+        </div>
+        <div class="rp" aria-hidden="true">
+          <div class="cell radar"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="33"/><circle cx="50" cy="50" r="20"/><path d="M50 4v92M4 50h92"/><g class="sweep"><path d="M50 50 L50 4 A46 46 0 0 1 82 17 Z"/></g><circle class="blip" cx="64" cy="34" r="2.2"/><circle class="blip b2" cx="36" cy="62" r="1.8"/></svg></div>
+          <div class="cell"><canvas id="cvWave"></canvas></div>
+        </div>
+        <div class="bp" aria-hidden="true">
+          <div class="cell"><canvas id="cvPyr"></canvas></div>
+          <div class="cell ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/><circle class="arc" cx="50" cy="50" r="40"/><circle cx="50" cy="50" r="26" class="thin"/><circle cx="50" cy="50" r="5" class="core"/></svg></div>
+          <div class="cell"><canvas id="cvSph"></canvas></div>
         </div>
         <div class="window" id="win" hidden>
           <div class="winbar">
@@ -56,15 +72,14 @@
           </div>
           <div class="wbody" id="wbody"><div class="loading" id="loading"></div></div>
         </div>
-        <button class="indicator" id="indicator" type="button" aria-label="Home"></button>
       </div>
     </div>
   </section>
-</main>
+  </main>
 
 <footer class="foot">© 2026 Alireza Yazdi · <a id="mailLink" href="#"></a></footer>
 <script src="assets/data.js"></script>
 <script src="assets/galaxy.js"></script>
-<script src="assets/phone.js"></script>
+<script src="assets/holo.js"></script>
 </body>
 </html>

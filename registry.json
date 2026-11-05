@@ -1,7 +1,7 @@
 {
   "name": "alireza-yazdi-portfolio",
-  "version": "1.6.0",
-  "purpose": "Static interactive portfolio: WebGL galaxy landing + phone shell hosting project apps",
+  "version": "1.7.0",
+  "purpose": "Static interactive portfolio: WebGL galaxy landing + holographic console hosting project modules",
   "interface": {
     "entry": "index.html",
     "config": "assets/data.js",

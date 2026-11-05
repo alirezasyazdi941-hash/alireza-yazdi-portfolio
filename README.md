@@ -1,6 +1,6 @@
 # Alireza Yazdi — Interactive Research Portfolio
 
-A portfolio presented as a phone floating inside a galaxy. Each project is an app on the phone's home screen and opens inside the device (or full page via the ↗ button).
+A portfolio presented as a holographic glass console floating inside a galaxy. Each project is a module tile on the console's main screen and opens inside it (or full page via the ↗ button). Side categories filter the modules; the radar, wave, pyramid, ring and sphere panels are decorative HUD canvases and imply no data.
 
 **Live site:** `https://alirezasyazdi941-hash.github.io/alireza-yazdi-portfolio/` (after enabling GitHub Pages — see below)
 
@@ -15,7 +15,7 @@ A portfolio presented as a phone floating inside a galaxy. Each project is an ap
 | **Uni Command** | Academic-journey command center for university applications. Its AI advisor needs a backend and is inactive on this static demo. | Angular, Tailwind |
 
 ## Design notes
-- **No runtime dependencies on the landing page.** The galaxy is a hand-written WebGL point renderer (`assets/galaxy.js`, ~100 lines); the phone shell is plain JS/CSS. Fonts for Research OS are bundled, so nothing is fetched from third-party CDNs.
+- **No runtime dependencies on the landing page.** The galaxy is a hand-written WebGL point renderer (`assets/galaxy.js`, ~100 lines); the holographic console (`assets/holo.js`) is plain JS/CSS/canvas. Fonts for Research OS are bundled, so nothing is fetched from third-party CDNs.
 - Respects `prefers-reduced-motion`; falls back to a CSS gradient if WebGL is unavailable; bilingual (EN / فارسی) with RTL support.
 - Apps are isolated in iframes on the same origin (they share `localStorage` per origin; keys are namespaced by each app).
 - All profile text and the app list live in one file: `assets/data.js`.
@@ -35,7 +35,7 @@ npx serve .          # or: python3 -m http.server 8000
 npm i -D playwright && npx playwright install chromium
 node test/site.test.js
 ```
-Checks: home screen, WebGL galaxy, each app loads inside the phone, close/Escape, Persian RTL mode, no console errors or failed requests, no horizontal overflow on mobile.
+Checks: home screen, WebGL galaxy, each module loads inside the console, close/Escape, Persian RTL mode, no console errors or failed requests, no horizontal overflow on mobile.
 
 ## Rebuilding Research OS
 The `apps/research-os` folder is the production build (`ng build --base-href ./`). Fonts were self-hosted via `material-icons`, `@fontsource-variable/vazirmatn`, `@fontsource-variable/plus-jakarta-sans` and `@fontsource/jetbrains-mono`.

@@ -20,8 +20,8 @@ const ok = (m) => console.log('  ✔', m);
   pg.on('console', (m) => { if (m.type() === 'error' && !/favicon|Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
   pg.on('requestfailed', (r) => { if (!/accounts\.google\.com\/gsi\/client/.test(r.url())) errors.push('reqfail: ' + r.url()); }); // optional Google sign-in script in Universal Code Hub (offline sandbox)
   await pg.goto(base); await pg.waitForSelector('#grid .app');
-  assert.strictEqual(await pg.locator("#grid .app").count(), 14); ok('home screen shows 14 project apps');
-  assert.strictEqual(await pg.locator('#dock .app').count(), 3); ok('dock: About, GitHub, Email');
+  assert.strictEqual(await pg.locator("#grid .app").count(), 14); ok('console shows 14 project modules');
+  assert.strictEqual(await pg.locator('#dock .app').count(), 3); ok('sidebar dock: About, GitHub, Email');
   const gl = await pg.evaluate(() => ({ ready: !!window.__galaxyReady, fallback: document.documentElement.classList.contains('no-webgl') }));
   assert(gl.ready || gl.fallback); ok(gl.ready ? 'WebGL galaxy rendering' : 'galaxy fell back to CSS (no WebGL in this browser)');
   await pg.screenshot({ path: '/tmp/claude-0/portfolio-desktop.png' });
@@ -32,12 +32,12 @@ const ok = (m) => console.log('  ✔', m);
     await frame.waitForLoadState('load'); await pg.waitForFunction(() => document.getElementById('loading').classList.contains('done'));
     await pg.waitForTimeout(id === 'docscan-iran' ? 2500 : 1200);
     const len = await frame.evaluate(() => document.body.innerText.trim().length);
-    assert(len > 40, id + ' rendered too little text: ' + len); ok(id + ' loads inside the phone (' + len + ' chars of content)');
+    assert(len > 40, id + ' rendered too little text: ' + len); ok(id + ' loads inside the console (' + len + ' chars of content)');
     await pg.screenshot({ path: `/tmp/claude-0/portfolio-${id}.png` });
     await pg.locator("#indicator").dispatchEvent("click"); await pg.waitForSelector('#win', { state: 'hidden' });
     assert.strictEqual(await pg.locator('#wbody iframe').count(), 0);
   }
-  ok('home indicator closes each app and frees the iframe');
+  ok('home button closes each app and frees the iframe');
 
   await pg.locator("#dock .app[data-id=about]").dispatchEvent("click"); await pg.waitForSelector('.about-card');
   assert((await pg.textContent('.about-card')).includes('Alireza Yazdi')); await pg.screenshot({ path: '/tmp/claude-0/portfolio-about.png' }); ok('About panel shows the name');
